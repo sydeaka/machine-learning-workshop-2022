@@ -1,0 +1,317 @@
+---
+title: "Untitled"
+author: "Sydeaka Watson"
+date: "9/13/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Introduction
+
+ACTG 175 was a randomized clinical trial to compare monotherapy with zidovudine or didanosine with combination therapy with zidovudine and didanosine or zidovudine and zalcitabine in adults infected with the human immunodeficiency virus type I whose CD4 T cell counts were between 200 and 500 per cubic millimeter.
+
+Hammer SM, et al. (1996), "A trial comparing nucleoside monotherapy with combination therapy in HIV-infected adults with CD4 cell counts from 200 to 500 per cubic millimeter.", New England Journal of Medicine, 335:1081--1090.
+
+Data source/detail: https://www.rdocumentation.org/packages/speff2trial/versions/1.0.4/topics/ACTG175
+Journal article: https://www.nejm.org/doi/10.1056/NEJM199610103351501
+
+
+- 2,467 patients were randomized. However, the dataframe includes 2,139 observations (one per patient) on 27 variables.
+
+- The primary end point was a (1) >50% decline in the CD4 cell count, (2) development of the acquired immunodeficiency syndrome (AIDS), or (3) death.
+  - The data set includes the following post-randomization covariates: CD4 and CD8 T cell count at 205 weeks and the indicator of whether or not the patient was taken off-treatment before 96 +/- 5 weeks.
+  
+- Paper used survival analysis to compare patient prognosis across the treatment arms
+  - Kaplain-Meier curves, log-rank test and Cox proportional-hazards model
+  
+- 
+
+
+The following notes were copied from the abstract.
+
+BACKGROUND
+This double-blind study evaluated treatment with either a single nucleoside or two nucleosides in adults infected with human immunodeficiency virus type 1 (HIV-1) whose CD4 cell counts were from 200 to 500 per cubic millimeter.
+
+METHODS
+We randomly assigned 2467 HIV-1–infected patients (43 percent without prior antiretroviral treatment) to one of four daily regimens: 600 mg of zidovudine; 600 mg of zidovudine plus 400 mg of didanosine; 600 mg of zidovudine plus 2.25 mg of zalcitabine; or 400 mg of didanosine. The primary end point was a >50 percent decline in the CD4 cell count, development of the acquired immunodeficiency syndrome (AIDS), or death.
+
+RESULTS
+Progression to the primary end point was more frequent with zidovudine alone (32 percent) than with zidovudine plus didanosine (18 percent; relative hazard ratio, 0.50; P<0.001), zidovudine plus zalcitabine (20 percent; relative hazard ratio, 0.54; P<0.001), or didanosine alone (22 percent; relative hazard ratio, 0.61; P<0.001). The relative hazard ratios for progression to an AIDS-defining event or death were 0.64 (P = 0.005) for zidovudine plus didanosine, as compared with zidovudine alone, 0.77 (P = 0.085) for zidovudine plus zalcitabine, and 0.69 (P = 0.019) for didanosine alone. The relative hazard ratios for death were 0.55 (P = 0.008), 0.71 (P = 0.10), and 0.51 (P = 0.003), respectively. For zidovudine plus zalcitabine, the benefits were limited to those without previous treatment.
+
+CONCLUSIONS
+Treatment with zidovudine plus didanosine, zidovudine plus zalcitabine, or didanosine alone slows the progression of HIV disease and is superior to treatment with zidovudine alone. Antiretroviral therapy can improve survival in patients with 200 to 500 CD4 cells per cubic millimeter.
+
+# Setup
+
+```{r load_packages}
+library(speff2trial)
+library(dplyr)
+library(ggplot2)
+library(grid)
+library(gridExtra)
+library(survival)
+library(survminer)
+```
+
+
+```{r helper_fns}
+
+```
+
+
+
+
+# Load the data
+
+```{r}
+data(ACTG175)
+
+dat_raw <- ACTG175; dat_raw
+```
+
+
+```{r}
+summary(dat_raw)
+```
+
+# Data transformation
+
+```{r}
+dat_clean <- dat_raw %>%
+  # treatment arm (0=zidovudine, 1=zidovudine and didanosine, 2=zidovudine and zalcitabine, 3=didanosine).
+  mutate(treatment_arm = case_when(
+    arms == 0 ~ 'zidovudine',
+    arms == 1 ~ 'zidovudine and didanosine',
+    arms == 2 ~ 'zidovudine and zalcitabine',
+    arms == 3 ~ 'didanosine',
+    TRUE ~ NA_character_
+  )) %>%
+  mutate(
+    hemo = case_when(
+      hemo == 0 ~ 'no',
+      hemo == 1 ~ 'yes',
+      TRUE ~ NA_character_
+    ),
+    lgbtq = case_when(
+      homo == 0 ~ 'no',
+      homo == 1 ~ 'yes',
+      TRUE ~ NA_character_
+    ),
+    hist_intra_drug_use = case_when(
+      drugs == 0 ~ 'no',
+      drugs == 1 ~ 'yes',
+      TRUE ~ NA_character_
+    ),
+    prior_nz_art = case_when(
+      oprior == 0 ~ 'no',
+      oprior == 1 ~ 'yes',
+      TRUE ~ NA_character_
+    ),
+    prior_z_30days = case_when(
+      z30 == 0 ~ 'no',
+      z30 == 1 ~ 'yes',
+      TRUE ~ NA_character_
+    ),
+    prior_z = case_when(
+      zprior == 0 ~ 'no',
+      zprior == 1 ~ 'yes',
+      TRUE ~ NA_character_
+    ),
+    days_prior_art = preanti,
+    race = case_when(
+      race == 0 ~ 'white',
+      race == 1 ~ 'non-white',
+      TRUE ~ NA_character_
+    ),
+    gender = case_when(
+      gender == 0 ~ 'female',
+      gender == 1 ~ 'male',
+      TRUE ~ NA_character_
+    ),
+    prior_art = case_when(
+      str2 == 0 ~ 'naive',
+      str2 == 1 ~ 'experienced',
+      TRUE ~ NA_character_
+    ),
+    # antiretroviral history stratification (1='antiretroviral naive', 2='> 1 but  52 weeks of prior antiretroviral therapy', 3='> 52 weeks')
+    strat_hist_art = case_when(
+      strat == 1 ~ 'antiretroviral naive',
+      strat == 2 ~ '> 1 but <= 52 weeks of prior antiretroviral therapy',
+      strat == 3 ~ '> 52 weeks',
+      TRUE ~ NA_character_
+    ),
+    symptom = case_when(
+      symptom == 0 ~ 'asymptomatic',
+      symptom == 1 ~ 'symptomatic',
+      TRUE ~ NA_character_
+    ),
+    prior_z = case_when(
+      zprior == 0 ~ 'no',
+      zprior == 1 ~ 'yes',
+      TRUE ~ NA_character_
+    ),
+    prior_z = case_when(
+      zprior == 0 ~ 'no',
+      zprior == 1 ~ 'yes',
+      TRUE ~ NA_character_
+    ),
+    zidovudine_indicator = treat,
+    surv_days = days,
+    surv_event = cens,
+    event = ifelse(surv_event == 0, 'no', 'yes') %>% factor,
+    baseline_cd4 = cd40,
+    baseline_cd8 = cd80
+  ) %>%
+  #select(pidnum, age, wtkg, hemo, homo, drugs, karnof, oprior, z30, zprior, preanti, race, gender, str2, strat, symptom, treat, offtrt, cd40, cd420, cd496, r, cd80, cd820, cens, days, arms) %>%
+  select(
+    # identifier
+    pidnum, 
+    # treatment assignment 
+   zidovudine_indicator, treatment_arm, offtrt, 
+    # baseline predictors
+    age, wtkg, hemo, lgbtq, hist_intra_drug_use, karnof, prior_nz_art, prior_z_30days, prior_z, days_prior_art, race, gender, prior_art, strat_hist_art, symptom, baseline_cd4, baseline_cd8, 
+   # survival outcome
+   event, surv_event, surv_days,
+   # other outcomes
+   cd420, cd496, r, cd820
+    ) %>%
+  mutate_if(is.character, factor) 
+
+dat_clean
+```
+
+
+
+```{r}
+summary(dat_clean)
+```
+
+Identify factor and numeric variables
+
+```{r}
+var_outcomes <- c('event', 'surv_event', 'surv_days', 'cd420', 'cd496', 'r', 'cd820')
+excluded_cols <- c('pidnum', 'zidovudine_indicator', 'offtrt')
+
+classes <- sapply(dat_clean, class)
+vars_factor <- classes[classes == 'factor'] %>% names %>% .[. %in% c('progression', 'event') == FALSE]
+vars_factor
+
+vars_cont <- classes[(classes  %in% c('integer', 'numeric'))] %>% names %>% .[!(. %in% c(var_outcomes, excluded_cols))]; vars_cont
+```
+
+
+
+# Kaplan-meier curves
+
+All patients
+
+```{r}
+kmfit0 <- survfit(Surv(time = surv_days, event = surv_event) ~ 1, data = dat_clean)
+
+ggsurvplot(kmfit0, risk.table=TRUE)
+```
+
+
+
+Stratified by each categorical baseline predictor
+
+```{r, fig.height=8}
+km_strat <- function(vname) {
+  txt_code <- as.character(glue::glue("survfit(Surv(time = surv_days, event = surv_event) ~ {vname}, data = dat_clean)"))
+  print(txt_code)
+  kmfit <- eval(parse(text=txt_code))
+
+  ggsurvplot(kmfit, legend = 'right', risk.table = TRUE) + 
+    ggtitle(glue::glue('Kaplan-Meier survival stratified by `{vname}`'))
+}
+
+
+#km_strat(vname='treatment_arm')
+lapply(vars_factor, km_strat)
+```
+
+
+
+
+```{r, fig.height=5, fig.width=12}
+kmfit1 <- survfit(Surv(time = surv_days, event = surv_event) ~ treatment_arm + symptom, data = dat_clean)
+#ggsurvplot(kmfit1, legend = 'right')
+ggsurvplot(kmfit1, legend = 'right')$plot + 
+  facet_grid( ~ symptom)
+```
+
+
+CD4 outcome
+
+```{r, fig.height=2}
+#vname = 'treatment_arm'; outcome = 'cd420'
+cont_outcome_strat <- function(vname, outcome) {
+  dat_clean %>%
+    ggplot(aes_string(x=vname, y=outcome)) +
+    geom_boxplot() + 
+    ggtitle(glue::glue('Boxplot of `{outcome}` stratified by `{vname}`')) + 
+    ylab('')
+}
+
+lapply(vars_factor, cont_outcome_strat, outcome='cd420')
+```
+
+```{r}
+lapply(vars_factor, cont_outcome_strat, outcome='cd820')
+```
+
+```{r, fig.height=2}
+vname = 'age'; outcome = 'cd420'
+cont_vs_cont <- function(vname, outcome) {
+  dat_clean %>%
+    ggplot(aes_string(x=vname, y=outcome)) +
+    geom_point() + 
+    facet_wrap(~ treatment_arm) +
+    ggtitle(glue::glue('scatterplot of `{outcome}` vs `{vname}`, stratified by treatment arm')) + 
+    ylab('')
+}
+
+lapply(vars_cont, cont_vs_cont, outcome='cd420')
+```
+
+```{r}
+lapply(vars_cont, cont_vs_cont, outcome='cd820')
+```
+
+
+
+
+# Export cleaned dataset
+
+```{r}
+out_folder <- here::here('derived-data')
+if (!dir.exists(out_folder)) dir.create(out_folder)
+saveRDS(dat_clean, file=file.path(out_folder, 'ACTG175-data-cleaned.RDS'))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

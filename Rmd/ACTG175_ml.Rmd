@@ -1,0 +1,321 @@
+---
+title: "ML"
+author: "Sydeaka Watson"
+date: "9/14/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Introduction
+
+Data source/detail: https://www.rdocumentation.org/packages/speff2trial/versions/1.0.4/topics/ACTG175
+Journal article: https://www.nejm.org/doi/10.1056/NEJM199610103351501
+
+# ML Best Practices
+
+Terms: features/preds ... target/outcome
+
+Best practices
+- Define modeling objectives
+  - What do we want the model to do? 
+  - What is the outcome / target variable? 
+  - Identify the relevant data sources
+  - Select an appropriate ML algorithm that aligns with the modeling objective
+- Exploratory data analysis 
+  - Data quality
+  - Determine if we need to exclude any data points or variables
+  - Determine if we need to transform any variables
+  - Examine relationships between candidate predictors and outcomes
+- Variable selection 
+  - Which variables do we want to include in the analysis? 
+  - Which should be excluded (identifier fields, redundant variables, zero-variance variables, etc.)?
+  - Kitchen sink vs more nuanced approach?
+    - Variable reduction - principal components
+    - Could also choose n top variables from preliminary model fit
+- Feature engineering 
+  - Should we create new features that extract additional insight from existing features?
+    - Example:  Split "2022-09-23 11:37:48 CDT" into
+      - year = 2022
+      - quarter = 3
+      - month = 9
+      - day_of_month = 23
+      - day_of_week = 'Friday'
+      - hour_24 = 11
+      - min = 37
+      - sec = 48
+      - time_zone = 'CDT'
+- Split data into training / validation? / testing sets 
+  - Fit the model on the training set
+  - Get intermediate assessment of model performance on validation set
+  - Get final assessment of final model performance on testing set
+- Model validation
+  - Single train / validation? / test split
+    - Train model on training set
+    - Evaluate on validation? / testing set
+  - Cross-validation
+    - Train model on all k train / validation splits
+    - Evaluate model performance across folds
+- Try different modeling algorithms 
+  - Compare model performance across various modeling approaches 
+- Tune the hyperparameters in any selected algorithm 
+  - "I tried algorithm XYZ, but it didn't work"
+- Select the "best" model
+  - Choose the algorithm / parameter set that optimizes the performance criterion 
+- Explain the model predictions 
+  - Examine variable importance 
+  - Understand the relationship between the predictor and the outcome
+    - Example: As predictor value increases from 0 to 0.25, the outcome increases, but then it tends to decrease after 0.25
+- Deploy the model -- Create model API via vetiver, plumber, RStudio Connect, etc. 
+  - Get the model out of your RMarkdown / Jupyter notebook to make it accessible to other people
+- Create a ML workflow (tidymodels, targets, etc) 
+  _ Create a reproducible workflow that ties all of these elements together
+  - Script everything if possible (avoid manual intermediate workflow steps)
+
+
+# Setup
+
+```{r load_packages}
+#library(speff2trial)
+library(dplyr)
+library(ggplot2)
+#library(grid)
+#library(gridExtra)
+#library(survival)
+#library(survminer)
+library(testthat)
+library(tidymodels)
+library(yardstick)
+```
+
+
+
+```{r helper_fns}
+
+```
+
+
+
+
+# Load the data
+
+```{r}
+dat_folder <- here::here('derived-data')
+dat_file <- file.path(dat_folder, 'ACTG175-data-cleaned.RDS')
+expect_true(dir.exists(dat_folder))
+expect_true(file.exists(dat_file))
+
+dat_clean <- readRDS(file=dat_file)
+dat_clean
+```
+
+
+Ignoring these variables
+- pidnum: patient identifier shouldn't be used as a predictor
+- zidovudine_indicator: redundant... this info is already captured in the `treatment_arm` variable
+- offtrt: we wouldn't know this at baseline (whether the patient went off treatment) 
+- prior_z: all patients have prior zidovudine treatment (i.e., all patients have the same value for this variable), so there's no value add
+
+```{r}
+var_predictors <- c(
+    # treatment assignment 
+    'treatment_arm', 
+    # baseline predictors
+    'age', 'wtkg', 'hemo', 'lgbtq', 'hist_intra_drug_use', 'karnof', 'prior_nz_art', 'prior_z_30days', #'prior_z', 
+    'days_prior_art', 'race', 'gender', 'prior_art', 'strat_hist_art', 'symptom', 'baseline_cd4', 'baseline_cd8')
+
+var_outcomes <- c('event', 'surv_event', 'surv_days', 'cd420', 'cd496', 'r', 'cd820')
+
+vars_all <- colnames(dat_clean)
+vars_to_keep <- c(var_predictors, var_outcomes)
+
+vars_excluded <- vars_all[!(vars_all %in%  vars_to_keep)]
+
+dat_analysis <- dat_clean %>%
+  select_at(vars_to_keep)
+
+
+
+dat_analysis
+```
+
+# Data pre-processing and splitting
+
+Split the data into training/testing sets
+
+```{r}
+# Set the seed so the result is reproducible
+set.seed(123)
+dat_split <- initial_split(dat_analysis, prop = 0.85, strata = strat_hist_art)
+dat_split
+```
+
+Get training and testing dataframes
+
+```{r}
+dat_train <- training(dat_split)
+dat_train
+
+dat_test <- testing(dat_split)
+dat_test
+```
+
+# Modeling
+
+## Specify models and create workflows
+
+```{r}
+# Model specifications
+model_spec_rf <- rand_forest(mode = 'classification', engine = 'ranger', trees = 300, mtry = 10, min_n = 25)
+model_spec_dt <- decision_tree(mode = 'classification', engine = 'rpart', tree_depth = 5, min_n = 20)
+model_spec_xgb <- boost_tree(mode = 'classification', engine = 'xgboost', trees = 250, tree_depth = 5, min_n = 30, learn_rate = 0.5)
+
+# Model formula
+model_formula <- as.formula(paste('event ~ ', paste(var_predictors, collapse = ' + ')))
+
+# Model workflows
+rf_model_wflow <- workflow(model_formula, model_spec_rf)
+dt_model_wflow <- workflow(model_formula, model_spec_dt)
+xgb_model_wflow <- workflow(model_formula, model_spec_xgb)
+```
+
+
+
+## Random Forest using a single training/testing split
+
+### All patients
+
+```{r}
+# Train the model
+model_fit <- fit(rf_model_wflow, dat_train)
+
+# Get model performance
+class_metrics <- metric_set(rmse, msd)
+dat_test_w_preds %>%
+  class_metrics(truth=surv_event, estimate=.pred_yes_int)
+
+# Append the predictions to the testing dataframe
+dat_test_w_preds <- augment(model_fit, new_data = dat_test) %>%
+  mutate(.pred_yes_int = ifelse(.pred_yes > .5, 1, 0))
+
+
+```
+
+
+### Identify high-risk patients in the placebo arm
+
+```{r}
+# Train the model
+model_fit <- fit(rf_model_wflow, dat_train)
+
+# Append the predictions to the testing dataframe
+dat_test_w_preds <- augment(model_fit, new_data = dat_test) %>%
+  mutate(.pred_yes_int = ifelse(.pred_yes > .5, 1, 0))
+
+# Get model performance
+class_metrics <- metric_set(rmse, msd)
+dat_test_w_preds %>%
+  class_metrics(truth=surv_event, estimate=.pred_yes_int)
+```
+
+
+
+### Random Forest using k-fold cross-validation
+
+```{r}
+set.seed(123)
+
+# Generate 10 folds for CV
+dat_folds <- vfold_cv(dat_train, v = 10, strata = strat_hist_art)
+
+# Save the assessment set results
+ctrl <- control_resamples(save_pred = TRUE)
+
+# Fit the workflow on each analysis set,
+# then compute performance on each assessment set
+fit_cv_res <- fit_resamples(rf_model_wflow, dat_folds, control = ctrl)
+
+# Aggregate metrics
+fit_cv_res %>%
+  collect_metrics()
+
+preds <- collect_predictions(fit_cv_res) %>%
+  mutate(.pred_yes_int = ifelse(.pred_yes > .5, 1, 0),
+         .pred_yes_yn = ifelse(.pred_yes > .5, 'yes', 'no'),
+         event_char = as.character(event),
+         acc = case_when(
+           event_char == 'no' & .pred_yes_yn == 'no' ~ 'true negative',
+           event_char == 'no' & .pred_yes_yn == 'yes' ~ 'false positive',
+           event_char == 'yes' & .pred_yes_yn == 'no' ~ 'false negative',
+           event_char == 'yes' & .pred_yes_yn == 'yes' ~ 'true positive',
+           TRUE ~ NA_character_
+         )
+         )
+
+
+preds %>%
+  group_by(event_char, .pred_yes_yn, acc) %>%
+  summarise(n = n()) %>%
+  ungroup %>%
+  group_by(event_char) %>%
+  mutate(pct = round(100 * n / sum(n), 2))
+
+
+
+# preds %>% 
+#   ggplot(aes(latency, .pred, color = id)) + 
+#   geom_abline(lty = 2, col = "gray", size = 1.5) +
+#   geom_point(alpha = 0.5) +
+#   coord_obs_pred()
+```
+
+
+## Multiple models
+
+```{r}
+wf_set <- workflow_set(list(model_formula), 
+                       list(model_spec_rf, model_spec_dt, model_spec_xgb))
+
+wf_set_fit <- wf_set %>%
+  workflow_map("fit_resamples", resamples = dat_folds)
+
+# Rank the sets of models by their aggregate metric performance
+wf_set_fit %>% rank_results()
+
+# Final model fit (choose the top model)
+final_fit <- last_fit(rf_model_wflow, dat_split)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+
+```
+
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,10 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+data/*
+derived-data/*
+Rmd/discard/*
+.DS_Store
+xx_*
+admin/*
