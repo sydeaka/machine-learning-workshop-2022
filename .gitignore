@@ -8,3 +8,4 @@ Rmd/discard/*
 .DS_Store
 xx_*
 admin/*
+slides/quarto/slides_ml_best_practices_files/*
