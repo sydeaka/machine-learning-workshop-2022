@@ -1,0 +1,807 @@
+---
+title: "Machine Learning: Principles & Best Practices"
+format: 
+  revealjs:
+    code-link: true
+    code-line-numbers: true
+    code-tools: true
+    code-copy: true
+    code-fold: true
+    code-summary: "Show the code"
+editor: visual
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 10 ML best practices
+
+::: columns
+::: {.column width="50%"}
+1.  Define modeling objectives
+
+2.  Exploratory data analysis
+
+3.  Feature engineering
+
+4.  Variable selection
+
+5.  Split data into training / testing sets
+:::
+
+::: {.column width="50%"}
+6.  Train / validate the model
+
+7.  Create visual summaries
+
+8.  Explain the model predictions
+
+9.  Deploy the model
+
+10. Create a ML workflow
+:::
+:::
+
+## 1. Define modeling objectives
+
+-   What do we want the model to do?
+
+    -   Classification? Regression? Clustering?
+
+-   What is the outcome / target variable?
+
+-   Identify the relevant data sources
+
+-   Select appropriate ML algorithm(s) that align with the modeling objective
+
+## 1. Example: Clinical Trial ACTG 175
+
+-   ACTG 175 was a randomized, double-blind, placebo-controlled trial that included HIV-1--infected subjects with CD4 cell counts 200-500 per cubic mm
+
+-   Treatments
+
+    -   Monotherapy: (1) zidovudine alone or (2) didanosine alone
+    -   Combination therapy: (3) zidovudine + didanosine or (4) zidovudine + zalcitabine
+
+-   Primary study end point: (1) \>50% decline in CD4 cell count, (2) progression to AIDS, or (3) death.
+
+## 1. Example: Modeling Plan
+
+-   Objective: Given baseline characteristics, predict whether patient will experience the primary study endpoint within the observation period, XX weeks
+
+-   Outcome: Binary indicator of whether patient had \>50% CD4+ increase, progressed to AIDS, or death
+
+-   Data source: Clinical data -- baseline predictors, treatment assignment, study outcomes
+
+-   Candidate algorithms
+
+    -   Supervised learning / binary classification: Random forest, XGBoost, & Decision Tree
+
+## 2. Exploratory data analysis
+
+-   Data quality
+
+-   Missing data summary / investigation
+
+-   Determine if we need to exclude any data points or variables
+
+-   Determine if we need to transform any variables
+
+-   Examine relationships between candidate predictors and outcomes
+
+## 2. Example: Load the packages / helper functions / dataset
+
+```{r load_pkg_helpers_data}
+
+# Load the packages
+suppressPackageStartupMessages(library(speff2trial))
+suppressPackageStartupMessages(library(dplyr))
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(testthat))
+suppressPackageStartupMessages(library(tidymodels))
+suppressPackageStartupMessages(library(yardstick))
+suppressPackageStartupMessages(library(DT))
+suppressPackageStartupMessages(library(pROC))
+suppressPackageStartupMessages(library(recipes))
+suppressPackageStartupMessages(library(themis))
+
+# Helper function: Pretty data table
+# Table fmt ref: https://stackoverflow.com/questions/44368572/dt-showing-more-rows-in-dt
+pretty_dt <- function(tbl, num_digits = 3, num_rows=20) {
+  dt <- tbl %>% 
+    head(num_rows) %>%
+    datatable(
+      fillContainer = FALSE, 
+      options = list(pageLength = 10, 
+                     autoWidth = TRUE,
+                     dom = 't', # table only
+                     scrollX = TRUE,
+                     scrollY = TRUE
+        )
+      )
+  
+  # Round float columns (numeric but not integer)
+  cols_numeric <- colnames(tbl)[sapply(tbl, is.numeric)]
+  cols_integer <- colnames(tbl)[sapply(tbl, is.integer)]
+  cols_float <- cols_numeric[!(cols_numeric %in% cols_integer)]
+  if (length(cols_float) > 0) {
+    dt <- dt %>% formatRound(cols_float, num_digits)
+  }
+  
+  return(dt)
+}
+
+# Load the data
+data(ACTG175)
+dat_raw <- ACTG175
+dat_raw %>% summary
+```
+
+## 2. Example: Apply data transformations
+
+```{r data_transformations}
+dat_clean <- dat_raw %>%
+  mutate(treatment_arm = case_when(
+    arms == 0 ~ 'zidovudine',
+    arms == 1 ~ 'zidovudine and didanosine',
+    arms == 2 ~ 'zidovudine and zalcitabine',
+    arms == 3 ~ 'didanosine',
+    TRUE ~ NA_character_
+  )) %>%
+  mutate(
+    hemo = case_when(
+      hemo == 0 ~ 'no',
+      hemo == 1 ~ 'yes',
+      TRUE ~ NA_character_
+    ),
+    lgbtq = case_when(
+      homo == 0 ~ 'no',
+      homo == 1 ~ 'yes',
+      TRUE ~ NA_character_
+    ),
+    hist_intra_drug_use = case_when(
+      drugs == 0 ~ 'no',
+      drugs == 1 ~ 'yes',
+      TRUE ~ NA_character_
+    ),
+    prior_nz_art = case_when(
+      oprior == 0 ~ 'no',
+      oprior == 1 ~ 'yes',
+      TRUE ~ NA_character_
+    ),
+    prior_z_30days = case_when(
+      z30 == 0 ~ 'no',
+      z30 == 1 ~ 'yes',
+      TRUE ~ NA_character_
+    ),
+    prior_z = case_when(
+      zprior == 0 ~ 'no',
+      zprior == 1 ~ 'yes',
+      TRUE ~ NA_character_
+    ),
+    days_prior_art = preanti,
+    race = case_when(
+      race == 0 ~ 'white',
+      race == 1 ~ 'non-white',
+      TRUE ~ NA_character_
+    ),
+    gender = case_when(
+      gender == 0 ~ 'female',
+      gender == 1 ~ 'male',
+      TRUE ~ NA_character_
+    ),
+    prior_art = case_when(
+      str2 == 0 ~ 'naive',
+      str2 == 1 ~ 'experienced',
+      TRUE ~ NA_character_
+    ),
+    strat_hist_art = case_when(
+      strat == 1 ~ 'antiretroviral naive',
+      strat == 2 ~ '> 1 but <= 52 weeks of prior antiretroviral therapy',
+      strat == 3 ~ '> 52 weeks',
+      TRUE ~ NA_character_
+    ),
+    symptom = case_when(
+      symptom == 0 ~ 'asymptomatic',
+      symptom == 1 ~ 'symptomatic',
+      TRUE ~ NA_character_
+    ),
+    prior_z = case_when(
+      zprior == 0 ~ 'no',
+      zprior == 1 ~ 'yes',
+      TRUE ~ NA_character_
+    ),
+    prior_z = case_when(
+      zprior == 0 ~ 'no',
+      zprior == 1 ~ 'yes',
+      TRUE ~ NA_character_
+    ),
+    zidovudine_indicator = treat,
+    surv_days = days,
+    surv_event = cens,
+    event = ifelse(surv_event == 0, 'no', 'yes') %>% factor,
+    baseline_cd4 = cd40,
+    baseline_cd8 = cd80
+  ) %>%
+  select(
+    # identifier
+    pidnum, 
+    # treatment assignment 
+   zidovudine_indicator, treatment_arm, offtrt, 
+    # baseline predictors
+    age, wtkg, hemo, lgbtq, hist_intra_drug_use, karnof, prior_nz_art, prior_z_30days, prior_z, days_prior_art, race, gender, prior_art, strat_hist_art, symptom, baseline_cd4, baseline_cd8, 
+   # survival outcome
+   event, surv_event, surv_days,
+   # other outcomes
+   cd420, cd496, r, cd820
+    ) %>%
+  mutate_if(is.character, factor) 
+
+dat_clean %>% summary
+```
+
+## 2. Example: Transformed data table
+
+```{r data_preview}
+dat_clean %>% pretty_dt
+```
+
+## 2. Example: Data visualizations
+
+```{r data_viz, fig.height=2}
+# Identify factor and numeric variables
+var_outcomes <- c('event', 'surv_event', 'surv_days', 'cd420', 'cd496', 'r', 'cd820')
+excluded_cols <- c('pidnum', 'zidovudine_indicator', 'offtrt')
+classes <- sapply(dat_clean, class)
+vars_factor <- classes[classes == 'factor'] %>% 
+  names %>% 
+  .[!(. %in% c('progression', 'event'))]
+vars_cont <- classes[(classes  %in% c('integer', 'numeric'))] %>% 
+  names %>% 
+  .[!(. %in% c(var_outcomes, excluded_cols))]
+
+# 
+
+#vname = 'treatment_arm'; outcome = 'cd420'
+cont_outcome_strat <- function(vname, outcome) {
+  dat_clean %>%
+    ggplot(aes_string(x=vname, y=outcome)) +
+    geom_boxplot() + 
+    ggtitle(glue::glue('Boxplot of `{outcome}` stratified by `{vname}`')) + 
+    ylab('')
+}
+
+lapply(vars_factor[1:2], cont_outcome_strat, outcome='cd420')
+```
+
+(show graphs and notes)
+
+## 3. Feature engineering
+
+-   Create new features that extract additional insight from existing features
+
+-   For example, we could split timestamp "2022-09-23 11:37:48 CDT" into:
+
+    ::: columns
+    ::: {.column width="50%"}
+    -   year = 2022
+
+    -   quarter = 3
+
+    -   month = 9
+
+    -   day_of_month = 23
+
+    -   day_of_week = 'Friday'
+    :::
+
+    ::: {.column width="50%"}
+    -   hour_24 = 11
+
+    -   minutes = 37
+
+    -   seconds = 48
+
+    -   time_zone = 'CDT'
+    :::
+    :::
+
+## 3. Example: Create individual drug indicators
+
+```{r feat_eng}
+dat_clean <- dat_clean %>%
+  mutate(
+    ind_didanosine = ifelse(grepl(pattern='didanosine', x=treatment_arm), 1L, 0L),
+    ind_zidovudine = ifelse(grepl(pattern='zidovudine', x=treatment_arm), 1L, 0L),
+    ind_zalcitabine = ifelse(grepl(pattern='zalcitabine', x=treatment_arm), 1L, 0L)
+  )
+
+dat_clean %>%
+  distinct(treatment_arm, ind_didanosine, ind_zidovudine, ind_zalcitabine) %>%
+  pretty_dt
+```
+
+## 4. Variable selection
+
+-   Which variables do we want to include in the analysis?
+
+-   Which should be excluded?
+
+    -   Identifier fields, redundant variables, zero-variance variables, etc.
+
+    -   Kitchen sink vs more nuanced approach?
+
+-   Variable reduction - principal components
+
+-   Could also choose n top variables from preliminary model fit
+
+## 4. Example: Keeping these variables
+
+-   Treatment arm assignments
+
+-   Baseline characteristics
+
+    -   Age, weight, race, gender, sexual orientation, etc.
+
+    -   Treatment history (including stratification variable)
+
+    -   CD4 and CD8 counts
+
+-   Symptomatic vs asymptomatic?
+
+-   Karnofsky score
+
+## 4. Example: Excluding these variables
+
+-   [**pidnum**]{.underline}: patient identifier shouldn't be used as a predictor
+
+-   [**zidovudine_indicator**]{.underline}: redundant... this info is already captured in the \`treatment_arm\` variable
+
+-   [**offtrt**]{.underline}: we wouldn't know this at baseline (whether the patient went off treatment)
+
+-   [**prior_z**]{.underline}: all patients have prior zidovudine treatment (i.e., all patients have the same value for this variable), so there's no value add
+
+-   [**prior_nz_art**]{.underline}: Very little variability in this variable (2092 no vs 47 yes)
+
+## 5. Split data into training / testing sets
+
+-   Fit the model on the training set
+
+-   Get intermediate assessment of model performance on validation set
+
+-   Get final assessment of final model performance on testing set
+
+## 5. Example: Selecting relevant predictors and outcome
+
+```{r var_types}
+var_predictors <- c(
+    # treatment assignment 
+    #'treatment_arm', 
+    'ind_didanosine', 'ind_zidovudine', 'ind_zalcitabine',
+    # baseline predictors
+    'age', 'wtkg', 'hemo', 'lgbtq', 'hist_intra_drug_use', 'karnof', 'prior_z_30days', #'prior_z', 
+    'days_prior_art', 'race', 'gender', 'prior_art', 'strat_hist_art', 'symptom', 'baseline_cd4', 'baseline_cd8')
+
+var_outcomes <- c('event', 'surv_event', 'surv_days', 'cd420', 'cd496', 'r', 'cd820')
+vars_all <- colnames(dat_clean)
+vars_to_keep <- c(var_predictors, var_outcomes)
+vars_excluded <- vars_all[!(vars_all %in% vars_to_keep)]
+
+dat_analysis <- dat_clean %>% select_at(vars_to_keep)
+
+dat_analysis %>% summary
+```
+
+## 5. Example: Initial data split = 85 % Train / validation + 15% test
+
+```{r dat_split}
+# Set the seed so the result is reproducible
+set.seed(123)
+# 85% training / 15% testing
+dat_split <- initial_split(dat_analysis, prop = 0.85, strata = strat_hist_art)
+dat_split
+```
+
+```{r dat_split_dims}
+dat_train_and_val <- training(dat_split)
+dat_test <- testing(dat_split)
+
+df_dimensions <- list(
+  full_dataset = dat_analysis %>% dim,
+  train_val_dataset = dat_train_and_val %>% dim,
+  test_dataset = dat_test %>% dim
+)
+
+df_dim_message <- sapply(names(df_dimensions), function(df_name) {
+  glue::glue("`{df_name}` contains {df_dimensions[[df_name]][1]} rows and {df_dimensions[[df_name]][2]} columns.")
+}) %>%
+  paste(., collapse='\n')
+
+cat(df_dim_message)
+```
+
+```{r}
+# Model formula
+model_formula <- as.formula(paste('event ~ ', paste(var_predictors, collapse = ' + ')))
+
+dat_train_and_val %>% count(event)
+
+# Model formula
+model_formula <- as.formula(paste('event ~ ', paste(var_predictors, collapse = ' + ')))
+
+downsample_rec <- 
+  recipe(model_formula, data = dat_train_and_val) %>%
+  step_downsample(event, under_ratio = 1.5) %>%
+  prep()
+
+upsample_rec <- 
+  recipe(model_formula, data = dat_train_and_val) %>%
+  step_upsample(event, over_ratio = 0.7) %>%
+  prep()
+
+dat_train_and_val_ds <- upsample_rec %>%
+  bake(new_data = NULL) 
+
+dat_train_and_val_ds %>%  count(event)
+```
+
+## 5. Example: Validation split = 80% training + 20% validation
+
+```{r dat_val_split}
+set.seed(321)
+dat_val_split <- validation_split(dat_train_and_val_ds, prop = 0.80, strata = strat_hist_art)
+dat_val_split
+
+dat_train <- analysis(dat_val_split$splits[[1]])
+dat_valid <- assessment(dat_val_split$splits[[1]])
+
+df_dimensions <- list(
+  dat_train_and_val_ds_dataset = dat_train_and_val_ds %>% dim,
+  train_dataset = dat_train %>% dim,
+  valid_dataset = dat_valid %>% dim
+)
+
+
+df_dim_message <- sapply(names(df_dimensions), function(df_name) {
+  glue::glue("`{df_name}` contains {df_dimensions[[df_name]][1]} rows and {df_dimensions[[df_name]][2]} columns.")
+}) %>%
+  paste(., collapse='\n')
+
+cat(df_dim_message)
+```
+
+## 6. Train the model
+
+-   Model validation - evaluate the model on holdout dataset
+
+-   Try different modeling algorithms
+
+-   Tune the hyperparameters in any selected algorithm
+
+## 6. Example: Fit benchmark model -- logistic regression
+
+```{r}
+# Model specification
+model_spec_logreg <- logistic_reg(mode = "classification", engine = "glm")
+
+# Model formula
+model_formula <- as.formula(paste('event ~ ', paste(var_predictors, collapse = ' + ')))
+
+# Model workflow
+logreg_model_wflow <- workflow(model_formula, model_spec_logreg)
+
+# Train the model
+model_fit_logreg <- fit(logreg_model_wflow, dat_train)
+
+# Append the predictions to the testing dataframe
+dat_valid_w_preds_logreg <- augment(model_fit_logreg, new_data = dat_valid) %>%
+  mutate(.pred_yes_int = ifelse(.pred_yes > .5, 1, 0))
+
+# Get model performance: Accuracy
+dat_valid_w_preds_logreg %>%
+  yardstick::accuracy(truth=event, estimate=.pred_class) %>%
+  pretty_dt
+
+# Get model performance: Area under the ROC curve
+dat_valid_w_preds_logreg %>%
+  yardstick::roc_auc(truth=event, estimate=.pred_yes, event_level='second') %>%
+  pretty_dt
+
+dat_valid_w_preds_logreg %>%
+  conf_mat(truth=event, estimate=.pred_class) %>%
+  autoplot(type='heatmap')
+```
+
+## 6. Example: Set up parallel backend
+
+```{r}
+cores <- parallelly::availableCores(logical = FALSE)
+cl <- parallel::makePSOCKcluster(cores)
+doParallel::registerDoParallel(cl)
+```
+
+## 6. Example: Random Forest -- k-fold Cross-validation
+
+```{r rf_train_w_cv}
+# Generate k folds for CV
+num_folds <- 3
+dat_folds <- vfold_cv(dat_train_and_val_ds, v = num_folds, strata = strat_hist_art)
+
+# Save the assessment set results
+ctrl <- control_resamples(save_pred = TRUE)
+
+# Model specification
+model_spec_rf <- rand_forest(mode = 'classification', engine = 'ranger', 
+                             trees = 300, mtry = 10, min_n = 100)
+
+# Model formula
+model_formula <- as.formula(paste('event ~ ', paste(var_predictors, collapse = ' + ')))
+
+# Model workflow
+rf_model_wflow <- workflow(model_formula, model_spec_rf)
+
+# k-fold cross validation of the random forest model
+fit_cv_res <- fit_resamples(rf_model_wflow, dat_folds, control = ctrl)
+
+# Aggregate performance metrics across folds
+fit_cv_res %>% 
+  collect_metrics() %>%
+  pretty_dt()
+
+# Get predictions on the held-out folds
+fit_cv_res %>% 
+  collect_predictions() %>%
+  pretty_dt()
+```
+
+## 6. Example --- Multiple models: Random forest, Decision Tree, and XGBoost
+
+```{r multi_model_train_w_cv}
+# Generate k folds for CV
+num_folds <- 3
+dat_folds <- vfold_cv(dat_train_and_val_ds, v = num_folds, strata = strat_hist_art)
+
+# Save the assessment set results
+ctrl <- control_resamples(save_pred = TRUE)
+
+# Model specifications
+model_spec_rf <- rand_forest(mode = 'classification', engine = 'ranger', trees = 300, 
+                             mtry = 10, min_n = 25)
+model_spec_dt <- decision_tree(mode = 'classification', engine = 'rpart', tree_depth = 5, 
+                               min_n = 20)
+model_spec_xgb <- boost_tree(mode = 'classification', engine = 'xgboost', trees = 250,
+                             tree_depth = 5, min_n = 30, learn_rate = 0.5)
+
+# Model formula
+model_formula <- as.formula(paste('event ~ ', paste(var_predictors, collapse = ' + ')))
+
+# Model workflows
+rf_model_wflow <- workflow(model_formula, model_spec_rf)
+dt_model_wflow <- workflow(model_formula, model_spec_dt)
+xgb_model_wflow <- workflow(model_formula, model_spec_xgb)
+
+wf_set <- workflow_set(list(model_formula), 
+                       list(model_spec_rf, model_spec_dt, model_spec_xgb))
+
+wf_set_fit <- wf_set %>%
+  workflow_map("fit_resamples", resamples = dat_folds)
+
+# Rank the sets of models by their aggregate metric performance
+leaderboard <- wf_set_fit %>% rank_results()
+leaderboard %>% pretty_dt()
+
+# Final model fit (Re-fit using Random Forest since it was the best model)
+final_fit <- last_fit(rf_model_wflow, dat_split)
+final_fit %>% collect_metrics()
+final_fit %>% collect_predictions()
+```
+
+## 6. Example --- XGBoost automated parameter tuning with cross-validation
+
+```{r xgb_param_tune_w_cv}
+set.seed(9265)
+
+# Generate k folds for CV
+num_folds <- 5
+dat_folds <- vfold_cv(dat_train_and_val_ds, v = num_folds, strata = strat_hist_art)
+
+# Model specifications
+# Some parameters are specified, while others are marked for tuning 
+model_spec_xgb_tune <- boost_tree(mode = 'classification', engine = 'xgboost', trees = tune(),
+                             tree_depth = tune(), min_n = 54, learn_rate = tune(), 
+                             mtry = tune())
+
+# Save the assessment set results
+ctrl <- control_grid(save_pred = TRUE, allow_par=TRUE, parallel_over = "everything", 
+                     verbose=TRUE, event_level='second')
+
+# Model formula
+model_formula <- as.formula(paste('event ~ ', paste(var_predictors, collapse = ' + ')))
+
+# Model workflow
+xgb_model_wflow_tune <- workflow(model_formula, model_spec_xgb_tune)
+
+xgb_param <- 
+  xgb_model_wflow_tune %>% 
+  extract_parameter_set_dials() %>% 
+  update(
+    trees = trees(c(100, 1500)),
+    learn_rate = learn_rate(c(.00005, .1), trans= NULL),
+    tree_depth = tree_depth(c(4, 20)),
+    mtry = mtry(c(3, 20))
+  )
+
+# Tune the hyperparameters using k-fold cross validation
+set.seed(9)
+tm <- system.time({
+  xgb_res <-
+    xgb_model_wflow_tune %>%
+    tune_grid(resamples = dat_folds, 
+              grid = xgb_param %>% grid_max_entropy(size = 100),
+              control = ctrl)
+})
+
+# How long did it take to run?
+print(tm)
+
+# Summarize model performance metrics across folds
+xgb_res %>% 
+  collect_metrics() %>%
+  pretty_dt
+
+# top model
+xgb_res %>% 
+  show_best(metric = 'roc_auc', n=1) %>% 
+  pretty_dt
+
+#xgb_res$.notes
+```
+
+```{r}
+# Shut the parallel backend down
+foreach::registerDoSEQ()
+parallel::stopCluster(cl)
+```
+
+## 7. Create visual summaries
+
+-   Model performance metrics across modeling scenarios
+-   Predicted vs actual -- scatterplot or confusion matrix
+
+## 7. Example: Model performance across tuning scenarios
+
+```{r xgb_tune_metrics, fig.height=4}
+xgb_tune_metrics <- xgb_res %>% 
+  collect_metrics() %>%
+  mutate(scenario = glue::glue("learn_rate = {signif(learn_rate, 3)}; trees = {trees}; tree_depth = {tree_depth}"))
+plot_tune_metrics_xgb <- xgb_tune_metrics %>%
+  #filter(.metric == 'roc_auc') %>% 
+  ggplot(aes(x=scenario)) + 
+  geom_point(aes(x=scenario, y=mean)) +
+  geom_errorbar(aes(ymin=mean-std_err, ymax=mean+std_err), width=.2,
+                 position=position_dodge(0.05)) +
+  facet_wrap(~.metric) +
+  coord_flip()
+
+plot_tune_metrics_xgb
+```
+
+## 7. Example: Model performance by parameter value
+
+```{r}
+tune_params <- c('learn_rate', 'trees', 'tree_depth', 'mtry')
+
+lapply(tune_params, function(param) {
+  xgb_tune_metrics %>%
+    filter(.metric == 'roc_auc') %>%
+    arrange_at('mean') %>%
+    ggplot(aes_string(x=param, y='mean')) +
+    geom_point() + 
+    #geom_line() + 
+    xlab(param) + 
+    ylab('') + 
+    ggtitle(glue::glue("ROC vs {param}"))
+})
+```
+
+## 7. Example: Confusion matrix on a single CV fold
+
+```{r}
+cm <- xgb_res%>%
+  collect_predictions() %>%
+  filter(id == "Fold1") %>%
+  conf_mat(event, .pred_class)
+cm
+
+autoplot(cm, type = "heatmap")
+```
+
+## 7. Example: Average Confusion matrix over k folds
+
+```{r}
+library(tidyr)
+
+tune_preds <- xgb_res %>%
+  collect_predictions()
+
+cells_per_resample <- tune_preds %>%
+  group_by(id) %>%
+  conf_mat(event, .pred_class) %>%
+  mutate(tidied = lapply(conf_mat, tidy)) %>%
+  unnest(tidied)
+
+# Get the totals per resample
+counts_per_resample <- tune_preds %>%
+  group_by(id) %>%
+  summarize(total = n()) %>%
+  left_join(cells_per_resample, by = "id") %>%
+  # Compute the proportions
+  mutate(prop = value/total) %>%
+  group_by(name) %>%
+  # Average
+  summarize(prop = mean(prop))
+
+# Now reshape these into a matrix
+mean_cmat <- matrix(counts_per_resample$prop, byrow = TRUE, ncol = 2)
+rownames(mean_cmat) <- levels(tune_preds$event)
+colnames(mean_cmat) <- levels(tune_preds$event)
+
+round(mean_cmat, 3)
+
+autoplot(cm, type = "heatmap")
+```
+
+## 8. Explain model predictions
+
+## 8. Example
+
+# 9. Deploy the model
+
+## 9. Example
+
+Example model deployment will be discussed in the hands-on session on Day 3.
+
+## 10. Create a ML workflow
+
+## 10. Example
+
+Example ML workflow will be discussed in the hands-on session on Day 3.
+
+## Resources
+
+-   2022 ML Workshop
+
+    -   [GitHub](https://github.com/sydeaka/machine-learning-workshop-2022)
+
+    -   [Video recording of Day 1](https://1759891.mediaspace.kaltura.com/media/2022+GSS+++SDnA+ML+Workshop+Day+1A+Machine+Learning+at+Lilly/1_2t52m5zn)
+
+-   Machine learning algorithms
+
+-   TidyModels workshop: [Slides](https://workshops.tidymodels.org/); [GitHub](https://github.com/tidymodels/workshops/tree/main/classwork); [Book](https://www.tmwr.org/)
+
+-   [Feature Engineering book](http://www.feat.engineering/)
+
+-   Model deployment
+
+    -   [Bike prediction demo](https://solutions.rstudio.com/example/bike_predict/)
+
+    -   [LEGO set demo](https://juliasilge.com/blog/lego-sets/)
+
+-   Lilly resources
+
+    -   HPC documentation
+
+        -   [RIDS HPC](https://hpc.am.lilly.com/index.php/Main_Page)
+
+        -   [HPC Analytics Documentation Portal](http://hpc-analytics.am.lilly.com)
+
+    -   JupyterHub: [Link](https://jupyterhub.am.lilly.com/); [Documentation](https://hpc.am.lilly.com/index.php/JupyterHub)
+
+    -   RStudio Server: [Link](https://rstudio.am.lilly.com/); [Documentation](http://hpc-analytics.am.lilly.com/r_info/rstudio_workbench/)
+
+    -   RStudio Connect: [Link](https://rstudio-connect.am.lilly.com/); [Documentation](http://hpc-analytics.am.lilly.com/r_info/rsconnect/)
+
+    -   Analytics WorkBench: Link; Documentation
+
+    -   
