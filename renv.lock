@@ -9,6 +9,30 @@
     ]
   },
   "Packages": {
+    "DALEX": {
+      "Package": "DALEX",
+      "Version": "2.4.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "f54b93f4fed4cdc2ebfb2170fd437496",
+      "Requirements": [
+        "ggplot2",
+        "iBreakDown",
+        "ingredients"
+      ]
+    },
+    "DALEXtra": {
+      "Package": "DALEXtra",
+      "Version": "2.2.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "e334e8eab5b36888c2d0427128670475",
+      "Requirements": [
+        "DALEX",
+        "ggplot2",
+        "reticulate"
+      ]
+    },
     "DT": {
       "Package": "DT",
       "Version": "0.25",
@@ -136,6 +160,16 @@
       "Hash": "4c86baed78388ceb06f88e3e9a1d87f5",
       "Requirements": [
         "Matrix",
+        "Rcpp"
+      ]
+    },
+    "RcppTOML": {
+      "Package": "RcppTOML",
+      "Version": "0.1.7",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "f8a578aa91321ecec1292f1e2ffadeda",
+      "Requirements": [
         "Rcpp"
       ]
     },
@@ -806,6 +840,16 @@
         "yaml"
       ]
     },
+    "iBreakDown": {
+      "Package": "iBreakDown",
+      "Version": "2.0.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "b45a9f10d6a33995a3b47f62f3264262",
+      "Requirements": [
+        "ggplot2"
+      ]
+    },
     "infer": {
       "Package": "infer",
       "Version": "1.0.3",
@@ -824,6 +868,18 @@
         "rlang",
         "tibble",
         "tidyr"
+      ]
+    },
+    "ingredients": {
+      "Package": "ingredients",
+      "Version": "2.2.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "942f60215133d4d218219c9412d0f92b",
+      "Requirements": [
+        "ggplot2",
+        "gridExtra",
+        "scales"
       ]
     },
     "ipred": {
@@ -1463,6 +1519,23 @@
       "Repository": "CRAN",
       "Hash": "6a38294e7d12f5d8e656b08c5bd8ae34",
       "Requirements": []
+    },
+    "reticulate": {
+      "Package": "reticulate",
+      "Version": "1.26",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "91c176c84a2e3558572d2cbaddc08bd4",
+      "Requirements": [
+        "Matrix",
+        "Rcpp",
+        "RcppTOML",
+        "here",
+        "jsonlite",
+        "png",
+        "rappdirs",
+        "withr"
+      ]
     },
     "rlang": {
       "Package": "rlang",

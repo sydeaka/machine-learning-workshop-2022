@@ -8,6 +8,7 @@ format:
     code-copy: true
     code-fold: true
     code-summary: "Show the code"
+    smaller: true
 editor: visual
 ---
 
@@ -92,7 +93,14 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## 2. Example: Load the packages / helper functions / dataset
 
-```{r load_pkg_helpers_data}
+
+::: {.panel-tabset}
+
+### Load Packages
+
+```{r load_pkg}
+#| echo: fenced
+#| code-fold: false
 
 # Load the packages
 suppressPackageStartupMessages(library(speff2trial))
@@ -105,6 +113,14 @@ suppressPackageStartupMessages(library(DT))
 suppressPackageStartupMessages(library(pROC))
 suppressPackageStartupMessages(library(recipes))
 suppressPackageStartupMessages(library(themis))
+suppressPackageStartupMessages(library(DALEXtra))
+```
+
+### Load Helper Fns
+
+```{r load_helpers}
+#| echo: fenced
+#| code-fold: false
 
 # Helper function: Pretty data table
 # Table fmt ref: https://stackoverflow.com/questions/44368572/dt-showing-more-rows-in-dt
@@ -131,12 +147,23 @@ pretty_dt <- function(tbl, num_digits = 3, num_rows=20) {
   
   return(dt)
 }
+```
+
+
+### Load Data
+
+```{r load_data}
+#| echo: fenced
 
 # Load the data
 data(ACTG175)
 dat_raw <- ACTG175
 dat_raw %>% summary
 ```
+
+:::
+
+
 
 ## 2. Example: Apply data transformations
 
@@ -241,16 +268,28 @@ dat_clean <- dat_raw %>%
 dat_clean %>% summary
 ```
 
-## 2. Example: Transformed data table
+## 2. Example: Data preview
 
 ```{r data_preview}
 dat_clean %>% pretty_dt
 ```
 
+ 
+
+
 ## 2. Example: Data visualizations
 
-```{r data_viz, fig.height=2}
-# Identify factor and numeric variables
+::: {.panel-tabset}
+
+### Plots 1 - 2
+
+```{r}
+#| layout-ncol: 2
+#| fig-cap: 
+#|   - "Event distribution is skewed"
+#|   - "Baseline CD4 levels extend beyond the 200-500 range"
+
+# Specify variable types
 var_outcomes <- c('event', 'surv_event', 'surv_days', 'cd420', 'cd496', 'r', 'cd820')
 excluded_cols <- c('pidnum', 'zidovudine_indicator', 'offtrt')
 classes <- sapply(dat_clean, class)
@@ -261,21 +300,50 @@ vars_cont <- classes[(classes  %in% c('integer', 'numeric'))] %>%
   names %>% 
   .[!(. %in% c(var_outcomes, excluded_cols))]
 
-# 
 
-#vname = 'treatment_arm'; outcome = 'cd420'
-cont_outcome_strat <- function(vname, outcome) {
-  dat_clean %>%
-    ggplot(aes_string(x=vname, y=outcome)) +
-    geom_boxplot() + 
-    ggtitle(glue::glue('Boxplot of `{outcome}` stratified by `{vname}`')) + 
-    ylab('')
-}
+# Bar plot of event counts
+dat_clean %>%
+  count(event) %>%
+  ggplot(aes(x = event, y = n)) + 
+  geom_bar(stat = 'identity') + 
+  ylab('') + ggtitle('Patient counts by event status')
 
-lapply(vars_factor[1:2], cont_outcome_strat, outcome='cd420')
+
+# Boxplot of baseline CD4 levels across treatment arms
+dat_clean %>%
+  ggplot(aes(x = treatment_arm, y = baseline_cd4)) + 
+  geom_boxplot() + 
+  coord_flip() +
+  xlab('') + ylab('') + ggtitle('Baseline CD4')
 ```
 
-(show graphs and notes)
+
+### Plots 3 - 4
+
+```{r data_viz_p3}
+#| layout-ncol: 2
+#| fig-cap: 
+#|   - "All patients have had prior zidovudine therapy "
+#|   - "Few patients have had prior non-zidovudine therapy "
+
+# Bar plot of prior_z counts
+dat_clean %>%
+  count(prior_z) %>%
+  ggplot(aes(x = prior_z, y = n)) + 
+  geom_bar(stat = 'identity') +
+  xlab('') + ylab('') + ggtitle('Patient counts by prior zidovudine history')
+
+
+# Bar plot of prior_nz_art counts
+dat_clean %>%
+  count(prior_nz_art) %>%
+  ggplot(aes(x = prior_nz_art, y = n)) + 
+  geom_bar(stat = 'identity') +
+  xlab('') + ylab('') + ggtitle('Patient counts by prior non-zidovudine history')
+```
+
+:::
+
 
 ## 3. Feature engineering
 
@@ -336,6 +404,7 @@ dat_clean %>%
 
 -   Could also choose n top variables from preliminary model fit
 
+
 ## 4. Example: Keeping these variables
 
 -   Treatment arm assignments
@@ -364,23 +433,16 @@ dat_clean %>%
 
 -   [**prior_nz_art**]{.underline}: Very little variability in this variable (2092 no vs 47 yes)
 
-## 5. Split data into training / testing sets
 
--   Fit the model on the training set
-
--   Get intermediate assessment of model performance on validation set
-
--   Get final assessment of final model performance on testing set
-
-## 5. Example: Selecting relevant predictors and outcome
+## 4. Example: Selecting relevant predictors and outcome
 
 ```{r var_types}
 var_predictors <- c(
     # treatment assignment 
-    #'treatment_arm', 
+    'treatment_arm', 
     'ind_didanosine', 'ind_zidovudine', 'ind_zalcitabine',
     # baseline predictors
-    'age', 'wtkg', 'hemo', 'lgbtq', 'hist_intra_drug_use', 'karnof', 'prior_z_30days', #'prior_z', 
+    'age', 'wtkg', 'hemo', 'lgbtq', 'hist_intra_drug_use', 'karnof', 'prior_z_30days', 
     'days_prior_art', 'race', 'gender', 'prior_art', 'strat_hist_art', 'symptom', 'baseline_cd4', 'baseline_cd8')
 
 var_outcomes <- c('event', 'surv_event', 'surv_days', 'cd420', 'cd496', 'r', 'cd820')
@@ -393,7 +455,26 @@ dat_analysis <- dat_clean %>% select_at(vars_to_keep)
 dat_analysis %>% summary
 ```
 
-## 5. Example: Initial data split = 85 % Train / validation + 15% test
+
+
+
+## 5. Split data into training / testing sets
+
+-   Fit the model on the training set
+
+-   Get intermediate assessment of model performance on validation set
+
+-   Get final assessment of final model performance on testing set
+
+
+
+## 5. Example: Split the data into training / validation / testing sets
+
+::: {.panel-tabset}
+
+### Initial data split
+
+85 % Train / validation + 15% test
 
 ```{r dat_split}
 # Set the seed so the result is reproducible
@@ -421,43 +502,21 @@ df_dim_message <- sapply(names(df_dimensions), function(df_name) {
 cat(df_dim_message)
 ```
 
-```{r}
-# Model formula
-model_formula <- as.formula(paste('event ~ ', paste(var_predictors, collapse = ' + ')))
 
-dat_train_and_val %>% count(event)
 
-# Model formula
-model_formula <- as.formula(paste('event ~ ', paste(var_predictors, collapse = ' + ')))
+### Validation split
 
-downsample_rec <- 
-  recipe(model_formula, data = dat_train_and_val) %>%
-  step_downsample(event, under_ratio = 1.5) %>%
-  prep()
-
-upsample_rec <- 
-  recipe(model_formula, data = dat_train_and_val) %>%
-  step_upsample(event, over_ratio = 0.7) %>%
-  prep()
-
-dat_train_and_val_ds <- upsample_rec %>%
-  bake(new_data = NULL) 
-
-dat_train_and_val_ds %>%  count(event)
-```
-
-## 5. Example: Validation split = 80% training + 20% validation
+80% training + 20% validation
 
 ```{r dat_val_split}
 set.seed(321)
-dat_val_split <- validation_split(dat_train_and_val_ds, prop = 0.80, strata = strat_hist_art)
-dat_val_split
+dat_val_split <- validation_split(dat_train_and_val, prop = 0.80, strata = strat_hist_art)
 
 dat_train <- analysis(dat_val_split$splits[[1]])
 dat_valid <- assessment(dat_val_split$splits[[1]])
 
 df_dimensions <- list(
-  dat_train_and_val_ds_dataset = dat_train_and_val_ds %>% dim,
+  dat_train_and_val_dataset = dat_train_and_val %>% dim,
   train_dataset = dat_train %>% dim,
   valid_dataset = dat_valid %>% dim
 )
@@ -471,6 +530,9 @@ df_dim_message <- sapply(names(df_dimensions), function(df_name) {
 cat(df_dim_message)
 ```
 
+::: 
+
+
 ## 6. Train the model
 
 -   Model validation - evaluate the model on holdout dataset
@@ -480,6 +542,8 @@ cat(df_dim_message)
 -   Tune the hyperparameters in any selected algorithm
 
 ## 6. Example: Fit benchmark model -- logistic regression
+
+### Model Fit
 
 ```{r}
 # Model specification
@@ -498,35 +562,67 @@ model_fit_logreg <- fit(logreg_model_wflow, dat_train)
 dat_valid_w_preds_logreg <- augment(model_fit_logreg, new_data = dat_valid) %>%
   mutate(.pred_yes_int = ifelse(.pred_yes > .5, 1, 0))
 
+# Show the augmented validation dataframe (original data + predictions)
+dat_valid_w_preds_logreg %>% pretty_dt
+```
+
+## 6. Example: Fit benchmark model -- logistic regression
+
+### Accuracy
+
+```{r}
 # Get model performance: Accuracy
 dat_valid_w_preds_logreg %>%
   yardstick::accuracy(truth=event, estimate=.pred_class) %>%
   pretty_dt
+```
 
+## 6. Example: Fit benchmark model -- logistic regression
+
+### Area under ROC Curve
+
+```{r}
 # Get model performance: Area under the ROC curve
 dat_valid_w_preds_logreg %>%
   yardstick::roc_auc(truth=event, estimate=.pred_yes, event_level='second') %>%
   pretty_dt
+```
 
+
+## 6. Example: Fit benchmark model -- logistic regression
+
+### Confusion Matrix
+
+```{r}
 dat_valid_w_preds_logreg %>%
   conf_mat(truth=event, estimate=.pred_class) %>%
   autoplot(type='heatmap')
 ```
 
+
+
 ## 6. Example: Set up parallel backend
 
-```{r}
+```{r parallel_setup}
+#| echo: fenced
+#| code-fold: false
+
 cores <- parallelly::availableCores(logical = FALSE)
 cl <- parallel::makePSOCKcluster(cores)
 doParallel::registerDoParallel(cl)
 ```
 
-## 6. Example: Random Forest -- k-fold Cross-validation
+## 6. Example: Random Forest -- k-fold CV
+
+Model fit
 
 ```{r rf_train_w_cv}
+#| echo: fenced
+#| code-fold: false
+
 # Generate k folds for CV
 num_folds <- 3
-dat_folds <- vfold_cv(dat_train_and_val_ds, v = num_folds, strata = strat_hist_art)
+dat_folds <- vfold_cv(dat_train_and_val, v = num_folds, strata = strat_hist_art)
 
 # Save the assessment set results
 ctrl <- control_resamples(save_pred = TRUE)
@@ -543,24 +639,42 @@ rf_model_wflow <- workflow(model_formula, model_spec_rf)
 
 # k-fold cross validation of the random forest model
 fit_cv_res <- fit_resamples(rf_model_wflow, dat_folds, control = ctrl)
+```
 
-# Aggregate performance metrics across folds
+## 6. Example: Random Forest -- k-fold CV
+
+Model performance: Aggregate performance metrics across folds
+
+```{r}
 fit_cv_res %>% 
   collect_metrics() %>%
   pretty_dt()
+```
 
-# Get predictions on the held-out folds
+## 6. Example: Random Forest -- k-fold CV
+
+Get predictions on the held-out folds
+
+```{r}
 fit_cv_res %>% 
   collect_predictions() %>%
   pretty_dt()
 ```
 
-## 6. Example --- Multiple models: Random forest, Decision Tree, and XGBoost
+
+
+
+## 6. Example: Multiple models -- Random forest, XGBoost, Logistic
+
+Model fit
 
 ```{r multi_model_train_w_cv}
+#| echo: fenced
+#| code-fold: false
+
 # Generate k folds for CV
 num_folds <- 3
-dat_folds <- vfold_cv(dat_train_and_val_ds, v = num_folds, strata = strat_hist_art)
+dat_folds <- vfold_cv(dat_train_and_val, v = num_folds, strata = strat_hist_art)
 
 # Save the assessment set results
 ctrl <- control_resamples(save_pred = TRUE)
@@ -568,43 +682,66 @@ ctrl <- control_resamples(save_pred = TRUE)
 # Model specifications
 model_spec_rf <- rand_forest(mode = 'classification', engine = 'ranger', trees = 300, 
                              mtry = 10, min_n = 25)
-model_spec_dt <- decision_tree(mode = 'classification', engine = 'rpart', tree_depth = 5, 
-                               min_n = 20)
+#model_spec_dt <- decision_tree(mode = 'classification', engine = 'rpart', tree_depth = 5, 
+#                               min_n = 20)
 model_spec_xgb <- boost_tree(mode = 'classification', engine = 'xgboost', trees = 250,
                              tree_depth = 5, min_n = 30, learn_rate = 0.5)
+model_spec_logreg <- logistic_reg(mode = "classification", engine = "glm")
 
 # Model formula
 model_formula <- as.formula(paste('event ~ ', paste(var_predictors, collapse = ' + ')))
 
 # Model workflows
 rf_model_wflow <- workflow(model_formula, model_spec_rf)
-dt_model_wflow <- workflow(model_formula, model_spec_dt)
+#dt_model_wflow <- workflow(model_formula, model_spec_dt)
 xgb_model_wflow <- workflow(model_formula, model_spec_xgb)
+logreg_model_wflow <- workflow(model_formula, model_spec_logreg)
 
 wf_set <- workflow_set(list(model_formula), 
-                       list(model_spec_rf, model_spec_dt, model_spec_xgb))
+                       list(model_spec_logreg, model_spec_rf, model_spec_xgb))
 
 wf_set_fit <- wf_set %>%
   workflow_map("fit_resamples", resamples = dat_folds)
+```
 
+## 6. Example: Multiple models -- Random forest, XGBoost, Logistic
+
+Leaderboard
+
+```{r}
 # Rank the sets of models by their aggregate metric performance
 leaderboard <- wf_set_fit %>% rank_results()
 leaderboard %>% pretty_dt()
-
-# Final model fit (Re-fit using Random Forest since it was the best model)
-final_fit <- last_fit(rf_model_wflow, dat_split)
-final_fit %>% collect_metrics()
-final_fit %>% collect_predictions()
 ```
 
-## 6. Example --- XGBoost automated parameter tuning with cross-validation
+## 6. Example: Multiple models -- Random forest, XGBoost, Logistic
+
+Final model fit (Re-fit using Random Forest since it was the best model)
+
+```{r}
+final_fit <- last_fit(rf_model_wflow, dat_split)
+#final_fit %>% collect_predictions()
+final_fit %>% collect_metrics()
+```
+
+
+
+
+ 
+
+## 6. Example --- XGBoost automated parameter tuning w/ CV
+
+Tune parameters
 
 ```{r xgb_param_tune_w_cv}
+#| echo: fenced
+#| code-fold: false
+
 set.seed(9265)
 
 # Generate k folds for CV
 num_folds <- 5
-dat_folds <- vfold_cv(dat_train_and_val_ds, v = num_folds, strata = strat_hist_art)
+dat_folds <- vfold_cv(dat_train_and_val, v = num_folds, strata = strat_hist_art)
 
 # Model specifications
 # Some parameters are specified, while others are marked for tuning 
@@ -638,31 +775,48 @@ tm <- system.time({
   xgb_res <-
     xgb_model_wflow_tune %>%
     tune_grid(resamples = dat_folds, 
-              grid = xgb_param %>% grid_max_entropy(size = 100),
+              grid = xgb_param %>% grid_max_entropy(size = 10),
               control = ctrl)
 })
 
 # How long did it take to run?
-print(tm)
+#print(tm)
+```
 
-# Summarize model performance metrics across folds
+## 6. Example --- XGBoost automated parameter tuning w/ CV
+
+Summarize model performance metrics across folds
+
+```{r xgb_metrics}
 xgb_res %>% 
   collect_metrics() %>%
   pretty_dt
+```
 
+## 6. Example --- XGBoost automated parameter tuning w/ CV
+
+Show the top XGBoost model
+
+```{r xgb_top_model}
 # top model
 xgb_res %>% 
   show_best(metric = 'roc_auc', n=1) %>% 
   pretty_dt
-
-#xgb_res$.notes
 ```
 
-```{r}
-# Shut the parallel backend down
+## 6. Example --- XGBoost automated parameter tuning w/ CV
+
+Shut down the parallel backend
+
+```{r parallel_close}
+#| echo: fenced
+#| code-fold: false
+
 foreach::registerDoSEQ()
 parallel::stopCluster(cl)
 ```
+
+
 
 ## 7. Create visual summaries
 
@@ -671,10 +825,11 @@ parallel::stopCluster(cl)
 
 ## 7. Example: Model performance across tuning scenarios
 
-```{r xgb_tune_metrics, fig.height=4}
+```{r xgb_tune_metrics}
 xgb_tune_metrics <- xgb_res %>% 
   collect_metrics() %>%
   mutate(scenario = glue::glue("learn_rate = {signif(learn_rate, 3)}; trees = {trees}; tree_depth = {tree_depth}"))
+
 plot_tune_metrics_xgb <- xgb_tune_metrics %>%
   #filter(.metric == 'roc_auc') %>% 
   ggplot(aes(x=scenario)) + 
@@ -689,35 +844,60 @@ plot_tune_metrics_xgb
 
 ## 7. Example: Model performance by parameter value
 
-```{r}
-tune_params <- c('learn_rate', 'trees', 'tree_depth', 'mtry')
+### Learning rate
 
-lapply(tune_params, function(param) {
+```{r}
+#| layout-ncol: 2
+#| fig-cap: 
+#|   - "Learning rate"
+#|   - "Number of trees"
+
+plot_param <- function(param) {
   xgb_tune_metrics %>%
     filter(.metric == 'roc_auc') %>%
     arrange_at('mean') %>%
     ggplot(aes_string(x=param, y='mean')) +
     geom_point() + 
-    #geom_line() + 
     xlab(param) + 
     ylab('') + 
     ggtitle(glue::glue("ROC vs {param}"))
-})
+}
+
+plot_param('learn_rate')
+plot_param('trees')
 ```
 
-## 7. Example: Confusion matrix on a single CV fold
+
+```{r}
+#| layout-ncol: 2
+#| fig-cap: 
+#|   - "Tree depth"
+#|   - "Mtry"
+
+plot_param('tree_depth')
+plot_param('mtry')
+```
+
+
+
+
+## 7. Example: Confusion matrix
+
+Single CV fold
 
 ```{r}
 cm <- xgb_res%>%
   collect_predictions() %>%
   filter(id == "Fold1") %>%
   conf_mat(event, .pred_class)
-cm
 
-autoplot(cm, type = "heatmap")
+#autoplot(cm, type = "heatmap")
+cm
 ```
 
-## 7. Example: Average Confusion matrix over k folds
+## 7. Example: Confusion matrix
+
+Averaged over k-folds
 
 ```{r}
 library(tidyr)
@@ -748,15 +928,162 @@ rownames(mean_cmat) <- levels(tune_preds$event)
 colnames(mean_cmat) <- levels(tune_preds$event)
 
 round(mean_cmat, 3)
-
-autoplot(cm, type = "heatmap")
 ```
+
+
+
+
+## 7. Example: Select top XGBoost model after tuning
+
+```{r}
+## XGBoost model that has the best AUC
+best_auc <- select_best(xgb_res, metric = "roc_auc")
+
+## Workflow associated with the best AUC
+best_xgb_wflow <- xgb_model_wflow_tune %>% 
+  finalize_workflow(best_auc)
+
+## The final model fit
+final_model_fit <- 
+  best_xgb_wflow %>% 
+  fit(data = dat_train)
+
+print(final_model_fit)
+```
+
+
 
 ## 8. Explain model predictions
 
-## 8. Example
+- A
+- B
+- C
 
-# 9. Deploy the model
+
+## 8. Example: Model explainer
+
+```{r}
+xgb_explainer <- explain_tidymodels(
+  final_model_fit,
+  data = dat_train,
+  # DALEX required an integer for factors:
+  y = as.integer(dat_train$event) - 1,
+  verbose = TRUE
+)
+```
+
+
+## 8. Example: Create partial dependence profiles
+
+By history of ART
+
+::: {.panel-tabset}
+
+### Plots 1 - 2
+
+```{r}
+#| layout-ncol: 2
+#| fig-cap: 
+#|   - "Age"
+#|   - "Karnofsky"
+
+
+# https://ema.drwhy.ai/partialDependenceProfiles.html
+plot_pdp <- function(dat, explainer, input_vars, group_var) {
+  set.seed(86329)
+  
+  pdp_list <- lapply(input_vars, function(vname) {
+    var_splits <- list(unique(dat[[vname]]))
+    names(var_splits) <- vname
+    
+    model_profile(
+      xgb_explainer,
+      variables = vname,
+      N = NULL,
+      groups = group_var,
+      variable_splits = var_splits
+    )
+  })
+  
+  lapply(pdp_list, plot)
+}
+
+# plot_pdp(explainer=xgb_explainer, input_vars=vars_cont, group_var='strat_hist_art')
+
+plot_pdp(dat = dat_train, explainer = xgb_explainer, 
+         input_vars='age', group_var='strat_hist_art')[[1]]
+
+plot_pdp(dat = dat_train, explainer=xgb_explainer, 
+         input_vars='karnof', group_var='strat_hist_art')[[1]]
+
+
+```
+
+### Plots 3 - 4
+
+```{r}
+#| layout-ncol: 2
+#| fig-cap: 
+#|   - "Days on prior ART"
+#|   - "Baseline CD8"
+
+plot_pdp(dat = dat_train, explainer=xgb_explainer, 
+         input_vars='days_prior_art', group_var='strat_hist_art')[[1]]
+
+plot_pdp(dat = dat_train, explainer=xgb_explainer, 
+         input_vars='baseline_cd8', group_var='strat_hist_art')[[1]]
+```
+
+
+:::
+
+
+
+## 8. Example: Create partial dependence profiles
+
+By treatment arm
+
+::: {.panel-tabset}
+
+### Plots 1 - 2
+
+```{r}
+#| layout-ncol: 2
+#| fig-cap: 
+#|   - "Age"
+#|   - "Karnofsky"
+
+
+plot_pdp(dat = dat_train, explainer = xgb_explainer, 
+         input_vars='age', group_var='treatment_arm')[[1]]
+
+plot_pdp(dat = dat_train, explainer=xgb_explainer, 
+         input_vars='karnof', group_var='treatment_arm')[[1]]
+```
+
+### Plots 3 - 4
+
+```{r}
+#| layout-ncol: 2
+#| fig-cap: 
+#|   - "Days on prior ART"
+#|   - "Baseline CD8"
+
+plot_pdp(dat = dat_train, explainer=xgb_explainer, 
+         input_vars='days_prior_art', group_var='treatment_arm')[[1]]
+
+plot_pdp(dat = dat_train, explainer=xgb_explainer, 
+         input_vars='baseline_cd8', group_var='treatment_arm')[[1]]
+```
+
+
+:::
+
+
+
+
+
+## 9. Deploy the model
 
 ## 9. Example
 
@@ -787,6 +1114,8 @@ Example ML workflow will be discussed in the hands-on session on Day 3.
     -   [Bike prediction demo](https://solutions.rstudio.com/example/bike_predict/)
 
     -   [LEGO set demo](https://juliasilge.com/blog/lego-sets/)
+
+## Resources
 
 -   Lilly resources
 
