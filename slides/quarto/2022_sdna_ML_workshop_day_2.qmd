@@ -50,13 +50,29 @@ knitr::opts_chunk$set(echo = TRUE)
 
 -   For more in-depth study, I recommend that you review the supplementary materials linked at the end of the Day 2 and Day 3 slides.
 
--   If interested in learning about more advanced ML use cases, I invite you to attend the upcoming AADS AI / ML workshop ~ November 2022 (contact Haoda Fu for details)
+-   If interested in learning about more advanced ML use cases, I invite you to attend the upcoming AADS AI / ML workshop \~ November 2022 (contact Haoda Fu for details)
+
+## About Me
+
+-   **Current role**: Senior Advisor - Innovative Sciences in SDnA/GSS
+
+-   **Education**: Ph.D. Statistics, Baylor University, 2011
+
+-   **Experience**:
+
+    -   Biostatistician -- Los Alamos National Laboratory, University of Chicago Medicine
+
+    -   Data Scentist -- AT&T, Elicit Insights (consulting firm), Eli Lilly (2020-present)
+
+-   **Skills**: R / Python; Statistics; Machine Learning; Shiny app development
+
+-   **Current residence**: Dallas, Texas
 
 # Introduction
 
 ## Machine learning defined
 
-There are many ways to define Machine Learning, but here's a good one: ![](images/ML_defined_by_MS.png)
+There are many ways to define Machine Learning. Here's a good working definition: ![](images/ML_defined_by_MS.png)
 
 ::: footer
 https://azure.microsoft.com/en-us/resources/cloud-computing-dictionary/what-is-machine-learning-platform/
@@ -94,12 +110,11 @@ https://www.botreetechnologies.com/blog/machine-learning-in-healthcare/
 :::
 
 ::: notes
-- Lots of uses for ML in healthcare
-- On Day 1 of the workshop, Haoda Fu in AADS mentioned the computer vision and 
-- Yushi Liu in Discovery also talked about how he used ML for target identification
-- As you can see, there are lots of other applications that can help with operations, such as patient flow optimization and detecting process inefficiencies.
-- In the pre-clinical space, it could help with risk stratification, say for example if you wanted to identify high risk patients that could potentially get the most benefit from your molecule. 
-
+-   Lots of uses for ML in healthcare
+-   On Day 1 of the workshop, Haoda Fu in AADS mentioned the computer vision and
+-   Yushi Liu in Discovery also talked about how he used ML for target identification
+-   As you can see, there are lots of other applications that can help with operations, such as patient flow optimization and detecting process inefficiencies.
+-   In the pre-clinical space, it could help with risk stratification, say for example if you wanted to identify high risk patients that could potentially get the most benefit from your molecule.
 :::
 
 ## ML Benefits / Opportunities
@@ -120,16 +135,13 @@ https://www.botreetechnologies.com/blog/machine-learning-in-healthcare/
 
     -   Independent training examples
 
-
-::: {.notes}
-- AI/ML is the buzz word of the day, so everyone wants to be one of the folks who say they are doing AI/ML
-- The model predictions can be more accurate compared to some of the statistical modeling approaches
-- You wouldn't have to manually code interactions. It automatically learns how the predictors work together
-- The models usually help you understand which variables are most important in predicting the outcome
-- We don't lean on the types of assumptions that are used in traditional statistical models, for example, independent predictor variables or independent records (rows)
+::: notes
+-   AI/ML is the buzz word of the day, so everyone wants to be one of the folks who say they are doing AI/ML
+-   The model predictions can be more accurate compared to some of the statistical modeling approaches
+-   You wouldn't have to manually code interactions. It automatically learns how the predictors work together
+-   The models usually help you understand which variables are most important in predicting the outcome
+-   We don't lean on the types of assumptions that are used in traditional statistical models, for example, independent predictor variables or independent records (rows)
 :::
-
-
 
 ## ML Challenges
 
@@ -149,29 +161,14 @@ https://www.botreetechnologies.com/blog/machine-learning-in-healthcare/
 
     -   Automated ML can help with this (somewhat)
 
-
-::: {.notes}
-- As stated in previous slids, ML algorithms tend to require larger datasets
-- If the data contain biases, then it can pick up on those patterns and perpetuate those biases... so we have to be careful about this.
-- Can learn patterns in the training data that don't generalize well to other data (overfitting)
-- We are used to fitting a statistical model in a matter of seconds. However, some ML models can take several minutes to train (or  hours, in extreme cases depending model complexity). May need to use more computational resources such as (1) multiple cores on a laptop (2) a high performance computing cluster or (3) a GPU.
-- May take a bit more time for some to learn the approach and feel comfortable applying these on real problems. However, hopefully after Days 2 and 3 of the workshop you will have a head start!
-- An algorithm's performance heavily depends on the values of the parameter values. We need to try lots of combinations of parameter values in order to find the optimal combination that will give the best fit. There are automated parameter search algorithms that can help with this.  
+::: notes
+-   As stated in previous slids, ML algorithms tend to require larger datasets
+-   If the data contain biases, then it can pick up on those patterns and perpetuate those biases... so we have to be careful about this.
+-   Can learn patterns in the training data that don't generalize well to other data (overfitting)
+-   We are used to fitting a statistical model in a matter of seconds. However, some ML models can take several minutes to train (or hours, in extreme cases depending model complexity). May need to use more computational resources such as (1) multiple cores on a laptop (2) a high performance computing cluster or (3) a GPU.
+-   May take a bit more time for some to learn the approach and feel comfortable applying these on real problems. However, hopefully after Days 2 and 3 of the workshop you will have a head start!
+-   An algorithm's performance heavily depends on the values of the parameter values. We need to try lots of combinations of parameter values in order to find the optimal combination that will give the best fit. There are automated parameter search algorithms that can help with this.\
 :::
-
-
-# Algorithms
-
-## ML types
-
-![](images/ML_algorithm_overview.png)
-
-::: footer
-https://medium.com/ml-research-lab/machine-learning-algorithm-overview-5816a2e6303
-:::
-
-
-
 
 ## ML types
 
@@ -181,18 +178,14 @@ https://medium.com/ml-research-lab/machine-learning-algorithm-overview-5816a2e63
 https://litslink.com/blog/an-introduction-to-machine-learning-algorithms
 :::
 
-::: {.notes}
-- Three large classes of ML: supervised learning, unsupervised learning, semi-supervised learning, and reinforcement learning
-- Supervised means we have labeled data. We know "the answer" (the true value of the outcome), so we can assess how well the model correctly predicts the outcome.
-  - Regression - predict a continuous outcome such as housing prices
-  - Classification - decide which class an item or person belongs to. In medical imaging, we might want to decide whether the radiation image shows a tumor or no tumor. 
-- Unsupervised means we don't have any labels, so there is no right or wrong answer that we want to predict. We want the algorithm to reveal patterns in the data, such as how units are grouped together, or how they are associated with one another.
-- Supervised and unsupervised learning are the most popular two types that you will encounter. The other two are beyond the scope of this lecture, but I can discuss these in a future workshop if there's interest.
+::: notes
+-   Three large classes of ML: supervised learning, unsupervised learning, semi-supervised learning, and reinforcement learning
+-   Supervised means we have labeled data. We know "the answer" (the true value of the outcome), so we can assess how well the model correctly predicts the outcome.
+    -   Regression - predict a continuous outcome such as housing prices
+    -   Classification - decide which class an item or person belongs to. In medical imaging, we might want to decide whether the radiation image shows a tumor or no tumor.
+-   Unsupervised means we don't have any labels, so there is no right or wrong answer that we want to predict. We want the algorithm to reveal patterns in the data, such as how units are grouped together, or how they are associated with one another.
+-   Supervised and unsupervised learning are the most popular two types that you will encounter. The other two are beyond the scope of this lecture, but I can discuss these in a future workshop if there's interest.
 :::
-
-
-
-
 
 ## Supervised Learning ML algorithms
 
@@ -206,13 +199,10 @@ https://litslink.com/blog/an-introduction-to-machine-learning-algorithms
 
 -   Many more!
 
-
-::: {.notes}
-- I've listed several of the more popular types of ML algorithms for supervised learning ML
-- They are quite different in how they are implemented, have various strengths/weaknesses.
+::: notes
+-   I've listed several of the more popular types of ML algorithms for supervised learning ML
+-   They are quite different in how they are implemented, have various strengths/weaknesses.
 :::
-
-
 
 ## Unsupervised learning ML algorithms
 
@@ -224,11 +214,10 @@ https://litslink.com/blog/an-introduction-to-machine-learning-algorithms
 
 -   Many more!
 
-::: {.notes}
-- These are a few popular unsupervised learning ML algorithms.
-- Probably not productive for us to go into the details of how each algorithm works in this session, so we can also host a future deep dive into the various algorithms in a future session if you all are interested.
+::: notes
+-   These are a few popular unsupervised learning ML algorithms.
+-   Probably not productive for us to go into the details of how each algorithm works in this session, so we can also host a future deep dive into the various algorithms in a future session if you all are interested.
 :::
-
 
 # Tools
 
@@ -244,14 +233,26 @@ https://litslink.com/blog/an-introduction-to-machine-learning-algorithms
 
 -   JupyterHub
 
--   Lilly Analytics Workbench (AWB)
+::: notes
+-   You might choose to use an IDE, or integrated development environment to do your ML modeling
+-   These provide a framework for loading your R projects or python virtual environments, doing your exploratory data analysis, building your models, deploying your models, etc
+-   RStudio works with both R and Python
+-   JupyterHub works with both R and Python
+-   Since the workshop is primarily aimed at statisticians in SDnA / GSS, and they mostly use R, I chose to demonstrate an R-based modeling demo for the workshop.
+:::
 
-## Exploratory data analysis
+## Data munging & EDA
+
+These packages are used for data manipulation and exploratory data analysis
 
 |      R      |         Python          |
 |:-----------:|:-----------------------:|
 | `tidyverse` |        `pandas`         |
 |  `ggplot2`  | `matplotlib`, `seaborn` |
+
+::: notes
+-   R packages and python modules that are commonly used for data manipulation and exploratory data analysis
+:::
 
 ## Model development
 
@@ -259,6 +260,13 @@ https://litslink.com/blog/an-introduction-to-machine-learning-algorithms
 |:------------:|:---------:|
 | `tidymodels` | `sklearn` |
 |    `h2o`     |   `h2o`   |
+
+::: notes
+-   R packages and python modules that are commonly used for ML model development
+-   I reallly like the h2o modeling framework. Works with both R and python. Has a nice interface (command line + GUI). Lots of great utilities for model assessment and model deployment. It was my go-to ML framework prior to the tidymodels launch.
+-   Tidymodels was developed more recently by the RStudio team. Max Kuhn is one of the authors. It is becoming more popular as they add new features and expand the user base. I find it to be well-developed. It is very intuitive and easy to learn. I highly recommend it.
+-   We will use the tidymodels framework for the workshop.
+:::
 
 # ML best practices
 
@@ -290,6 +298,13 @@ https://litslink.com/blog/an-introduction-to-machine-learning-algorithms
 :::
 :::
 
+::: notes
+-   As I reflected on the machine learning projects that I've worked on over the years, I came up with a list of 10 best practices for model development.
+-   This isn't to suggest that these are to be performed in this particular order.
+-   You may end up doing and re-doing some or all of these steps multiple times as the project progresses.
+-   We will spend the rest of the workshop diving into each of these principles
+:::
+
 # 1. Define modeling objectives
 
 ## 1. Define modeling objectives
@@ -298,11 +313,19 @@ https://litslink.com/blog/an-introduction-to-machine-learning-algorithms
 
     -   Classification? Regression? Clustering?
 
--   What is the outcome / target variable?
+-   What is the outcome / target variable (if any)?
 
 -   Identify the relevant data sources
 
 -   Select appropriate ML algorithm(s) that align with the modeling objective
+
+::: notes
+-   As in a statistical analysis, we should start with a plan.
+-   What do we want the model to do... classification? Regression?
+-   If it's a supervised learning project, what is the outcome that we want to predict?
+-   Which data sources are we going to leverage?
+-   Which ML algorithms do we want to try?
+:::
 
 ## 1. Example: Clinical Trial ACTG 175
 
@@ -326,6 +349,12 @@ https://litslink.com/blog/an-introduction-to-machine-learning-algorithms
 -   Candidate algorithms
 
     -   Supervised learning / binary classification: Random forest, XGBoost, & Logistic regression
+
+::: notes
+-   Try two ML approaches: random forest and xgboost
+-   Compare to a simple logistic regression as a benchmark.
+-   Do this problem really need a ML solution? Do we see any benefit beyond what we would get from a simpler model?
+:::
 
 # 2. Exploratory data analysis
 
@@ -411,6 +440,11 @@ data(ACTG175)
 dat_raw <- ACTG175
 dat_raw %>% summary
 ```
+:::
+
+::: notes
+-   Clinical data for the ACTG 175 trial comes from the `speff2trial` R package
+-   The help page for this dataset includes a data dictionary that shows how the data are coded. It would be helpful to transform the data using these suggested codings.
 :::
 
 ## 2. Example: Data transformations
@@ -881,9 +915,11 @@ dat_valid_w_preds_logreg %>%
 Confusion matrix: Logistic regression model struggles to correctly predict events.
 
 ```{r}
-dat_valid_w_preds_logreg %>%
+cm_logreg <- dat_valid_w_preds_logreg %>%
   conf_mat(truth=event, estimate=.pred_class) %>%
   autoplot(type='heatmap')
+
+cm_logreg
 ```
 
 ## 6b. Example: Set up parallel backend
@@ -1096,7 +1132,7 @@ tm <- system.time({
   xgb_res <-
     xgb_model_wflow_tune %>%
     tune_grid(resamples = dat_folds, 
-              grid = xgb_param %>% grid_max_entropy(size = 200),
+              grid = xgb_param %>% grid_max_entropy(size = 100),
               control = ctrl)
 })
 
@@ -1201,6 +1237,11 @@ plot_param('learn_rate')
 plot_param('trees')
 ```
 
+::: notes
+-   Learning rate = Curved relationship; variance increases with learning rate; best performance seems to occur with higher learning rate
+-   Similar for number of trees
+:::
+
 ------------------------------------------------------------------------
 
 ### Plots: Tree depth and mtry
@@ -1215,19 +1256,9 @@ plot_param('tree_depth')
 plot_param('mtry')
 ```
 
-## 7. Example: Confusion matrix
-
-Compare predicted vs observed outcomes in a single CV fold
-
-```{r}
-cm <- xgb_res%>%
-  collect_predictions() %>%
-  filter(id == "Fold1") %>%
-  conf_mat(event, .pred_class)
-
-#autoplot(cm, type = "heatmap")
-cm
-```
+::: notes
+-   Tree depth and mtry don't seem to affect model performance as much here
+:::
 
 ## 7. Example: Confusion matrix
 
@@ -1264,11 +1295,17 @@ colnames(mean_cmat) <- levels(tune_preds$event)
 round(mean_cmat, 3)
 ```
 
+::: notes
+:::
+
 ## 7. Example: Select the best model
 
 -   Best model is the one that optimizes the performance metric
 
 -   For example, we could choose the model with highest AUC
+
+::: notes
+:::
 
 ------------------------------------------------------------------------
 
@@ -1290,6 +1327,9 @@ final_model_fit <-
 print(final_model_fit)
 ```
 
+::: notes
+:::
+
 # 8. Explain model predictions
 
 ## 8. Explain model predictions
@@ -1301,6 +1341,9 @@ print(final_model_fit)
 -   Can summarize individual and interactive importance of the predictors
 -   Can provide global summary of overall relationships vs local explanations of individual predictions
 -   Will provide more details on Day 3
+
+::: notes
+:::
 
 ## 8. Example: Model explainer
 
@@ -1314,9 +1357,15 @@ xgb_explainer <- explain_tidymodels(
 )
 ```
 
+::: notes
+:::
+
 ## 8. Example: PDP
 
 -   Partial dependence profiles show relationship between predicted probabilities and the values of individual predictors.
+
+::: notes
+:::
 
 ------------------------------------------------------------------------
 
@@ -1359,6 +1408,9 @@ plot_pdp(dat = dat_train, explainer=xgb_explainer,
          input_vars='karnof', group_var='treatment_arm')[[1]]
 ```
 
+::: notes
+:::
+
 ### Plots 3 - 4
 
 ```{r}
@@ -1373,6 +1425,9 @@ plot_pdp(dat = dat_train, explainer=xgb_explainer,
 plot_pdp(dat = dat_train, explainer=xgb_explainer, 
          input_vars='baseline_cd8', group_var='treatment_arm')[[1]]
 ```
+
+::: notes
+:::
 :::
 
 # 9. Deploy the model
