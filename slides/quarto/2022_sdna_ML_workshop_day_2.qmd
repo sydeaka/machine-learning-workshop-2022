@@ -1496,8 +1496,6 @@ Meodel deployment will be discussed in the hands-on session on Day 3.
 
     -   [GitHub](https://github.com/sydeaka/machine-learning-workshop-2022)
 
-    -   [Video recording of Day 1](https://1759891.mediaspace.kaltura.com/media/2022+GSS+++SDnA+ML+Workshop+Day+1A+Machine+Learning+at+Lilly/1_2t52m5zn)
-
 -   Machine learning algorithms
 
 -   TidyModels workshop: [Slides](https://workshops.tidymodels.org/); [GitHub](https://github.com/tidymodels/workshops/tree/main/classwork); [Book](https://www.tmwr.org/)
@@ -1510,20 +1508,3 @@ Meodel deployment will be discussed in the hands-on session on Day 3.
 
     -   [LEGO set demo](https://juliasilge.com/blog/lego-sets/)
 
-## Lilly resources
-
--   HPC documentation
-
-    -   [RIDS HPC](https://hpc.am.lilly.com/index.php/Main_Page)
-
-    -   [HPC Analytics Documentation Portal](http://hpc-analytics.am.lilly.com)
-
--   JupyterHub: [Link](https://jupyterhub.am.lilly.com/); [Documentation](https://hpc.am.lilly.com/index.php/JupyterHub)
-
--   RStudio Server: [Link](https://rstudio.am.lilly.com/); [Documentation](http://hpc-analytics.am.lilly.com/r_info/rstudio_workbench/)
-
--   RStudio Connect: [Link](https://rstudio-connect.am.lilly.com/); [Documentation](http://hpc-analytics.am.lilly.com/r_info/rsconnect/)
-
--   Analytics WorkBench: Link; Documentation
-
--   Targets workflow: [CRAN](https://cran.r-project.org/web/packages/targets/index.html), [Manual](https://books.ropensci.org/targets/), [Vignette](https://cran.r-project.org/web/packages/targets/vignettes/overview.html)
