@@ -26,33 +26,33 @@ editor: visual
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Introduction
-
 ## Outline
 
--   Introduction​
+-   Introduction
 
--   Algorithms​
+-   Algorithms
 
--   Tools​
+-   Tools
 
--   Principles and best practices​
+-   Principles and best practices
 
 -   Resources
 
 ## This workshop is\...
 
--   A **gentle introduction** to machine learning concepts, algorithms, tools​
+-   A **gentle introduction** to machine learning concepts, algorithms, tools
 
--   An opportunity to use popular ML tools on real datasets for clinical and pre-clinical use-cases​
+-   An opportunity to use popular ML tools on real datasets for clinical and pre-clinical use-cases
 
-## This workshop is NOT\...​
+## This workshop is NOT\...
 
--   A **comprehensive** overview of all machine learning concepts, algorithms, tools, use cases, etc.​
+-   A **comprehensive** overview of all machine learning concepts, algorithms, tools, use cases, etc.
 
--   For more in-depth study, I recommend that you review the supplementary materials linked at the end of the Day 2 and Day 3 slides.​
+-   For more in-depth study, I recommend that you review the supplementary materials linked at the end of the Day 2 and Day 3 slides.
 
--   If interested in learning about more advanced ML use cases, I invite you to attend the upcoming AADS AI / ML workshop (contact Haoda Fu for details)​
+-   If interested in learning about more advanced ML use cases, I invite you to attend the upcoming AADS AI / ML workshop ~ November 2022 (contact Haoda Fu for details)
+
+# Introduction
 
 ## Machine learning defined
 
@@ -60,6 +60,12 @@ There are many ways to define Machine Learning, but here's a good one: ![](image
 
 ::: footer
 https://azure.microsoft.com/en-us/resources/cloud-computing-dictionary/what-is-machine-learning-platform/
+:::
+
+::: notes
+-   ML uses mathematical models to learn patterns without explicitly telling it how to learn.
+-   It learns from experience
+-   More data --\> more experience -- \> more likely that it will learn the patterns
 :::
 
 ## ML vs Statistics
@@ -70,12 +76,30 @@ https://azure.microsoft.com/en-us/resources/cloud-computing-dictionary/what-is-m
 https://towardsdatascience.com/how-is-machine-learning-different-from-statistics-and-why-it-matters-5a8ed539976
 :::
 
+::: notes
+-   Using numerical optimization instead of an assumed data generating process (Normal iid, etc)
+-   More emphasis on predictive accuracy, less on inference
+-   ML models don't lean on distributional assumptions. They require more data to learn the patterns
+-   In statistical inference, we might care more about whether certain parameters are significant, and whether the our model assumptions are reasonable via Goodness of fit test. In ML, we care more about whether the model predictions are accurate.
+-   ML models are less interpretable
+-   R is the preferred tool for statisticians, whereas Python is the preferred tool for data scientists. However, the lines are blurring these days, so that is quite possible to do both stats and ML in both.
+:::
+
 ## Healthcare applications
 
 ![](images/ML_healthcare.jpeg)
 
 ::: footer
 https://www.botreetechnologies.com/blog/machine-learning-in-healthcare/
+:::
+
+::: notes
+- Lots of uses for ML in healthcare
+- On Day 1 of the workshop, Haoda Fu in AADS mentioned the computer vision and 
+- Yushi Liu in Discovery also talked about how he used ML for target identification
+- As you can see, there are lots of other applications that can help with operations, such as patient flow optimization and detecting process inefficiencies.
+- In the pre-clinical space, it could help with risk stratification, say for example if you wanted to identify high risk patients that could potentially get the most benefit from your molecule. 
+
 :::
 
 ## ML Benefits / Opportunities
@@ -96,6 +120,17 @@ https://www.botreetechnologies.com/blog/machine-learning-in-healthcare/
 
     -   Independent training examples
 
+
+::: {.notes}
+- AI/ML is the buzz word of the day, so everyone wants to be one of the folks who say they are doing AI/ML
+- The model predictions can be more accurate compared to some of the statistical modeling approaches
+- You wouldn't have to manually code interactions. It automatically learns how the predictors work together
+- The models usually help you understand which variables are most important in predicting the outcome
+- We don't lean on the types of assumptions that are used in traditional statistical models, for example, independent predictor variables or independent records (rows)
+:::
+
+
+
 ## ML Challenges
 
 -   Requires larger datasets
@@ -114,6 +149,17 @@ https://www.botreetechnologies.com/blog/machine-learning-in-healthcare/
 
     -   Automated ML can help with this (somewhat)
 
+
+::: {.notes}
+- As stated in previous slids, ML algorithms tend to require larger datasets
+- If the data contain biases, then it can pick up on those patterns and perpetuate those biases... so we have to be careful about this.
+- Can learn patterns in the training data that don't generalize well to other data (overfitting)
+- We are used to fitting a statistical model in a matter of seconds. However, some ML models can take several minutes to train (or  hours, in extreme cases depending model complexity). May need to use more computational resources such as (1) multiple cores on a laptop (2) a high performance computing cluster or (3) a GPU.
+- May take a bit more time for some to learn the approach and feel comfortable applying these on real problems. However, hopefully after Days 2 and 3 of the workshop you will have a head start!
+- An algorithm's performance heavily depends on the values of the parameter values. We need to try lots of combinations of parameter values in order to find the optimal combination that will give the best fit. There are automated parameter search algorithms that can help with this.  
+:::
+
+
 # Algorithms
 
 ## ML types
@@ -124,6 +170,9 @@ https://www.botreetechnologies.com/blog/machine-learning-in-healthcare/
 https://medium.com/ml-research-lab/machine-learning-algorithm-overview-5816a2e6303
 :::
 
+
+
+
 ## ML types
 
 ![](images/ML_types.png)
@@ -131,6 +180,19 @@ https://medium.com/ml-research-lab/machine-learning-algorithm-overview-5816a2e63
 ::: footer
 https://litslink.com/blog/an-introduction-to-machine-learning-algorithms
 :::
+
+::: {.notes}
+- Three large classes of ML: supervised learning, unsupervised learning, semi-supervised learning, and reinforcement learning
+- Supervised means we have labeled data. We know "the answer" (the true value of the outcome), so we can assess how well the model correctly predicts the outcome.
+  - Regression - predict a continuous outcome such as housing prices
+  - Classification - decide which class an item or person belongs to. In medical imaging, we might want to decide whether the radiation image shows a tumor or no tumor. 
+- Unsupervised means we don't have any labels, so there is no right or wrong answer that we want to predict. We want the algorithm to reveal patterns in the data, such as how units are grouped together, or how they are associated with one another.
+- Supervised and unsupervised learning are the most popular two types that you will encounter. The other two are beyond the scope of this lecture, but I can discuss these in a future workshop if there's interest.
+:::
+
+
+
+
 
 ## Supervised Learning ML algorithms
 
@@ -144,6 +206,14 @@ https://litslink.com/blog/an-introduction-to-machine-learning-algorithms
 
 -   Many more!
 
+
+::: {.notes}
+- I've listed several of the more popular types of ML algorithms for supervised learning ML
+- They are quite different in how they are implemented, have various strengths/weaknesses.
+:::
+
+
+
 ## Unsupervised learning ML algorithms
 
 -   K-means
@@ -154,23 +224,29 @@ https://litslink.com/blog/an-introduction-to-machine-learning-algorithms
 
 -   Many more!
 
+::: {.notes}
+- These are a few popular unsupervised learning ML algorithms.
+- Probably not productive for us to go into the details of how each algorithm works in this session, so we can also host a future deep dive into the various algorithms in a future session if you all are interested.
+:::
+
+
 # Tools
 
-## Integrated development environments (IDEs)​
+## Integrated development environments (IDEs)
 
--   RStudio​
+-   RStudio
 
-    -   RStudio Server​
+    -   RStudio Server
 
-    -   RStudio Desktop​
+    -   RStudio Desktop
 
-    -   RStudio on Linux remote desktop​
+    -   RStudio on Linux remote desktop
 
--   JupyterHub​
+-   JupyterHub
 
--   Lilly Analytics Workbench (AWB)​
+-   Lilly Analytics Workbench (AWB)
 
-## Exploratory data analysis​
+## Exploratory data analysis
 
 |      R      |         Python          |
 |:-----------:|:-----------------------:|
@@ -1020,7 +1096,7 @@ tm <- system.time({
   xgb_res <-
     xgb_model_wflow_tune %>%
     tune_grid(resamples = dat_folds, 
-              grid = xgb_param %>% grid_max_entropy(size = 5),
+              grid = xgb_param %>% grid_max_entropy(size = 200),
               control = ctrl)
 })
 
