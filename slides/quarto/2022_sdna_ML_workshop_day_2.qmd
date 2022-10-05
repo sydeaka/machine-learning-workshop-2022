@@ -50,7 +50,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 -   For more in-depth study, I recommend that you review the supplementary materials linked at the end of the Day 2 and Day 3 slides.
 
--   If interested in learning about more advanced ML use cases, I invite you to attend the upcoming AADS AI / ML workshop \~ November 2022 (contact Haoda Fu for details)
+-   If interested in learning about more advanced ML use cases, AADS invites you to attend the upcoming AADS AI / ML workshop later this fall (contact Haoda Fu for details)
 
 ## About Me
 
@@ -75,7 +75,7 @@ knitr::opts_chunk$set(echo = TRUE)
 There are many ways to define Machine Learning. Here's a good working definition: ![](images/ML_defined_by_MS.png)
 
 ::: footer
-https://azure.microsoft.com/en-us/resources/cloud-computing-dictionary/what-is-machine-learning-platform/
+Source: <https://azure.microsoft.com/en-us/resources/cloud-computing-dictionary/what-is-machine-learning-platform/>
 :::
 
 ::: notes
@@ -89,7 +89,7 @@ https://azure.microsoft.com/en-us/resources/cloud-computing-dictionary/what-is-m
 ![](images/ML_vs_stats.png)
 
 ::: footer
-https://towardsdatascience.com/how-is-machine-learning-different-from-statistics-and-why-it-matters-5a8ed539976
+Source: <https://towardsdatascience.com/how-is-machine-learning-different-from-statistics-and-why-it-matters-5a8ed539976>
 :::
 
 ::: notes
@@ -106,7 +106,7 @@ https://towardsdatascience.com/how-is-machine-learning-different-from-statistics
 ![](images/ML_healthcare.jpeg)
 
 ::: footer
-https://www.botreetechnologies.com/blog/machine-learning-in-healthcare/
+Source: <https://www.botreetechnologies.com/blog/machine-learning-in-healthcare/>
 :::
 
 ::: notes
@@ -175,7 +175,7 @@ https://www.botreetechnologies.com/blog/machine-learning-in-healthcare/
 ![](images/ML_types.png)
 
 ::: footer
-https://litslink.com/blog/an-introduction-to-machine-learning-algorithms
+Source: <https://litslink.com/blog/an-introduction-to-machine-learning-algorithms>
 :::
 
 ::: notes
@@ -280,7 +280,7 @@ These packages are used for data manipulation and exploratory data analysis
 
 3.  Feature engineering
 
-4.  Variable selection
+4.  Feature selection
 
 5.  Split data into training / testing sets
 :::
@@ -443,6 +443,7 @@ dat_raw %>% summary
 :::
 
 ::: notes
+-   To start, we set up the environment. Load packages and a helper function that makes it easier to display tables in the slides.
 -   Clinical data for the ACTG 175 trial comes from the `speff2trial` R package
 -   The help page for this dataset includes a data dictionary that shows how the data are coded. It would be helpful to transform the data using these suggested codings.
 :::
@@ -550,11 +551,23 @@ dat_clean <- dat_raw %>%
 dat_clean %>% summary
 ```
 
+::: notes
+-   Used the data dictionary to recode the categorical variables into meaningful labels
+-   Changed some variable names
+-   Selected only the relevant columns that I might want to use as predictors or outcomes
+-   Represented character fields as factor
+-   The data summary is easier to read after applying transformations
+:::
+
 ## 2. Example: Data preview
 
 ```{r data_preview}
 dat_clean %>% pretty_dt
 ```
+
+::: notes
+-   Showing the first few rows of the transformed data table
+:::
 
 ## 2. Example: Data visualizations
 
@@ -620,6 +633,14 @@ dat_clean %>%
 ```
 :::
 
+::: notes
+-   As in any other data analysis, it is helpful to prepare summary plots that show distributions and trends in the data.
+-   The event distribution is skewed. The event only occurs in about 25% of the patients. We will come back to this point.
+-   Inclusion criteria in the paper says the study included patients with CD4 cell count values ranging from 200-500 per cubic mm. However, the baseline CD4 ranges extend beyond that range in all treatment arms. There is even a patient who appears to have a baseline CD4 of zero. This could either mean that we have data quality issues, and/or that some patients may have had significant shifts in their CD4 values since they were initially assessed.
+-   All of the patients have the same value in the prior zidovudine variable. This suggests that all patients had zidovudine treatment in the past.
+-   We also see that only a few patients had no prior non-zidovudine treatment in the past. There is very little variation in these variables, so they probably won't be useful as predictor variables in a model.
+:::
+
 # 3. Feature engineering
 
 ## 3. Feature engineering
@@ -652,6 +673,14 @@ dat_clean %>%
     :::
     :::
 
+::: notes
+-   In ML, predictor variables are called "features"
+-   Feature engineering is where we take existing variables and create new ones that extract additional information
+-   This allows us to "help" the model understand what we want it to know about a specific var
+-   As an example, this timestamp wouldn't be helpful as model input.
+-   We can split this field into multiple columns that include date components that the model might want to know about.
+:::
+
 ## 3. Example: Individual drugs
 
 ```{r feat_eng}
@@ -667,9 +696,17 @@ dat_clean %>%
   pretty_dt
 ```
 
-# 4. Variable selection
+::: notes
+-   As an example, notice that three treatments contain zidovudine and two contain didanosine.
+-   If we use treatment arm as a predictor in its current form, the model wouldn't understand that some of the treatments contain the same drug
+-   We might help the model by creating indicator variables for the individual drugs
+-   The table on this slide shows how the treatment arms are recoded
+-   This creates some redundancy, though. The treatment arm is completely specified by the indicators. If you know the values of all the individual drug indicators, you know which treatment arm. This could cause some issues in statistical methods. We will see if we run into any issues in the ML model.
+:::
 
-## 4. Variable selection
+# 4. Feature selection
+
+## 4. Feature selection
 
 -   Which variables do we want to include in the analysis?
 
@@ -682,6 +719,17 @@ dat_clean %>%
 -   Variable reduction - principal components
 
 -   Could also choose n top variables from preliminary model fit
+
+::: notes
+-   The next step is to decide which variables we want to include or exclude from the model
+-   This includes the original variables and the new ones we introduced in the feature engineering step
+-   We want to keep the features that think are relevant to the modeling objective
+-   Exclude features that are redundant (that provide information that other variables already capture)
+-   Exclude features that have zero variance (the same value for all subjects)
+-   After that first cut, we could still be left with hundreds of candidate predictors. Do we keep them all, or try to further reduce the number of variables
+-   Might use a dimension reduction approach such as principal components.
+-   Could also use ML to help with this task. Fit a preliminary ML model, select the top n important features identified in that model.
+:::
 
 ## 4. Example: Keeping these variables
 
@@ -699,6 +747,10 @@ dat_clean %>%
 
 -   Karnofsky score
 
+::: notes
+-   Here's a summary of the variables that I thought might be relevant in the prediction of the primary endpoint
+:::
+
 ## 4. Example: Excluding these variables
 
 -   [**pidnum**]{.underline}: patient identifier shouldn't be used as a predictor
@@ -710,6 +762,13 @@ dat_clean %>%
 -   [**prior_nz_art**]{.underline}: Very little variability in this variable (2092 no vs 47 yes)
 
 -   [**CD4 and CD8 measurements at later time points**]{.underline}: we wouldn't know these at baseline
+
+::: notes
+-   Here's a list of variables I thought we should exclude.
+    -   Patient identifier numbers
+    -   Things we wouldn't know at baseline, such as whether the patient went off treatment, and future CD4 and CD8 measurements
+    -   The two treatment history variables that had little or no variability
+:::
 
 ## 4. Example: Analysis subset
 
@@ -732,6 +791,12 @@ dat_analysis <- dat_clean %>% select_at(vars_to_keep)
 dat_analysis %>% summary
 ```
 
+::: notes
+-   I applied these variable inclusions and exclusions so that we only keep the relevant columns in the dataset
+-   I kept a few additional outcome fields that we may need in Day 3 of the workshop. These include survival outcomes and future CD4 and CD8 measurements.
+-   Here's a summary of the dataset that we will use for the analysis.
+:::
+
 # 5. Split data into training / testing
 
 ## 5. Split data into training / testing
@@ -743,6 +808,22 @@ dat_analysis %>% summary
 -   Use k-fold cross-validation to train/validate on multiple data splits
 
 -   Get final assessment of model performance on testing set
+
+::: notes
+-   In statistical inference, we usually use the entire dataset to fit the model
+-   However, in prediction, we need to set some data aside to use as a sanity check. We need to see how well the model works on data that it has never seen before.
+-   We can have data split into 3 parts... training, validation, and testing
+    -   Training: fit the model
+    -   Validation: intermediate assessment of model performance. Used to compare model fits across algorithms or parameter settings. Technically still used in training since we are using it to select the model, so it isn't a completely separate dataset.
+    -   Testing: Use this to get a final assessment of model performance after all modeling is complete
+    -   Problem with this approach is that we can get an unlucky split. May get different results depending on which cases ended up in training vs validation set
+-   Another approach: k-fold cross-validation
+    -   Split the data into training and testing sets
+    -   Further split the training data into k folds
+    -   Fit the model k times, using (k-1) folds train the model and the held out kth fold for assessment
+    -   Average across folds
+    -   Gives better assessment of how the model will perform on external data (generalizable) \_ I recommend the latter approach
+:::
 
 ## 5. Example: Train /validation/test split
 
@@ -776,6 +857,14 @@ df_dim_message <- sapply(names(df_dimensions), function(df_name) {
 cat(df_dim_message)
 ```
 
+::: notes
+-   Here's our initial data split.
+    -   85% of the data will be used for training and validation across k folds.
+    -   The remining 15% will be used for final testing
+-   Summary at the bottom shows how the two splits add up to the size of the entire dataset
+-   If we are using the k-fold cross validation approach, this is the data split that we would use.
+:::
+
 ------------------------------------------------------------------------
 
 ### Correct class imbalance issue
@@ -788,6 +877,14 @@ cat(df_dim_message)
 # Show imbalanced distribution of event outcome
 dat_train_and_val %>% count(event)
 ```
+
+::: notes
+-   I mentioned earlier in the data visualization section that there was an issue with the event column.
+-   There are 3x as many 'no' events as there are 'yes' events.
+-   This is called a class imbalance.
+-   Remember ML models learn from experiences from reviewing example data.
+-   The algorithm will have more examples of 'no' events than it does with 'yes' events, so it will do a better job predicting the 'no' cases.
+:::
 
 ------------------------------------------------------------------------
 
@@ -817,6 +914,12 @@ dat_train_and_val <- upsample_rec %>%
 dat_train_and_val %>%  count(event)
 ```
 
+::: notes
+-   There is a function in the recipes framework called step_upsample that handles oversampling
+-   After oversampling, now the event distribution is less imbalanced
+-   This is only something that we would need to do for data that will be involved in training the model. No need to do this for the testing set.
+:::
+
 ------------------------------------------------------------------------
 
 ### Validation split
@@ -845,6 +948,12 @@ df_dim_message <- sapply(names(df_dimensions), function(df_name) {
 cat(df_dim_message)
 ```
 
+::: notes
+-   This step creates a separate validation set.
+-   This is used if you didn't use k-fold cross validation, so that you have a pre-defined training and validation split.
+-   We will see how both versions are used in the next section.
+:::
+
 # 6. Train the model(s)
 
 ## 6. Train the model(s)
@@ -853,15 +962,28 @@ cat(df_dim_message)
 
     -   Try different modeling algorithms
 
+    -   Try different model formulas
+
     -   Try different hyperparameter values
 
     -   May need to use parallel processing over multiple cores for faster training
 
 -   Model validation - evaluate each model on holdout dataset(s)
 
-    -   Good: Train on training set / validate on validation set
+    -   Good: Train on training set + validate on validation set
 
     -   Best: Cross-validation on training/validation set
+
+::: notes
+-   Next step is to train the models
+    -   Working definition: A model is a specific choice of modeling algorithm, the model formula, and the parameter values to be used in the algorithm
+    -   Think of this as an experiment. Try different modeling algorithms, different model formulations, and different hyperparameter values.
+    -   This can take a lot of time and computational resources to run, so we may need to use parallel processing over multiple cores if we want to speed up the training
+-   We also need to validate the model to see how well it works on data it hasn't seen before.
+-   To summarize my advice on previous slide
+    -   At minimum, set aside some data in a validation set that you will use to evaluate your model
+    -   However I highly recommend that instead of using a single validation split, that you run k-fold cross validation to get a better idea of how generalizable your model is
+:::
 
 ## 6a. Example: Benchmark model
 
@@ -888,6 +1010,13 @@ dat_valid_w_preds_logreg <- augment(model_fit_logreg, new_data = dat_valid) %>%
 dat_valid_w_preds_logreg %>% pretty_dt
 ```
 
+::: notes
+-   Before fitting any ML models, I like to fit what is called a "benchmark" model
+-   It is a simple model that probably isn't very good. However, it's used as a baseline that we will compare the ML model results to
+-   In this case, I'm choosing to fit a very basic logistic regression model, using the same model formula and training data that I will use to fit the ML models
+-   After fitting the model `augment` function appends the predicted probabilities of each category in the outcome class to the validation set. It also includes the predicted class, basically whichever class had the higher predicted probability.
+:::
+
 ## 6a. Example: Benchmark model
 
 Logistic regression model accuracy
@@ -898,6 +1027,12 @@ dat_valid_w_preds_logreg %>%
   yardstick::accuracy(truth=event, estimate=.pred_class) %>%
   pretty_dt
 ```
+
+::: notes
+-   Accuracy = proportion of cases that were correctly classified.
+-   Interpretation: higher accuracy --\> better performance
+-   Model accuracy isn't very high in the logistic regression model
+:::
 
 ## 6a. Example: Benchmark model
 
@@ -910,6 +1045,12 @@ dat_valid_w_preds_logreg %>%
   pretty_dt
 ```
 
+::: notes
+-   AUC = Area under the Receiver Operator Characteristic curve, or ROC curve
+-   Interpretation: higher AUC --\> better performance
+-   AUC isn't very high in the logistic regression model
+:::
+
 ## 6a. Example: Benchmark model
 
 Confusion matrix: Logistic regression model struggles to correctly predict events.
@@ -921,6 +1062,11 @@ cm_logreg <- dat_valid_w_preds_logreg %>%
 
 cm_logreg
 ```
+
+::: notes
+-   Confusion matrix summaries how the predicted values compare to the actual values
+-   Logistic regression model gives lots of false positives and false negatives
+:::
 
 ## 6b. Example: Set up parallel backend
 
@@ -938,6 +1084,10 @@ cores <- parallelly::availableCores(logical = FALSE)
 cl <- parallel::makePSOCKcluster(cores)
 doParallel::registerDoParallel(cl)
 ```
+
+::: notes
+-   Many ways to do this, but this code shows one example setup
+:::
 
 ## 6c. Example: RF k-fold CV
 
@@ -996,7 +1146,7 @@ fit_cv_res <- fit_resamples(rf_model_wflow, dat_folds, control = ctrl)
 
     -   Aggregate performance metrics across folds
 
-        -   Shows mean, standard error, and n = \# folds
+    -   Shows mean, standard error, and n = \# folds
 
 ```{r}
 fit_cv_res %>% 
@@ -1008,11 +1158,11 @@ fit_cv_res %>%
 
 -   Get predictions on the held-out folds
 
-    -   Predicted probability of yes or no
+-   Predicted probability of yes or no
 
-    -   Predicted class = whichever has highest predicted probability
+-   Predicted class = whichever has highest predicted probability
 
-    -   Also includes the true classification column `event` for comparison purposes
+-   Also includes the true classification column `event` for comparison purposes
 
 ------------------------------------------------------------------------
 
@@ -1064,6 +1214,14 @@ wf_set_fit <- wf_set %>%
   workflow_map("fit_resamples", resamples = dat_folds)
 ```
 
+::: notes
+-   Tidymodels provides a convenient framework for fitting multiple models
+-   Here, we specify RF, XGB, and Logistic regression model using specific values of their hyperparameters
+-   Put them all together into a single workflow set using the `workflow_set` function
+    -   Could have used multiple model formulations, for example if we wante to explore different variable subsets
+-   Run all combinations of model formulas and model specifications using the `workflow_map` function
+:::
+
 ## 6d. Example: Multiple models
 
 Leaderboard shows model performance rankings across modeling scenarios
@@ -1073,6 +1231,12 @@ Leaderboard shows model performance rankings across modeling scenarios
 leaderboard <- wf_set_fit %>% rank_results()
 leaderboard %>% pretty_dt()
 ```
+
+::: notes
+-   Leaderboard ranks model performance across the different modeling scenarios
+-   Random forest is in first place, followed by XGBoost.
+-   Both beat our benchmark logistic regression model
+:::
 
 ## 6e. Example --- Param tuning w/ CV
 
@@ -1085,6 +1249,15 @@ Tune hyperparameters
 -   Can choose grid search approach - Latin Hypercube, Max entropy, Regular, etc
 
 -   Can choose parameter value ranges or have them automatically selected
+
+::: notes
+-   What I hear: "I tried random forest, but it didn't give great results."
+-   What that usually means: "I tried one specific set of parameter values for random forest, and it didn't give great results."
+-   Parameter value settings can have a significant impact on the model performance. We need to find the combination of parameters that work well or the specific modeling exercise.
+-   Grid search = try a bunch of different parameter combinations; choose the set of values that optimizes the performance metric
+    -   Several grid search approaches in tidymodels framework: latin hypercube, max entropy, regular, etc
+    -   Can have the algorithm choose value ranges for you, or you could set them yourself
+:::
 
 ------------------------------------------------------------------------
 
@@ -1140,6 +1313,16 @@ tm <- system.time({
 print(tm)
 ```
 
+::: notes
+-   Example: tune parameters in the XGBoost algorithm
+-   Using 5-fold cross validation to assess the performance of each parameter combination across folds
+-   Use the tune() function to indicate that we want to train 4 important parameters in the XGBoost model
+    -   number of trees, learning rate, tree depth, and mtry
+-   In this example, I specifically set the parameter ranges that I want the grid search to focus on
+-   And then I use the max entropy method to select 100 different parameter combinations
+-   As you can see, it took some time to run
+:::
+
 ## 6e. Example --- Param tuning w/ CV
 
 Summarize model performance metrics across folds
@@ -1147,8 +1330,13 @@ Summarize model performance metrics across folds
 ```{r xgb_metrics}
 xgb_res %>% 
   collect_metrics() %>%
+  filter(.metric == 'roc_auc') %>%
   pretty_dt
 ```
+
+::: notes
+-   AUC metrics averaged across folds for each parameter combination in the grid search
+:::
 
 ## 6e. Example --- Param tuning w/ CV
 
@@ -1161,6 +1349,10 @@ xgb_res %>%
   pretty_dt
 ```
 
+::: notes
+-   The `show_best` function allows us to select the optimal parameter combination, i.e., the one that gives the highest AUC
+:::
+
 ## 6e. Example --- Stop the cluster
 
 Shut down the parallel backend
@@ -1172,6 +1364,10 @@ Shut down the parallel backend
 foreach::registerDoSEQ()
 parallel::stopCluster(cl)
 ```
+
+::: notes
+Don't forget to shut down the cluster after you are done training your models!
+:::
 
 # 7. Create visual summaries
 
@@ -1205,6 +1401,12 @@ plot_tune_metrics_xgb <- xgb_tune_metrics %>%
 
 plot_tune_metrics_xgb
 ```
+
+::: notes
+-   Sorry for the small print!
+-   Each row shows the mean +/- SE for the accuracy and AUC measurements for a specific parameter combination in the XGBoost grid search
+-   Lots of variability in performance
+:::
 
 ## 7. Example: ROC vs param value
 
@@ -1260,52 +1462,11 @@ plot_param('mtry')
 -   Tree depth and mtry don't seem to affect model performance as much here
 :::
 
-## 7. Example: Confusion matrix
-
-Summarize the predicted vs observed outcomes across k folds
-
-```{r}
-library(tidyr)
-
-tune_preds <- xgb_res %>%
-  collect_predictions()
-
-cells_per_resample <- tune_preds %>%
-  group_by(id) %>%
-  conf_mat(event, .pred_class) %>%
-  mutate(tidied = lapply(conf_mat, tidy)) %>%
-  unnest(tidied)
-
-# Get the totals per resample
-counts_per_resample <- tune_preds %>%
-  group_by(id) %>%
-  summarize(total = n()) %>%
-  left_join(cells_per_resample, by = "id") %>%
-  # Compute the proportions
-  mutate(prop = value/total) %>%
-  group_by(name) %>%
-  # Average
-  summarize(prop = mean(prop))
-
-# Now reshape these into a matrix
-mean_cmat <- matrix(counts_per_resample$prop, byrow = TRUE, ncol = 2)
-rownames(mean_cmat) <- levels(tune_preds$event)
-colnames(mean_cmat) <- levels(tune_preds$event)
-
-round(mean_cmat, 3)
-```
-
-::: notes
-:::
-
 ## 7. Example: Select the best model
 
 -   Best model is the one that optimizes the performance metric
 
 -   For example, we could choose the model with highest AUC
-
-::: notes
-:::
 
 ------------------------------------------------------------------------
 
@@ -1328,6 +1489,8 @@ print(final_model_fit)
 ```
 
 ::: notes
+-   Scroll down to see the rest of the output
+-   This view shows the details of the final XGBoost model fit using the optimal combination of parameters
 :::
 
 # 8. Explain model predictions
@@ -1343,6 +1506,7 @@ print(final_model_fit)
 -   Will provide more details on Day 3
 
 ::: notes
+-   Tools for explainable AI, or xAI available in R and python
 :::
 
 ## 8. Example: Model explainer
@@ -1358,6 +1522,7 @@ xgb_explainer <- explain_tidymodels(
 ```
 
 ::: notes
+-   Create a model explainer that will run the
 :::
 
 ## 8. Example: PDP
@@ -1408,9 +1573,6 @@ plot_pdp(dat = dat_train, explainer=xgb_explainer,
          input_vars='karnof', group_var='treatment_arm')[[1]]
 ```
 
-::: notes
-:::
-
 ### Plots 3 - 4
 
 ```{r}
@@ -1425,16 +1587,24 @@ plot_pdp(dat = dat_train, explainer=xgb_explainer,
 plot_pdp(dat = dat_train, explainer=xgb_explainer, 
          input_vars='baseline_cd8', group_var='treatment_arm')[[1]]
 ```
+:::
 
 ::: notes
-:::
 :::
 
 # 9. Deploy the model
 
 ## 9. Deploy the model
 
-Meodel deployment will be discussed in the hands-on session on Day 3.
+-   Model deployment: integrate a machine learning model and integrate it into an existing production environment where it can take in an input and return an output.
+
+-   Make the predictions from a trained ML model available to others, whether that be users, management, or other systems.
+
+-   Model deployment will be discussed in the hands-on session on Day 3.
+
+::: footer
+Source: <https://towardsdatascience.com/what-does-it-mean-to-deploy-a-machine-learning-model-dddb983ac416>
+:::
 
 # 10. Create a ML workflow
 
@@ -1495,6 +1665,9 @@ Meodel deployment will be discussed in the hands-on session on Day 3.
 -   2022 ML Workshop
 
     -   [GitHub](https://github.com/sydeaka/machine-learning-workshop-2022)
+    -   ACTG 175 study used in demo
+        -   Data source/detail: https://www.rdocumentation.org/packages/speff2trial/versions/1.0.4/topics/ACTG175
+        -   Journal article: https://www.nejm.org/doi/10.1056/NEJM199610103351501
 
 -   Machine learning algorithms
 
@@ -1507,4 +1680,3 @@ Meodel deployment will be discussed in the hands-on session on Day 3.
     -   [Bike prediction demo](https://solutions.rstudio.com/example/bike_predict/)
 
     -   [LEGO set demo](https://juliasilge.com/blog/lego-sets/)
-

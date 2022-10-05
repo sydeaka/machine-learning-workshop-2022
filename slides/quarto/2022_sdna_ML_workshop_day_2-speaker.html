@@ -423,25 +423,21 @@
 <ul>
 <li><p>A <strong>comprehensive</strong> overview of all machine learning concepts, algorithms, tools, use cases, etc.</p></li>
 <li><p>For more in-depth study, I recommend that you review the supplementary materials linked at the end of the Day 2 and Day 3 slides.</p></li>
-<li><p>If interested in learning about more advanced ML use cases, I invite you to attend the upcoming AADS AI / ML workshop ~ November 2022 (contact Haoda Fu for details)</p></li>
+<li><p>If interested in learning about more advanced ML use cases, AADS invites you to attend the upcoming AADS AI / ML workshop later this fall (contact Haoda Fu for details)</p></li>
 </ul>
 </section>
 <section id="about-me" class="slide level2">
 <h2>About Me</h2>
 <ul>
-<li><p><strong>Current role</strong>: Senior Advisor - Innovative Sciences in SDnA / GSS​</p>
+<li><p><strong>Current role</strong>: Senior Advisor - Innovative Sciences in SDnA/GSS</p></li>
+<li><p><strong>Education</strong>: Ph.D.&nbsp;Statistics, Baylor University, 2011</p></li>
+<li><p><strong>Experience</strong>:</p>
 <ul>
-<li><p>Statistical Innovation Center​</p></li>
-<li><p>Design Hub Data Insights​</p></li>
+<li><p>Biostatistician – Los Alamos National Laboratory, University of Chicago Medicine</p></li>
+<li><p>Data Scentist – AT&amp;T, Elicit Insights (consulting firm), Eli Lilly (2020-present)</p></li>
 </ul></li>
-<li><p><strong>Education</strong>: Ph.D.&nbsp;Statistics, Baylor University, 2011​</p></li>
-<li><p><strong>Experience</strong>:​</p>
-<ul>
-<li><p>Biostatistician – Los Alamos National Laboratory,&nbsp;University of Chicago​ Medicine</p></li>
-<li><p>Data Scentist – AT&amp;T, Elicit Insights (consulting firm), Eli Lilly (2020-present)​</p></li>
-</ul></li>
-<li><p><strong>Skills</strong>: R / Python;&nbsp;Statistics; Machine Learning; Shiny app development​</p></li>
-<li><p><strong>Current residence</strong>: Dallas, Texas​</p></li>
+<li><p><strong>Skills</strong>: R / Python; Statistics; Machine Learning; Shiny app development</p></li>
+<li><p><strong>Current residence</strong>: Dallas, Texas</p></li>
 </ul>
 </section>
 <section>
@@ -451,9 +447,9 @@
 </section>
 <section id="machine-learning-defined" class="slide level2">
 <h2>Machine learning defined</h2>
-<p>There are many ways to define Machine Learning, but here’s a good one: <img data-src="images/ML_defined_by_MS.png"></p>
+<p>There are many ways to define Machine Learning. Here’s a good working definition: <img data-src="images/ML_defined_by_MS.png"></p>
 <div class="footer">
-<p>https://azure.microsoft.com/en-us/resources/cloud-computing-dictionary/what-is-machine-learning-platform/</p>
+<p>Source: <a href="https://azure.microsoft.com/en-us/resources/cloud-computing-dictionary/what-is-machine-learning-platform/" class="uri">https://azure.microsoft.com/en-us/resources/cloud-computing-dictionary/what-is-machine-learning-platform/</a></p>
 </div>
 <aside class="notes">
 <ul>
@@ -477,7 +473,7 @@
 <h2>ML vs Statistics</h2>
 <p><img data-src="images/ML_vs_stats.png"></p>
 <div class="footer">
-<p>https://towardsdatascience.com/how-is-machine-learning-different-from-statistics-and-why-it-matters-5a8ed539976</p>
+<p>Source: <a href="https://towardsdatascience.com/how-is-machine-learning-different-from-statistics-and-why-it-matters-5a8ed539976" class="uri">https://towardsdatascience.com/how-is-machine-learning-different-from-statistics-and-why-it-matters-5a8ed539976</a></p>
 </div>
 <aside class="notes">
 <ul>
@@ -504,7 +500,7 @@
 <h2>Healthcare applications</h2>
 <p><img data-src="images/ML_healthcare.jpeg"></p>
 <div class="footer">
-<p>https://www.botreetechnologies.com/blog/machine-learning-in-healthcare/</p>
+<p>Source: <a href="https://www.botreetechnologies.com/blog/machine-learning-in-healthcare/" class="uri">https://www.botreetechnologies.com/blog/machine-learning-in-healthcare/</a></p>
 </div>
 <aside class="notes">
 <ul>
@@ -604,7 +600,7 @@
 <h2>ML types</h2>
 <p><img data-src="images/ML_types.png"></p>
 <div class="footer">
-<p>https://litslink.com/blog/an-introduction-to-machine-learning-algorithms</p>
+<p>Source: <a href="https://litslink.com/blog/an-introduction-to-machine-learning-algorithms" class="uri">https://litslink.com/blog/an-introduction-to-machine-learning-algorithms</a></p>
 </div>
 <aside class="notes">
 <ul>
@@ -805,7 +801,7 @@
 <li><p>Define modeling objectives</p></li>
 <li><p>Exploratory data analysis</p></li>
 <li><p>Feature engineering</p></li>
-<li><p>Variable selection</p></li>
+<li><p>Feature selection</p></li>
 <li><p>Split data into training / testing sets</p></li>
 </ol>
 </div><div class="column" style="width:50%;">
@@ -1066,6 +1062,7 @@
 </div>
 <aside class="notes">
 <ul>
+<li>To start, we set up the environment. Load packages and a helper function that makes it easier to display tables in the slides.</li>
 <li>Clinical data for the ACTG 175 trial comes from the <code>speff2trial</code> R package</li>
 <li>The help page for this dataset includes a data dictionary that shows how the data are coded. It would be helpful to transform the data using these suggested codings.</li>
 </ul>
@@ -1244,6 +1241,25 @@
                   NA's   :797                                       </code></pre>
 </div>
 </div>
+<aside class="notes">
+<ul>
+<li>Used the data dictionary to recode the categorical variables into meaningful labels</li>
+<li>Changed some variable names</li>
+<li>Selected only the relevant columns that I might want to use as predictors or outcomes</li>
+<li>Represented character fields as factor</li>
+<li>The data summary is easier to read after applying transformations</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="example-data-preview" class="slide level2">
 <h2>2. Example: Data preview</h2>
@@ -1254,10 +1270,25 @@
 </details>
 <div class="cell-output-display">
 
-<div id="htmlwidget-f33dc00086730286d0ee" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-f33dc00086730286d0ee">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],[10056,10059,10089,10093,10124,10140,10165,10190,10198,10229,10241,10341,10343,10361,10364,10368,10378,10386,10389,10432],[1,1,1,1,0,1,0,0,1,0,1,1,1,1,1,0,0,1,1,1],["zidovudine and zalcitabine","didanosine","didanosine","didanosine","zidovudine","zidovudine and didanosine","zidovudine","zidovudine","didanosine","zidovudine","zidovudine and zalcitabine","didanosine","zidovudine and zalcitabine","zidovudine and didanosine","zidovudine and zalcitabine","zidovudine","zidovudine","zidovudine and zalcitabine","zidovudine and didanosine","zidovudine and zalcitabine"],[0,0,1,0,0,0,0,0,1,1,0,0,0,1,1,0,0,1,1,0],[48,61,45,47,43,46,31,41,40,35,34,38,25,34,49,40,27,46,47,34],[89.8128,49.4424,88.452,85.2768,66.6792,88.9056,73.0296,66.2256,82.5552,78.0192,95.256,76.4316,68.04,62.8236,79.38,83.0088,67.3,63.8,94,60.3288],["no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no"],["no","no","yes","yes","yes","yes","yes","yes","yes","yes","no","yes","yes","yes","yes","yes","no","yes","yes","no"],["no","no","yes","no","no","yes","no","yes","no","no","no","no","no","no","no","no","yes","no","no","no"],[100,90,90,100,100,100,100,100,90,100,100,100,90,90,90,100,90,100,100,100],["no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no"],["no","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes"],["yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes"],[0,895,707,1399,1352,1181,930,1329,1074,964,897,461,852,342,402,974,875,881,1421,854],["white","white","white","white","white","white","white","white","white","white","non-white","white","white","white","white","white","white","white","white","non-white"],["female","female","male","male","male","male","male","male","male","male","female","male","male","male","male","male","female","male","male","female"],["naive","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced"],["antiretroviral naive","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 1 but &lt;= 52 weeks of prior antiretroviral therapy","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks"],["asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","symptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","symptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic"],[422,162,326,287,504,235,244,401,214,221,471,340,540,212,120,150,350,330,180,233],[566,392,2063,1590,870,860,708,889,652,221,770,660,1590,1094,800,1730,750,820,710,1462],["no","yes","no","no","no","no","yes","no","yes","yes","yes","no","no","no","yes","yes","no","no","yes","no"],[0,1,0,0,0,0,1,0,1,1,1,0,0,0,1,1,0,0,1,0],[948,1002,961,1166,1090,1181,794,957,198,188,1073,1175,1203,1065,357,308,1062,1069,322,1119],[477,218,274,394,353,339,225,366,107,132,468,230,590,190,140,90,440,320,200,240],[660,null,122,null,660,264,106,453,8,null,477,270,410,100,null,20,null,180,null,null],[1,0,1,0,1,1,1,1,1,0,1,1,1,1,0,1,0,1,0,0],[324,564,1893,966,782,1060,699,720,131,759,620,510,1330,1180,1090,1160,990,630,830,1170]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>pidnum<\/th>\n      <th>zidovudine_indicator<\/th>\n      <th>treatment_arm<\/th>\n      <th>offtrt<\/th>\n      <th>age<\/th>\n      <th>wtkg<\/th>\n      <th>hemo<\/th>\n      <th>lgbtq<\/th>\n      <th>hist_intra_drug_use<\/th>\n      <th>karnof<\/th>\n      <th>prior_nz_art<\/th>\n      <th>prior_z_30days<\/th>\n      <th>prior_z<\/th>\n      <th>days_prior_art<\/th>\n      <th>race<\/th>\n      <th>gender<\/th>\n      <th>prior_art<\/th>\n      <th>strat_hist_art<\/th>\n      <th>symptom<\/th>\n      <th>baseline_cd4<\/th>\n      <th>baseline_cd8<\/th>\n      <th>event<\/th>\n      <th>surv_event<\/th>\n      <th>surv_days<\/th>\n      <th>cd420<\/th>\n      <th>cd496<\/th>\n      <th>r<\/th>\n      <th>cd820<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":6,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[1,2,4,5,6,10,14,20,21,23,24,25,26,27,28]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render"],"jsHooks":[]}</script>
+<div id="htmlwidget-508c3e849c06caaf44cd" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-508c3e849c06caaf44cd">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],[10056,10059,10089,10093,10124,10140,10165,10190,10198,10229,10241,10341,10343,10361,10364,10368,10378,10386,10389,10432],[1,1,1,1,0,1,0,0,1,0,1,1,1,1,1,0,0,1,1,1],["zidovudine and zalcitabine","didanosine","didanosine","didanosine","zidovudine","zidovudine and didanosine","zidovudine","zidovudine","didanosine","zidovudine","zidovudine and zalcitabine","didanosine","zidovudine and zalcitabine","zidovudine and didanosine","zidovudine and zalcitabine","zidovudine","zidovudine","zidovudine and zalcitabine","zidovudine and didanosine","zidovudine and zalcitabine"],[0,0,1,0,0,0,0,0,1,1,0,0,0,1,1,0,0,1,1,0],[48,61,45,47,43,46,31,41,40,35,34,38,25,34,49,40,27,46,47,34],[89.8128,49.4424,88.452,85.2768,66.6792,88.9056,73.0296,66.2256,82.5552,78.0192,95.256,76.4316,68.04,62.8236,79.38,83.0088,67.3,63.8,94,60.3288],["no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no"],["no","no","yes","yes","yes","yes","yes","yes","yes","yes","no","yes","yes","yes","yes","yes","no","yes","yes","no"],["no","no","yes","no","no","yes","no","yes","no","no","no","no","no","no","no","no","yes","no","no","no"],[100,90,90,100,100,100,100,100,90,100,100,100,90,90,90,100,90,100,100,100],["no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no"],["no","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes"],["yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes"],[0,895,707,1399,1352,1181,930,1329,1074,964,897,461,852,342,402,974,875,881,1421,854],["white","white","white","white","white","white","white","white","white","white","non-white","white","white","white","white","white","white","white","white","non-white"],["female","female","male","male","male","male","male","male","male","male","female","male","male","male","male","male","female","male","male","female"],["naive","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced"],["antiretroviral naive","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 1 but &lt;= 52 weeks of prior antiretroviral therapy","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks"],["asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","symptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","symptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic"],[422,162,326,287,504,235,244,401,214,221,471,340,540,212,120,150,350,330,180,233],[566,392,2063,1590,870,860,708,889,652,221,770,660,1590,1094,800,1730,750,820,710,1462],["no","yes","no","no","no","no","yes","no","yes","yes","yes","no","no","no","yes","yes","no","no","yes","no"],[0,1,0,0,0,0,1,0,1,1,1,0,0,0,1,1,0,0,1,0],[948,1002,961,1166,1090,1181,794,957,198,188,1073,1175,1203,1065,357,308,1062,1069,322,1119],[477,218,274,394,353,339,225,366,107,132,468,230,590,190,140,90,440,320,200,240],[660,null,122,null,660,264,106,453,8,null,477,270,410,100,null,20,null,180,null,null],[1,0,1,0,1,1,1,1,1,0,1,1,1,1,0,1,0,1,0,0],[324,564,1893,966,782,1060,699,720,131,759,620,510,1330,1180,1090,1160,990,630,830,1170]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>pidnum<\/th>\n      <th>zidovudine_indicator<\/th>\n      <th>treatment_arm<\/th>\n      <th>offtrt<\/th>\n      <th>age<\/th>\n      <th>wtkg<\/th>\n      <th>hemo<\/th>\n      <th>lgbtq<\/th>\n      <th>hist_intra_drug_use<\/th>\n      <th>karnof<\/th>\n      <th>prior_nz_art<\/th>\n      <th>prior_z_30days<\/th>\n      <th>prior_z<\/th>\n      <th>days_prior_art<\/th>\n      <th>race<\/th>\n      <th>gender<\/th>\n      <th>prior_art<\/th>\n      <th>strat_hist_art<\/th>\n      <th>symptom<\/th>\n      <th>baseline_cd4<\/th>\n      <th>baseline_cd8<\/th>\n      <th>event<\/th>\n      <th>surv_event<\/th>\n      <th>surv_days<\/th>\n      <th>cd420<\/th>\n      <th>cd496<\/th>\n      <th>r<\/th>\n      <th>cd820<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":6,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[1,2,4,5,6,10,14,20,21,23,24,25,26,27,28]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render"],"jsHooks":[]}</script>
 </div>
 </div>
+<aside class="notes">
+<ul>
+<li>Showing the first few rows of the transformed data table</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="example-data-visualizations" class="slide level2">
 <h2>2. Example: Data visualizations</h2>
@@ -1356,6 +1387,25 @@
 </div>
 </div>
 </div>
+<aside class="notes">
+<ul>
+<li>As in any other data analysis, it is helpful to prepare summary plots that show distributions and trends in the data.</li>
+<li>The event distribution is skewed. The event only occurs in about 25% of the patients. We will come back to this point.</li>
+<li>Inclusion criteria in the paper says the study included patients with CD4 cell count values ranging from 200-500 per cubic mm. However, the baseline CD4 ranges extend beyond that range in all treatment arms. There is even a patient who appears to have a baseline CD4 of zero. This could either mean that we have data quality issues, and/or that some patients may have had significant shifts in their CD4 values since they were initially assessed.</li>
+<li>All of the patients have the same value in the prior zidovudine variable. This suggests that all patients had zidovudine treatment in the past.</li>
+<li>We also see that only a few patients had no prior non-zidovudine treatment in the past. There is very little variation in these variables, so they probably won’t be useful as predictor variables in a model.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section></section>
 <section>
 <section id="feature-engineering" class="title-slide slide level1 center">
@@ -1386,6 +1436,25 @@
 </div>
 </div></li>
 </ul>
+<aside class="notes">
+<ul>
+<li>In ML, predictor variables are called “features”</li>
+<li>Feature engineering is where we take existing variables and create new ones that extract additional information</li>
+<li>This allows us to “help” the model understand what we want it to know about a specific var</li>
+<li>As an example, this timestamp wouldn’t be helpful as model input.</li>
+<li>We can split this field into multiple columns that include date components that the model might want to know about.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="example-individual-drugs" class="slide level2">
 <h2>3. Example: Individual drugs</h2>
@@ -1405,18 +1474,37 @@
 </details>
 <div class="cell-output-display">
 
-<div id="htmlwidget-c84f04abe987cb9b73f3" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-c84f04abe987cb9b73f3">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4"],["zidovudine and zalcitabine","didanosine","zidovudine","zidovudine and didanosine"],[0,1,0,1],[1,0,1,1],[1,0,0,0]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>treatment_arm<\/th>\n      <th>ind_didanosine<\/th>\n      <th>ind_zidovudine<\/th>\n      <th>ind_zalcitabine<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"className":"dt-right","targets":[2,3,4]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete"],"jsHooks":[]}</script>
+<div id="htmlwidget-4c22903708baf095c33e" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4c22903708baf095c33e">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4"],["zidovudine and zalcitabine","didanosine","zidovudine","zidovudine and didanosine"],[0,1,0,1],[1,0,1,1],[1,0,0,0]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>treatment_arm<\/th>\n      <th>ind_didanosine<\/th>\n      <th>ind_zidovudine<\/th>\n      <th>ind_zalcitabine<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"className":"dt-right","targets":[2,3,4]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete"],"jsHooks":[]}</script>
 </div>
 </div>
+<aside class="notes">
+<ul>
+<li>As an example, notice that three treatments contain zidovudine and two contain didanosine.</li>
+<li>If we use treatment arm as a predictor in its current form, the model wouldn’t understand that some of the treatments contain the same drug</li>
+<li>We might help the model by creating indicator variables for the individual drugs</li>
+<li>The table on this slide shows how the treatment arms are recoded</li>
+<li>This creates some redundancy, though. The treatment arm is completely specified by the indicators. If you know the values of all the individual drug indicators, you know which treatment arm. This could cause some issues in statistical methods. We will see if we run into any issues in the ML model.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section></section>
 <section>
-<section id="variable-selection" class="title-slide slide level1 center">
-<h1>4. Variable selection</h1>
+<section id="feature-selection" class="title-slide slide level1 center">
+<h1>4. Feature selection</h1>
 
 </section>
-<section id="variable-selection-1" class="slide level2">
-<h2>4. Variable selection</h2>
+<section id="feature-selection-1" class="slide level2">
+<h2>4. Feature selection</h2>
 <ul>
 <li><p>Which variables do we want to include in the analysis?</p></li>
 <li><p>Which should be excluded?</p>
@@ -1427,6 +1515,28 @@
 <li><p>Variable reduction - principal components</p></li>
 <li><p>Could also choose n top variables from preliminary model fit</p></li>
 </ul>
+<aside class="notes">
+<ul>
+<li>The next step is to decide which variables we want to include or exclude from the model</li>
+<li>This includes the original variables and the new ones we introduced in the feature engineering step</li>
+<li>We want to keep the features that think are relevant to the modeling objective</li>
+<li>Exclude features that are redundant (that provide information that other variables already capture)</li>
+<li>Exclude features that have zero variance (the same value for all subjects)</li>
+<li>After that first cut, we could still be left with hundreds of candidate predictors. Do we keep them all, or try to further reduce the number of variables</li>
+<li>Might use a dimension reduction approach such as principal components.</li>
+<li>Could also use ML to help with this task. Fit a preliminary ML model, select the top n important features identified in that model.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="example-keeping-these-variables" class="slide level2">
 <h2>4. Example: Keeping these variables</h2>
@@ -1441,6 +1551,21 @@
 <li><p>Symptomatic vs asymptomatic?</p></li>
 <li><p>Karnofsky score</p></li>
 </ul>
+<aside class="notes">
+<ul>
+<li>Here’s a summary of the variables that I thought might be relevant in the prediction of the primary endpoint</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="example-excluding-these-variables" class="slide level2">
 <h2>4. Example: Excluding these variables</h2>
@@ -1451,6 +1576,26 @@
 <li><p><u><strong>prior_nz_art</strong></u>: Very little variability in this variable (2092 no vs 47 yes)</p></li>
 <li><p><u><strong>CD4 and CD8 measurements at later time points</strong></u>: we wouldn’t know these at baseline</p></li>
 </ul>
+<aside class="notes">
+<ul>
+<li>Here’s a list of variables I thought we should exclude.
+<ul>
+<li>Patient identifier numbers</li>
+<li>Things we wouldn’t know at baseline, such as whether the patient went off treatment, and future CD4 and CD8 measurements</li>
+<li>The two treatment history variables that had little or no variability</li>
+</ul></li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="example-analysis-subset" class="slide level2">
 <h2>4. Example: Analysis subset</h2>
@@ -1533,6 +1678,23 @@
                   NA's   :797                                       </code></pre>
 </div>
 </div>
+<aside class="notes">
+<ul>
+<li>I applied these variable inclusions and exclusions so that we only keep the relevant columns in the dataset</li>
+<li>I kept a few additional outcome fields that we may need in Day 3 of the workshop. These include survival outcomes and future CD4 and CD8 measurements.</li>
+<li>Here’s a summary of the dataset that we will use for the analysis.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section></section>
 <section>
 <section id="split-data-into-training-testing" class="title-slide slide level1 center">
@@ -1547,6 +1709,37 @@
 <li><p>Use k-fold cross-validation to train/validate on multiple data splits</p></li>
 <li><p>Get final assessment of model performance on testing set</p></li>
 </ul>
+<aside class="notes">
+<ul>
+<li>In statistical inference, we usually use the entire dataset to fit the model</li>
+<li>However, in prediction, we need to set some data aside to use as a sanity check. We need to see how well the model works on data that it has never seen before.</li>
+<li>We can have data split into 3 parts… training, validation, and testing
+<ul>
+<li>Training: fit the model</li>
+<li>Validation: intermediate assessment of model performance. Used to compare model fits across algorithms or parameter settings. Technically still used in training since we are using it to select the model, so it isn’t a completely separate dataset.</li>
+<li>Testing: Use this to get a final assessment of model performance after all modeling is complete</li>
+<li>Problem with this approach is that we can get an unlucky split. May get different results depending on which cases ended up in training vs validation set</li>
+</ul></li>
+<li>Another approach: k-fold cross-validation
+<ul>
+<li>Split the data into training and testing sets</li>
+<li>Further split the training data into k folds</li>
+<li>Fit the model k times, using (k-1) folds train the model and the held out kth fold for assessment</li>
+<li>Average across folds</li>
+<li>Gives better assessment of how the model will perform on external data (generalizable) _ I recommend the latter approach</li>
+</ul></li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="example-train-validationtest-split" class="slide level2">
 <h2>5. Example: Train /validation/test split</h2>
@@ -1591,6 +1784,27 @@
 `test_dataset` contains 322 rows and 26 columns.</code></pre>
 </div>
 </div>
+<aside class="notes">
+<ul>
+<li>Here’s our initial data split.
+<ul>
+<li>85% of the data will be used for training and validation across k folds.</li>
+<li>The remining 15% will be used for final testing</li>
+</ul></li>
+<li>Summary at the bottom shows how the two splits add up to the size of the entire dataset</li>
+<li>If we are using the k-fold cross validation approach, this is the data split that we would use.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section class="slide level2">
 
@@ -1611,6 +1825,25 @@
 2   yes  432</code></pre>
 </div>
 </div>
+<aside class="notes">
+<ul>
+<li>I mentioned earlier in the data visualization section that there was an issue with the event column.</li>
+<li>There are 3x as many ‘no’ events as there are ‘yes’ events.</li>
+<li>This is called a class imbalance.</li>
+<li>Remember ML models learn from experiences from reviewing example data.</li>
+<li>The algorithm will have more examples of ‘no’ events than it does with ‘yes’ events, so it will do a better job predicting the ‘no’ cases.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section class="slide level2">
 
@@ -1647,6 +1880,23 @@
 2 yes     969</code></pre>
 </div>
 </div>
+<aside class="notes">
+<ul>
+<li>There is a function in the recipes framework called step_upsample that handles oversampling</li>
+<li>After oversampling, now the event distribution is less imbalanced</li>
+<li>This is only something that we would need to do for data that will be involved in training the model. No need to do this for the testing set.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section class="slide level2">
 
@@ -1681,6 +1931,23 @@
 `valid_dataset` contains 472 rows and 20 columns.</code></pre>
 </div>
 </div>
+<aside class="notes">
+<ul>
+<li>This step creates a separate validation set.</li>
+<li>This is used if you didn’t use k-fold cross validation, so that you have a pre-defined training and validation split.</li>
+<li>We will see how both versions are used in the next section.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section></section>
 <section>
 <section id="train-the-models" class="title-slide slide level1 center">
@@ -1693,15 +1960,42 @@
 <li><p>Model = modeling algorithm + model formula + algorithm hyperparameter values</p>
 <ul>
 <li><p>Try different modeling algorithms</p></li>
+<li><p>Try different model formulas</p></li>
 <li><p>Try different hyperparameter values</p></li>
 <li><p>May need to use parallel processing over multiple cores for faster training</p></li>
 </ul></li>
 <li><p>Model validation - evaluate each model on holdout dataset(s)</p>
 <ul>
-<li><p>Good: Train on training set / validate on validation set</p></li>
+<li><p>Good: Train on training set + validate on validation set</p></li>
 <li><p>Best: Cross-validation on training/validation set</p></li>
 </ul></li>
 </ul>
+<aside class="notes">
+<ul>
+<li>Next step is to train the models
+<ul>
+<li>Working definition: A model is a specific choice of modeling algorithm, the model formula, and the parameter values to be used in the algorithm</li>
+<li>Think of this as an experiment. Try different modeling algorithms, different model formulations, and different hyperparameter values.</li>
+<li>This can take a lot of time and computational resources to run, so we may need to use parallel processing over multiple cores if we want to speed up the training</li>
+</ul></li>
+<li>We also need to validate the model to see how well it works on data it hasn’t seen before.</li>
+<li>To summarize my advice on previous slide
+<ul>
+<li>At minimum, set aside some data in a validation set that you will use to evaluate your model</li>
+<li>However I highly recommend that instead of using a single validation split, that you run k-fold cross validation to get a better idea of how generalizable your model is</li>
+</ul></li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="a.-example-benchmark-model" class="slide level2">
 <h2>6a. Example: Benchmark model</h2>
@@ -1730,10 +2024,28 @@
 </details>
 <div class="cell-output-display">
 
-<div id="htmlwidget-a69e0fdf0aa86008d91b" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-a69e0fdf0aa86008d91b">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],["zidovudine and zalcitabine","zidovudine","zidovudine and didanosine","zidovudine","zidovudine","zidovudine and didanosine","zidovudine and zalcitabine","zidovudine and didanosine","zidovudine","zidovudine and zalcitabine","didanosine","zidovudine and didanosine","zidovudine and didanosine","zidovudine and didanosine","zidovudine and zalcitabine","zidovudine and zalcitabine","zidovudine and didanosine","zidovudine and didanosine","zidovudine","zidovudine"],[0,0,1,0,0,1,0,1,0,0,1,1,1,1,0,0,1,1,0,0],[1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,1,0,0,1,0,0,0,0,1,1,0,0,0,0],[39,29,28,40,43,45,39,40,34,39,49,31,31,39,36,36,48,30,40,27],[75.7,66.1,76.6584,71.6688,76.4,82.87272,67.1328,110.4516,72.9,73.9368,80.7408,79.8336,78.1,83.9,61.6896,86.184,83.0088,77.3,55.3392,74.3904],["no","no","no","no","no","no","no","no","no","no","no","no","yes","no","no","no","no","no","no","no"],["yes","yes","yes","no","yes","no","no","no","yes","no","yes","yes","no","yes","no","yes","yes","yes","no","yes"],["no","no","no","no","no","no","yes","no","no","no","no","yes","yes","no","no","no","yes","no","no","no"],[100,90,100,100,90,90,100,90,100,100,90,100,90,100,90,100,90,100,100,100],["yes","yes","no","no","yes","yes","yes","yes","yes","no","no","no","yes","no","no","no","no","no","yes","no"],[159,1509,0,0,724,406,1057,179,16,0,0,0,1174,0,0,575,0,0,486,0],["white","white","white","non-white","white","non-white","white","white","white","non-white","white","white","white","white","non-white","white","white","white","non-white","non-white"],["male","male","male","female","male","male","female","male","male","female","male","male","male","male","male","male","male","male","female","male"],["experienced","experienced","naive","naive","experienced","experienced","experienced","experienced","experienced","naive","naive","naive","experienced","naive","naive","experienced","naive","naive","experienced","naive"],["&gt; 1 but &lt;= 52 weeks of prior antiretroviral therapy","&gt; 52 weeks","antiretroviral naive","antiretroviral naive","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 1 but &lt;= 52 weeks of prior antiretroviral therapy","&gt; 1 but &lt;= 52 weeks of prior antiretroviral therapy","antiretroviral naive","antiretroviral naive","antiretroviral naive","&gt; 52 weeks","antiretroviral naive","antiretroviral naive","&gt; 52 weeks","antiretroviral naive","antiretroviral naive","&gt; 52 weeks","antiretroviral naive"],["asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","symptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","symptomatic"],[431,469,440,440,210,324,470,548,332,420,392,419,257,370,416,337,308,309,338,437],[647,775,1210,493,430,1427,950,1117,1571,730,1566,757,137,630,1326,618,956,806,1664,903],["no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no"],["no","yes","no","no","yes","no","no","no","yes","no","no","no","no","no","no","no","no","no","yes","no"],[0.784292811342467,0.460056929320691,0.782805777234955,0.773611910833614,0.29469617346244,0.568227318543993,0.792360175035089,0.821806506823222,0.285612125209292,0.872339539229377,0.621427183364213,0.858621678446729,0.730795186386258,0.794236060235568,0.751417510859172,0.730755609315792,0.739102893685311,0.717174450233723,0.366816335001865,0.639219391399041],[0.215707188657533,0.539943070679309,0.217194222765045,0.226388089166386,0.70530382653756,0.431772681456007,0.207639824964911,0.178193493176778,0.714387874790708,0.127660460770623,0.378572816635787,0.141378321553271,0.269204813613742,0.205763939764432,0.248582489140828,0.269244390684208,0.260897106314689,0.282825549766277,0.633183664998135,0.360780608600959],[0,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>treatment_arm<\/th>\n      <th>ind_didanosine<\/th>\n      <th>ind_zidovudine<\/th>\n      <th>ind_zalcitabine<\/th>\n      <th>age<\/th>\n      <th>wtkg<\/th>\n      <th>hemo<\/th>\n      <th>lgbtq<\/th>\n      <th>hist_intra_drug_use<\/th>\n      <th>karnof<\/th>\n      <th>prior_z_30days<\/th>\n      <th>days_prior_art<\/th>\n      <th>race<\/th>\n      <th>gender<\/th>\n      <th>prior_art<\/th>\n      <th>strat_hist_art<\/th>\n      <th>symptom<\/th>\n      <th>baseline_cd4<\/th>\n      <th>baseline_cd8<\/th>\n      <th>event<\/th>\n      <th>.pred_class<\/th>\n      <th>.pred_no<\/th>\n      <th>.pred_yes<\/th>\n      <th>.pred_yes_int<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":6,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":22,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":23,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":24,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[2,3,4,5,6,10,12,18,19,22,23,24]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render","options.columnDefs.2.render","options.columnDefs.3.render"],"jsHooks":[]}</script>
+<div id="htmlwidget-6b689da2530fcb98b59d" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6b689da2530fcb98b59d">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],["zidovudine and zalcitabine","zidovudine","zidovudine and didanosine","zidovudine","zidovudine","zidovudine and didanosine","zidovudine and zalcitabine","zidovudine and didanosine","zidovudine","zidovudine and zalcitabine","didanosine","zidovudine and didanosine","zidovudine and didanosine","zidovudine and didanosine","zidovudine and zalcitabine","zidovudine and zalcitabine","zidovudine and didanosine","zidovudine and didanosine","zidovudine","zidovudine"],[0,0,1,0,0,1,0,1,0,0,1,1,1,1,0,0,1,1,0,0],[1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,1,0,0,1,0,0,0,0,1,1,0,0,0,0],[39,29,28,40,43,45,39,40,34,39,49,31,31,39,36,36,48,30,40,27],[75.7,66.1,76.6584,71.6688,76.4,82.87272,67.1328,110.4516,72.9,73.9368,80.7408,79.8336,78.1,83.9,61.6896,86.184,83.0088,77.3,55.3392,74.3904],["no","no","no","no","no","no","no","no","no","no","no","no","yes","no","no","no","no","no","no","no"],["yes","yes","yes","no","yes","no","no","no","yes","no","yes","yes","no","yes","no","yes","yes","yes","no","yes"],["no","no","no","no","no","no","yes","no","no","no","no","yes","yes","no","no","no","yes","no","no","no"],[100,90,100,100,90,90,100,90,100,100,90,100,90,100,90,100,90,100,100,100],["yes","yes","no","no","yes","yes","yes","yes","yes","no","no","no","yes","no","no","no","no","no","yes","no"],[159,1509,0,0,724,406,1057,179,16,0,0,0,1174,0,0,575,0,0,486,0],["white","white","white","non-white","white","non-white","white","white","white","non-white","white","white","white","white","non-white","white","white","white","non-white","non-white"],["male","male","male","female","male","male","female","male","male","female","male","male","male","male","male","male","male","male","female","male"],["experienced","experienced","naive","naive","experienced","experienced","experienced","experienced","experienced","naive","naive","naive","experienced","naive","naive","experienced","naive","naive","experienced","naive"],["&gt; 1 but &lt;= 52 weeks of prior antiretroviral therapy","&gt; 52 weeks","antiretroviral naive","antiretroviral naive","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 1 but &lt;= 52 weeks of prior antiretroviral therapy","&gt; 1 but &lt;= 52 weeks of prior antiretroviral therapy","antiretroviral naive","antiretroviral naive","antiretroviral naive","&gt; 52 weeks","antiretroviral naive","antiretroviral naive","&gt; 52 weeks","antiretroviral naive","antiretroviral naive","&gt; 52 weeks","antiretroviral naive"],["asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","symptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","symptomatic"],[431,469,440,440,210,324,470,548,332,420,392,419,257,370,416,337,308,309,338,437],[647,775,1210,493,430,1427,950,1117,1571,730,1566,757,137,630,1326,618,956,806,1664,903],["no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no"],["no","yes","no","no","yes","no","no","no","yes","no","no","no","no","no","no","no","no","no","yes","no"],[0.784292811342467,0.460056929320691,0.782805777234955,0.773611910833614,0.29469617346244,0.568227318543993,0.792360175035089,0.821806506823222,0.285612125209292,0.872339539229377,0.621427183364213,0.858621678446729,0.730795186386258,0.794236060235568,0.751417510859172,0.730755609315792,0.739102893685311,0.717174450233723,0.366816335001865,0.639219391399041],[0.215707188657533,0.539943070679309,0.217194222765045,0.226388089166386,0.70530382653756,0.431772681456007,0.207639824964911,0.178193493176778,0.714387874790708,0.127660460770623,0.378572816635787,0.141378321553271,0.269204813613742,0.205763939764432,0.248582489140828,0.269244390684208,0.260897106314689,0.282825549766277,0.633183664998135,0.360780608600959],[0,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>treatment_arm<\/th>\n      <th>ind_didanosine<\/th>\n      <th>ind_zidovudine<\/th>\n      <th>ind_zalcitabine<\/th>\n      <th>age<\/th>\n      <th>wtkg<\/th>\n      <th>hemo<\/th>\n      <th>lgbtq<\/th>\n      <th>hist_intra_drug_use<\/th>\n      <th>karnof<\/th>\n      <th>prior_z_30days<\/th>\n      <th>days_prior_art<\/th>\n      <th>race<\/th>\n      <th>gender<\/th>\n      <th>prior_art<\/th>\n      <th>strat_hist_art<\/th>\n      <th>symptom<\/th>\n      <th>baseline_cd4<\/th>\n      <th>baseline_cd8<\/th>\n      <th>event<\/th>\n      <th>.pred_class<\/th>\n      <th>.pred_no<\/th>\n      <th>.pred_yes<\/th>\n      <th>.pred_yes_int<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":6,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":22,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":23,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":24,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[2,3,4,5,6,10,12,18,19,22,23,24]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render","options.columnDefs.2.render","options.columnDefs.3.render"],"jsHooks":[]}</script>
 </div>
 </div>
+<aside class="notes">
+<ul>
+<li>Before fitting any ML models, I like to fit what is called a “benchmark” model</li>
+<li>It is a simple model that probably isn’t very good. However, it’s used as a baseline that we will compare the ML model results to</li>
+<li>In this case, I’m choosing to fit a very basic logistic regression model, using the same model formula and training data that I will use to fit the ML models</li>
+<li>After fitting the model <code>augment</code> function appends the predicted probabilities of each category in the outcome class to the validation set. It also includes the predicted class, basically whichever class had the higher predicted probability.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="a.-example-benchmark-model-1" class="slide level2">
 <h2>6a. Example: Benchmark model</h2>
@@ -1748,10 +2060,27 @@
 </details>
 <div class="cell-output-display">
 
-<div id="htmlwidget-76b9a3454a608b7281ac" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-76b9a3454a608b7281ac">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1"],["accuracy"],["binary"],[0.677966101694915]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>.metric<\/th>\n      <th>.estimator<\/th>\n      <th>.estimate<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":3},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render"],"jsHooks":[]}</script>
+<div id="htmlwidget-7db00e7c027ed4a02690" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-7db00e7c027ed4a02690">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1"],["accuracy"],["binary"],[0.677966101694915]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>.metric<\/th>\n      <th>.estimator<\/th>\n      <th>.estimate<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":3},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render"],"jsHooks":[]}</script>
 </div>
 </div>
+<aside class="notes">
+<ul>
+<li>Accuracy = proportion of cases that were correctly classified.</li>
+<li>Interpretation: higher accuracy –&gt; better performance</li>
+<li>Model accuracy isn’t very high in the logistic regression model</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="a.-example-benchmark-model-2" class="slide level2">
 <h2>6a. Example: Benchmark model</h2>
@@ -1766,10 +2095,27 @@
 </details>
 <div class="cell-output-display">
 
-<div id="htmlwidget-af48f6312873ccdb803e" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-af48f6312873ccdb803e">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1"],["roc_auc"],["binary"],[0.706469535737828]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>.metric<\/th>\n      <th>.estimator<\/th>\n      <th>.estimate<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":3},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render"],"jsHooks":[]}</script>
+<div id="htmlwidget-4a06a0222b5b27ee01bf" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4a06a0222b5b27ee01bf">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1"],["roc_auc"],["binary"],[0.706469535737828]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>.metric<\/th>\n      <th>.estimator<\/th>\n      <th>.estimate<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":3},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render"],"jsHooks":[]}</script>
 </div>
 </div>
+<aside class="notes">
+<ul>
+<li>AUC = Area under the Receiver Operator Characteristic curve, or ROC curve</li>
+<li>Interpretation: higher AUC –&gt; better performance</li>
+<li>AUC isn’t very high in the logistic regression model</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="a.-example-benchmark-model-3" class="slide level2">
 <h2>6a. Example: Benchmark model</h2>
@@ -1783,9 +2129,27 @@
 <span id="cb26-4"><a href="#cb26-4"></a></span>
 <span id="cb26-5"><a href="#cb26-5"></a>cm_logreg</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-
+<div class="cell-output-display">
+<p><img data-src="2022_sdna_ML_workshop_day_2_files/figure-revealjs/unnamed-chunk-6-1.png" width="960"></p>
 </div>
-<img data-src="2022_sdna_ML_workshop_day_2_files/figure-revealjs/unnamed-chunk-6-1.png" width="960" class="r-stretch"></section>
+</div>
+<aside class="notes">
+<ul>
+<li>Confusion matrix summaries how the predicted values compare to the actual values</li>
+<li>Logistic regression model gives lots of false positives and false negatives</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
 <section id="b.-example-set-up-parallel-backend" class="slide level2">
 <h2>6b. Example: Set up parallel backend</h2>
 <ul>
@@ -1802,6 +2166,21 @@
 <span id="cb27-6"><a href="#cb27-6"></a>doParallel<span class="sc">::</span><span class="fu">registerDoParallel</span>(cl)</span>
 <span id="cb27-7"><a href="#cb27-7"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<aside class="notes">
+<ul>
+<li>Many ways to do this, but this code shows one example setup</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="c.-example-rf-k-fold-cv" class="slide level2">
 <h2>6c. Example: RF k-fold CV</h2>
@@ -1856,10 +2235,8 @@
 <ul>
 <li><p>Evaluate model performance</p>
 <ul>
-<li><p>Aggregate performance metrics across folds</p>
-<ul>
-<li>Shows mean, standard error, and n = # folds</li>
-</ul></li>
+<li><p>Aggregate performance metrics across folds</p></li>
+<li><p>Shows mean, standard error, and n = # folds</p></li>
 </ul></li>
 </ul>
 <div class="cell">
@@ -1871,20 +2248,18 @@
 </details>
 <div class="cell-output-display">
 
-<div id="htmlwidget-ba11dbb097296fb9ae35" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-ba11dbb097296fb9ae35">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2"],["accuracy","roc_auc"],["binary","binary"],[0.763349656951358,0.83498141197273],[5,5],[0.0193105793784417,0.00996596592884503],["Preprocessor1_Model1","Preprocessor1_Model1"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>.metric<\/th>\n      <th>.estimator<\/th>\n      <th>mean<\/th>\n      <th>n<\/th>\n      <th>std_err<\/th>\n      <th>.config<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":5,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[3,4,5]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render"],"jsHooks":[]}</script>
+<div id="htmlwidget-aa6e44585158052e8af7" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-aa6e44585158052e8af7">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2"],["accuracy","roc_auc"],["binary","binary"],[0.763349656951358,0.83498141197273],[5,5],[0.0193105793784417,0.00996596592884503],["Preprocessor1_Model1","Preprocessor1_Model1"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>.metric<\/th>\n      <th>.estimator<\/th>\n      <th>mean<\/th>\n      <th>n<\/th>\n      <th>std_err<\/th>\n      <th>.config<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":5,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[3,4,5]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render"],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
 <section id="c.-rf-k-fold-cv-1" class="slide level2">
 <h2>6c. RF k-fold CV</h2>
 <ul>
-<li><p>Get predictions on the held-out folds</p>
-<ul>
+<li><p>Get predictions on the held-out folds</p></li>
 <li><p>Predicted probability of yes or no</p></li>
 <li><p>Predicted class = whichever has highest predicted probability</p></li>
 <li><p>Also includes the true classification column <code>event</code> for comparison purposes</p></li>
-</ul></li>
 </ul>
 </section>
 <section class="slide level2">
@@ -1898,8 +2273,8 @@
 </details>
 <div class="cell-output-display">
 
-<div id="htmlwidget-9f6f8c6fd6cdffe59289" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-9f6f8c6fd6cdffe59289">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],["Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1"],[0.880087192814745,0.516312015732011,0.561806704313741,0.495155747837037,0.686990876952118,0.584657232984979,0.556767844829154,0.567720022201775,0.871080624893879,0.883196657652289,0.489783779397969,0.836028939022556,0.661528800395404,0.609139135455884,0.893540689600632,0.751398638083507,0.698876378127063,0.89487695549398,0.499061518893374,0.669333604079683],[0.119912807185255,0.483687984267989,0.438193295686259,0.504844252162963,0.313009123047882,0.415342767015022,0.443232155170847,0.432279977798225,0.128919375106121,0.11680334234771,0.510216220602031,0.163971060977444,0.338471199604596,0.390860864544116,0.106459310399367,0.248601361916493,0.301123621872937,0.10512304450602,0.500938481106626,0.330666395920316],[7,11,14,15,18,20,32,34,36,58,59,62,69,73,81,85,95,105,107,109],["no","no","no","yes","no","no","no","no","no","no","yes","no","no","no","no","no","no","no","yes","no"],["no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no"],["Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>id<\/th>\n      <th>.pred_no<\/th>\n      <th>.pred_yes<\/th>\n      <th>.row<\/th>\n      <th>.pred_class<\/th>\n      <th>event<\/th>\n      <th>.config<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":2,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[2,3,4]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render"],"jsHooks":[]}</script>
+<div id="htmlwidget-a34b34980ef81f62c5e6" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-a34b34980ef81f62c5e6">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],["Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1"],[0.880087192814745,0.516312015732011,0.561806704313741,0.495155747837037,0.686990876952118,0.584657232984979,0.556767844829154,0.567720022201775,0.871080624893879,0.883196657652289,0.489783779397969,0.836028939022556,0.661528800395404,0.609139135455884,0.893540689600632,0.751398638083507,0.698876378127063,0.89487695549398,0.499061518893374,0.669333604079683],[0.119912807185255,0.483687984267989,0.438193295686259,0.504844252162963,0.313009123047882,0.415342767015022,0.443232155170847,0.432279977798225,0.128919375106121,0.11680334234771,0.510216220602031,0.163971060977444,0.338471199604596,0.390860864544116,0.106459310399367,0.248601361916493,0.301123621872937,0.10512304450602,0.500938481106626,0.330666395920316],[7,11,14,15,18,20,32,34,36,58,59,62,69,73,81,85,95,105,107,109],["no","no","no","yes","no","no","no","no","no","no","yes","no","no","no","no","no","no","no","yes","no"],["no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no"],["Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>id<\/th>\n      <th>.pred_no<\/th>\n      <th>.pred_yes<\/th>\n      <th>.row<\/th>\n      <th>.pred_class<\/th>\n      <th>event<\/th>\n      <th>.config<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":2,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[2,3,4]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render"],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -1945,6 +2320,27 @@
 <span id="cb31-33"><a href="#cb31-33"></a>  <span class="fu">workflow_map</span>(<span class="st">"fit_resamples"</span>, <span class="at">resamples =</span> dat_folds)</span>
 <span id="cb31-34"><a href="#cb31-34"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<aside class="notes">
+<ul>
+<li>Tidymodels provides a convenient framework for fitting multiple models</li>
+<li>Here, we specify RF, XGB, and Logistic regression model using specific values of their hyperparameters</li>
+<li>Put them all together into a single workflow set using the <code>workflow_set</code> function
+<ul>
+<li>Could have used multiple model formulations, for example if we wante to explore different variable subsets</li>
+</ul></li>
+<li>Run all combinations of model formulas and model specifications using the <code>workflow_map</code> function</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="d.-example-multiple-models-1" class="slide level2">
 <h2>6d. Example: Multiple models</h2>
@@ -1958,10 +2354,27 @@
 </details>
 <div class="cell-output-display">
 
-<div id="htmlwidget-84beed89c682cceaf914" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-84beed89c682cceaf914">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4","5","6"],["formula_rand_forest","formula_rand_forest","formula_boost_tree","formula_boost_tree","formula_logistic_reg","formula_logistic_reg"],["Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1"],["accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc"],[0.846653557262506,0.912457503491465,0.833046983492653,0.885090641109191,0.668229596846805,0.70318245623449],[0.00451522882966764,0.00164220583161298,0.00640930232460071,0.00435371196864467,0.00273486175191353,0.00686656788409845],[3,3,3,3,3,3],["formula","formula","formula","formula","formula","formula"],["rand_forest","rand_forest","boost_tree","boost_tree","logistic_reg","logistic_reg"],[1,1,2,2,3,3]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>wflow_id<\/th>\n      <th>.config<\/th>\n      <th>.metric<\/th>\n      <th>mean<\/th>\n      <th>std_err<\/th>\n      <th>n<\/th>\n      <th>preprocessor<\/th>\n      <th>model<\/th>\n      <th>rank<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":4,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":5,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[4,5,6,9]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render"],"jsHooks":[]}</script>
+<div id="htmlwidget-e784c3fa380f318ff005" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e784c3fa380f318ff005">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4","5","6"],["formula_rand_forest","formula_rand_forest","formula_boost_tree","formula_boost_tree","formula_logistic_reg","formula_logistic_reg"],["Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1"],["accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc"],[0.846653557262506,0.912457503491465,0.833046983492653,0.885090641109191,0.668229596846805,0.70318245623449],[0.00451522882966764,0.00164220583161298,0.00640930232460071,0.00435371196864467,0.00273486175191353,0.00686656788409845],[3,3,3,3,3,3],["formula","formula","formula","formula","formula","formula"],["rand_forest","rand_forest","boost_tree","boost_tree","logistic_reg","logistic_reg"],[1,1,2,2,3,3]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>wflow_id<\/th>\n      <th>.config<\/th>\n      <th>.metric<\/th>\n      <th>mean<\/th>\n      <th>std_err<\/th>\n      <th>n<\/th>\n      <th>preprocessor<\/th>\n      <th>model<\/th>\n      <th>rank<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":4,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":5,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[4,5,6,9]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render"],"jsHooks":[]}</script>
 </div>
 </div>
+<aside class="notes">
+<ul>
+<li>Leaderboard ranks model performance across the different modeling scenarios</li>
+<li>Random forest is in first place, followed by XGBoost.</li>
+<li>Both beat our benchmark logistic regression model</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="e.-example-param-tuning-w-cv" class="slide level2">
 <h2>6e. Example — Param tuning w/ CV</h2>
@@ -1972,6 +2385,28 @@
 <li><p>Can choose grid search approach - Latin Hypercube, Max entropy, Regular, etc</p></li>
 <li><p>Can choose parameter value ranges or have them automatically selected</p></li>
 </ul>
+<aside class="notes">
+<ul>
+<li>What I hear: “I tried random forest, but it didn’t give great results.”</li>
+<li>What that usually means: “I tried one specific set of parameter values for random forest, and it didn’t give great results.”</li>
+<li>Parameter value settings can have a significant impact on the model performance. We need to find the combination of parameters that work well or the specific modeling exercise.</li>
+<li>Grid search = try a bunch of different parameter combinations; choose the set of values that optimizes the performance metric
+<ul>
+<li>Several grid search approaches in tidymodels framework: latin hypercube, max entropy, regular, etc</li>
+<li>Can have the algorithm choose value ranges for you, or you could set them yourself</li>
+</ul></li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section class="slide level2">
 
@@ -2027,9 +2462,32 @@
 <span id="cb33-48"><a href="#cb33-48"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  2.776   0.650  95.562 </code></pre>
+  2.926   0.750 117.567 </code></pre>
 </div>
 </div>
+<aside class="notes">
+<ul>
+<li>Example: tune parameters in the XGBoost algorithm</li>
+<li>Using 5-fold cross validation to assess the performance of each parameter combination across folds</li>
+<li>Use the tune() function to indicate that we want to train 4 important parameters in the XGBoost model
+<ul>
+<li>number of trees, learning rate, tree depth, and mtry</li>
+</ul></li>
+<li>In this example, I specifically set the parameter ranges that I want the grid search to focus on</li>
+<li>And then I use the max entropy method to select 100 different parameter combinations</li>
+<li>As you can see, it took some time to run</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="e.-example-param-tuning-w-cv-1" class="slide level2">
 <h2>6e. Example — Param tuning w/ CV</h2>
@@ -2039,14 +2497,30 @@
 <summary>Show the code</summary>
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a>xgb_res <span class="sc">%&gt;%</span> </span>
 <span id="cb35-2"><a href="#cb35-2"></a>  <span class="fu">collect_metrics</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb35-3"><a href="#cb35-3"></a>  pretty_dt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb35-3"><a href="#cb35-3"></a>  <span class="fu">filter</span>(.metric <span class="sc">==</span> <span class="st">'roc_auc'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb35-4"><a href="#cb35-4"></a>  pretty_dt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 
-<div id="htmlwidget-6798644ae3ee4cbb60b5" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-6798644ae3ee4cbb60b5">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],[3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4,4],[1327,1327,1170,1170,855,855,1158,1158,1344,1344,588,588,594,594,1128,1128,987,987,217,217],[5,5,7,7,9,9,15,15,5,5,6,6,12,12,14,14,14,14,15,15],[0.00254957582367351,0.00254957582367351,0.0243159519884037,0.0243159519884037,0.0146805804258329,0.0146805804258329,0.0553313889769605,0.0553313889769605,0.0997989159637829,0.0997989159637829,0.0205189070739434,0.0205189070739434,0.035569909024681,0.035569909024681,0.0267443444857723,0.0267443444857723,0.0690918528113165,0.0690918528113165,0.00698534466210986,0.00698534466210986],["accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc"],["binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary"],[0.669461446937139,0.714200983259457,0.71155297557659,0.763129189737974,0.685633443663228,0.739340502997574,0.730245692655061,0.787165932679061,0.76209562485692,0.824445618421626,0.695829062930916,0.743846960311825,0.710275491680085,0.760638319644494,0.720470199826504,0.77215902502805,0.737037068088322,0.799031307779839,0.657995575319486,0.705606100905544],[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5],[0.0129066557157075,0.0120565085486827,0.0107177476504232,0.0106287270243548,0.00497187060787812,0.011295626404594,0.00702369448189001,0.0111608680252451,0.0108452522694062,0.0128134543882215,0.00658715048552925,0.0103102898801414,0.00824127841880596,0.0104857827009493,0.00706227475118205,0.011126570578537,0.00815532665668525,0.0109758507103662,0.0128286421327647,0.0143300303473854],["Preprocessor1_Model001","Preprocessor1_Model001","Preprocessor1_Model002","Preprocessor1_Model002","Preprocessor1_Model003","Preprocessor1_Model003","Preprocessor1_Model004","Preprocessor1_Model004","Preprocessor1_Model005","Preprocessor1_Model005","Preprocessor1_Model006","Preprocessor1_Model006","Preprocessor1_Model007","Preprocessor1_Model007","Preprocessor1_Model008","Preprocessor1_Model008","Preprocessor1_Model009","Preprocessor1_Model009","Preprocessor1_Model010","Preprocessor1_Model010"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>mtry<\/th>\n      <th>trees<\/th>\n      <th>tree_depth<\/th>\n      <th>learn_rate<\/th>\n      <th>.metric<\/th>\n      <th>.estimator<\/th>\n      <th>mean<\/th>\n      <th>n<\/th>\n      <th>std_err<\/th>\n      <th>.config<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":4,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":7,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":9,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[1,2,3,4,7,8,9]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render","options.columnDefs.2.render"],"jsHooks":[]}</script>
+<div id="htmlwidget-7c9edebbe7a9563ac26c" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-7c9edebbe7a9563ac26c">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],[3,3,3,3,4,4,4,4,4,4,4,4,4,4,5,5,5,6,6,6],[1327,1170,855,1158,1344,588,594,1128,987,217,839,441,1164,969,1472,549,404,1419,1486,1372],[5,7,9,15,5,6,12,14,14,15,17,17,18,19,13,18,19,5,6,8],[0.00254957582367351,0.0243159519884037,0.0146805804258329,0.0553313889769605,0.0997989159637829,0.0205189070739434,0.035569909024681,0.0267443444857723,0.0690918528113165,0.00698534466210986,0.0279530117585557,0.0397375199546106,0.0723127264787909,0.0187981477434165,0.0877256885797484,0.086601771616796,0.0164499973460333,0.0429676587202004,0.00853467310153646,0.0241826337304199],["roc_auc","roc_auc","roc_auc","roc_auc","roc_auc","roc_auc","roc_auc","roc_auc","roc_auc","roc_auc","roc_auc","roc_auc","roc_auc","roc_auc","roc_auc","roc_auc","roc_auc","roc_auc","roc_auc","roc_auc"],["binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary"],[0.714200983259457,0.763129189737974,0.739340502997574,0.787165932679061,0.824445618421626,0.743846960311825,0.760638319644494,0.77215902502805,0.799031307779839,0.705606100905544,0.762609462800966,0.75586311380786,0.806468988671379,0.756453916606873,0.829600224991029,0.792476690698719,0.734365843393076,0.804515479998172,0.752562506910228,0.784207895608143],[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5],[0.0120565085486827,0.0106287270243548,0.011295626404594,0.0111608680252451,0.0128134543882215,0.0103102898801414,0.0104857827009493,0.011126570578537,0.0109758507103662,0.0143300303473854,0.0113926147379554,0.0116711848803124,0.0123201740139599,0.0114943358077584,0.0130062419413584,0.0106101052845152,0.0115811756019904,0.0109941015742595,0.0114602377930705,0.0108877342281836],["Preprocessor1_Model001","Preprocessor1_Model002","Preprocessor1_Model003","Preprocessor1_Model004","Preprocessor1_Model005","Preprocessor1_Model006","Preprocessor1_Model007","Preprocessor1_Model008","Preprocessor1_Model009","Preprocessor1_Model010","Preprocessor1_Model011","Preprocessor1_Model012","Preprocessor1_Model013","Preprocessor1_Model014","Preprocessor1_Model015","Preprocessor1_Model016","Preprocessor1_Model017","Preprocessor1_Model018","Preprocessor1_Model019","Preprocessor1_Model020"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>mtry<\/th>\n      <th>trees<\/th>\n      <th>tree_depth<\/th>\n      <th>learn_rate<\/th>\n      <th>.metric<\/th>\n      <th>.estimator<\/th>\n      <th>mean<\/th>\n      <th>n<\/th>\n      <th>std_err<\/th>\n      <th>.config<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":4,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":7,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":9,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[1,2,3,4,7,8,9]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render","options.columnDefs.2.render"],"jsHooks":[]}</script>
 </div>
 </div>
+<aside class="notes">
+<ul>
+<li>AUC metrics averaged across folds for each parameter combination in the grid search</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="e.-example-param-tuning-w-cv-2" class="slide level2">
 <h2>6e. Example — Param tuning w/ CV</h2>
@@ -2061,10 +2535,25 @@
 </details>
 <div class="cell-output-display">
 
-<div id="htmlwidget-26638853a230d39dc84d" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-26638853a230d39dc84d">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1"],[16],[1385],[17],[0.0924847716008197],["roc_auc"],["binary"],[0.848391763863541],[5],[0.011549706729051],["Preprocessor1_Model084"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>mtry<\/th>\n      <th>trees<\/th>\n      <th>tree_depth<\/th>\n      <th>learn_rate<\/th>\n      <th>.metric<\/th>\n      <th>.estimator<\/th>\n      <th>mean<\/th>\n      <th>n<\/th>\n      <th>std_err<\/th>\n      <th>.config<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":4,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":7,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":9,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[1,2,3,4,7,8,9]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render","options.columnDefs.2.render"],"jsHooks":[]}</script>
+<div id="htmlwidget-8f7ac08eb04ef13bf0fd" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-8f7ac08eb04ef13bf0fd">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1"],[16],[1385],[17],[0.0924847716008197],["roc_auc"],["binary"],[0.848391763863541],[5],[0.011549706729051],["Preprocessor1_Model084"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>mtry<\/th>\n      <th>trees<\/th>\n      <th>tree_depth<\/th>\n      <th>learn_rate<\/th>\n      <th>.metric<\/th>\n      <th>.estimator<\/th>\n      <th>mean<\/th>\n      <th>n<\/th>\n      <th>std_err<\/th>\n      <th>.config<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":4,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":7,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":9,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[1,2,3,4,7,8,9]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render","options.columnDefs.2.render"],"jsHooks":[]}</script>
 </div>
 </div>
+<aside class="notes">
+<ul>
+<li>The <code>show_best</code> function allows us to select the optimal parameter combination, i.e., the one that gives the highest AUC</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="e.-example-stop-the-cluster" class="slide level2">
 <h2>6e. Example — Stop the cluster</h2>
@@ -2077,6 +2566,19 @@
 <span id="cb37-5"><a href="#cb37-5"></a>parallel<span class="sc">::</span><span class="fu">stopCluster</span>(cl)</span>
 <span id="cb37-6"><a href="#cb37-6"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<aside class="notes">
+<p>Don’t forget to shut down the cluster after you are done training your models!</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section></section>
 <section>
 <section id="create-visual-summaries" class="title-slide slide level1 center">
@@ -2115,9 +2617,28 @@
 <span id="cb38-13"><a href="#cb38-13"></a></span>
 <span id="cb38-14"><a href="#cb38-14"></a>plot_tune_metrics_xgb</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-
+<div class="cell-output-display">
+<p><img data-src="2022_sdna_ML_workshop_day_2_files/figure-revealjs/xgb_tune_metrics-1.png" width="960"></p>
 </div>
-<img data-src="2022_sdna_ML_workshop_day_2_files/figure-revealjs/xgb_tune_metrics-1.png" width="960" class="r-stretch"></section>
+</div>
+<aside class="notes">
+<ul>
+<li>Sorry for the small print!</li>
+<li>Each row shows the mean +/- SE for the accuracy and AUC measurements for a specific parameter combination in the XGBoost grid search</li>
+<li>Lots of variability in performance</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
 <section id="example-roc-vs-param-value" class="slide level2">
 <h2>7. Example: ROC vs param value</h2>
 <ul>
@@ -2229,80 +2750,12 @@
           display:block!important;
       }</style></aside>
 </section>
-<section id="example-confusion-matrix" class="slide level2">
-<h2>7. Example: Confusion matrix</h2>
-<p>Summarize the predicted vs observed outcomes across k folds</p>
-<div class="cell">
-<details>
-<summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb41-2"><a href="#cb41-2"></a></span>
-<span id="cb41-3"><a href="#cb41-3"></a>tune_preds <span class="ot">&lt;-</span> xgb_res <span class="sc">%&gt;%</span></span>
-<span id="cb41-4"><a href="#cb41-4"></a>  <span class="fu">collect_predictions</span>()</span>
-<span id="cb41-5"><a href="#cb41-5"></a></span>
-<span id="cb41-6"><a href="#cb41-6"></a>cells_per_resample <span class="ot">&lt;-</span> tune_preds <span class="sc">%&gt;%</span></span>
-<span id="cb41-7"><a href="#cb41-7"></a>  <span class="fu">group_by</span>(id) <span class="sc">%&gt;%</span></span>
-<span id="cb41-8"><a href="#cb41-8"></a>  <span class="fu">conf_mat</span>(event, .pred_class) <span class="sc">%&gt;%</span></span>
-<span id="cb41-9"><a href="#cb41-9"></a>  <span class="fu">mutate</span>(<span class="at">tidied =</span> <span class="fu">lapply</span>(conf_mat, tidy)) <span class="sc">%&gt;%</span></span>
-<span id="cb41-10"><a href="#cb41-10"></a>  <span class="fu">unnest</span>(tidied)</span>
-<span id="cb41-11"><a href="#cb41-11"></a></span>
-<span id="cb41-12"><a href="#cb41-12"></a><span class="co"># Get the totals per resample</span></span>
-<span id="cb41-13"><a href="#cb41-13"></a>counts_per_resample <span class="ot">&lt;-</span> tune_preds <span class="sc">%&gt;%</span></span>
-<span id="cb41-14"><a href="#cb41-14"></a>  <span class="fu">group_by</span>(id) <span class="sc">%&gt;%</span></span>
-<span id="cb41-15"><a href="#cb41-15"></a>  <span class="fu">summarize</span>(<span class="at">total =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb41-16"><a href="#cb41-16"></a>  <span class="fu">left_join</span>(cells_per_resample, <span class="at">by =</span> <span class="st">"id"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb41-17"><a href="#cb41-17"></a>  <span class="co"># Compute the proportions</span></span>
-<span id="cb41-18"><a href="#cb41-18"></a>  <span class="fu">mutate</span>(<span class="at">prop =</span> value<span class="sc">/</span>total) <span class="sc">%&gt;%</span></span>
-<span id="cb41-19"><a href="#cb41-19"></a>  <span class="fu">group_by</span>(name) <span class="sc">%&gt;%</span></span>
-<span id="cb41-20"><a href="#cb41-20"></a>  <span class="co"># Average</span></span>
-<span id="cb41-21"><a href="#cb41-21"></a>  <span class="fu">summarize</span>(<span class="at">prop =</span> <span class="fu">mean</span>(prop))</span>
-<span id="cb41-22"><a href="#cb41-22"></a></span>
-<span id="cb41-23"><a href="#cb41-23"></a><span class="co"># Now reshape these into a matrix</span></span>
-<span id="cb41-24"><a href="#cb41-24"></a>mean_cmat <span class="ot">&lt;-</span> <span class="fu">matrix</span>(counts_per_resample<span class="sc">$</span>prop, <span class="at">byrow =</span> <span class="cn">TRUE</span>, <span class="at">ncol =</span> <span class="dv">2</span>)</span>
-<span id="cb41-25"><a href="#cb41-25"></a><span class="fu">rownames</span>(mean_cmat) <span class="ot">&lt;-</span> <span class="fu">levels</span>(tune_preds<span class="sc">$</span>event)</span>
-<span id="cb41-26"><a href="#cb41-26"></a><span class="fu">colnames</span>(mean_cmat) <span class="ot">&lt;-</span> <span class="fu">levels</span>(tune_preds<span class="sc">$</span>event)</span>
-<span id="cb41-27"><a href="#cb41-27"></a></span>
-<span id="cb41-28"><a href="#cb41-28"></a><span class="fu">round</span>(mean_cmat, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>       no   yes
-no  0.488 0.176
-yes 0.100 0.236</code></pre>
-</div>
-</div>
-<aside class="notes">
-
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
-</section>
 <section id="example-select-the-best-model" class="slide level2">
 <h2>7. Example: Select the best model</h2>
 <ul>
 <li><p>Best model is the one that optimizes the performance metric</p></li>
 <li><p>For example, we could choose the model with highest AUC</p></li>
 </ul>
-<aside class="notes">
-
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
 </section>
 <section class="slide level2">
 
@@ -2310,19 +2763,19 @@ yes 0.100 0.236</code></pre>
 <div class="cell">
 <details>
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a><span class="do">## XGBoost model that has the best AUC</span></span>
-<span id="cb43-2"><a href="#cb43-2"></a>best_auc <span class="ot">&lt;-</span> <span class="fu">select_best</span>(xgb_res, <span class="at">metric =</span> <span class="st">"roc_auc"</span>)</span>
-<span id="cb43-3"><a href="#cb43-3"></a></span>
-<span id="cb43-4"><a href="#cb43-4"></a><span class="do">## Workflow associated with the best AUC</span></span>
-<span id="cb43-5"><a href="#cb43-5"></a>best_xgb_wflow <span class="ot">&lt;-</span> xgb_model_wflow_tune <span class="sc">%&gt;%</span> </span>
-<span id="cb43-6"><a href="#cb43-6"></a>  <span class="fu">finalize_workflow</span>(best_auc)</span>
-<span id="cb43-7"><a href="#cb43-7"></a></span>
-<span id="cb43-8"><a href="#cb43-8"></a><span class="do">## The final model fit</span></span>
-<span id="cb43-9"><a href="#cb43-9"></a>final_model_fit <span class="ot">&lt;-</span> </span>
-<span id="cb43-10"><a href="#cb43-10"></a>  best_xgb_wflow <span class="sc">%&gt;%</span> </span>
-<span id="cb43-11"><a href="#cb43-11"></a>  <span class="fu">fit</span>(<span class="at">data =</span> dat_train)</span>
-<span id="cb43-12"><a href="#cb43-12"></a></span>
-<span id="cb43-13"><a href="#cb43-13"></a><span class="fu">print</span>(final_model_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a><span class="do">## XGBoost model that has the best AUC</span></span>
+<span id="cb41-2"><a href="#cb41-2"></a>best_auc <span class="ot">&lt;-</span> <span class="fu">select_best</span>(xgb_res, <span class="at">metric =</span> <span class="st">"roc_auc"</span>)</span>
+<span id="cb41-3"><a href="#cb41-3"></a></span>
+<span id="cb41-4"><a href="#cb41-4"></a><span class="do">## Workflow associated with the best AUC</span></span>
+<span id="cb41-5"><a href="#cb41-5"></a>best_xgb_wflow <span class="ot">&lt;-</span> xgb_model_wflow_tune <span class="sc">%&gt;%</span> </span>
+<span id="cb41-6"><a href="#cb41-6"></a>  <span class="fu">finalize_workflow</span>(best_auc)</span>
+<span id="cb41-7"><a href="#cb41-7"></a></span>
+<span id="cb41-8"><a href="#cb41-8"></a><span class="do">## The final model fit</span></span>
+<span id="cb41-9"><a href="#cb41-9"></a>final_model_fit <span class="ot">&lt;-</span> </span>
+<span id="cb41-10"><a href="#cb41-10"></a>  best_xgb_wflow <span class="sc">%&gt;%</span> </span>
+<span id="cb41-11"><a href="#cb41-11"></a>  <span class="fu">fit</span>(<span class="at">data =</span> dat_train)</span>
+<span id="cb41-12"><a href="#cb41-12"></a></span>
+<span id="cb41-13"><a href="#cb41-13"></a><span class="fu">print</span>(final_model_fit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>══ Workflow [trained] ══════════════════════════════════════════════════════════
@@ -2362,7 +2815,10 @@ evaluation_log:
 </div>
 </div>
 <aside class="notes">
-
+<ul>
+<li>Scroll down to see the rest of the output</li>
+<li>This view shows the details of the final XGBoost model fit using the optimal combination of parameters</li>
+</ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -2394,7 +2850,9 @@ evaluation_log:
 <li>Will provide more details on Day 3</li>
 </ul>
 <aside class="notes">
-
+<ul>
+<li>Tools for explainable AI, or xAI available in R and python</li>
+</ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -2412,13 +2870,13 @@ evaluation_log:
 <div class="cell">
 <details>
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1"></a>xgb_explainer <span class="ot">&lt;-</span> <span class="fu">explain_tidymodels</span>(</span>
-<span id="cb45-2"><a href="#cb45-2"></a>  final_model_fit,</span>
-<span id="cb45-3"><a href="#cb45-3"></a>  <span class="at">data =</span> dat_train,</span>
-<span id="cb45-4"><a href="#cb45-4"></a>  <span class="co"># DALEX required an integer for factors:</span></span>
-<span id="cb45-5"><a href="#cb45-5"></a>  <span class="at">y =</span> <span class="fu">as.integer</span>(dat_train<span class="sc">$</span>event) <span class="sc">-</span> <span class="dv">1</span>,</span>
-<span id="cb45-6"><a href="#cb45-6"></a>  <span class="at">verbose =</span> <span class="cn">TRUE</span></span>
-<span id="cb45-7"><a href="#cb45-7"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a>xgb_explainer <span class="ot">&lt;-</span> <span class="fu">explain_tidymodels</span>(</span>
+<span id="cb43-2"><a href="#cb43-2"></a>  final_model_fit,</span>
+<span id="cb43-3"><a href="#cb43-3"></a>  <span class="at">data =</span> dat_train,</span>
+<span id="cb43-4"><a href="#cb43-4"></a>  <span class="co"># DALEX required an integer for factors:</span></span>
+<span id="cb43-5"><a href="#cb43-5"></a>  <span class="at">y =</span> <span class="fu">as.integer</span>(dat_train<span class="sc">$</span>event) <span class="sc">-</span> <span class="dv">1</span>,</span>
+<span id="cb43-6"><a href="#cb43-6"></a>  <span class="at">verbose =</span> <span class="cn">TRUE</span></span>
+<span id="cb43-7"><a href="#cb43-7"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Preparation of a new explainer is initiated
@@ -2436,7 +2894,9 @@ evaluation_log:
 </div>
 </div>
 <aside class="notes">
-
+<ul>
+<li>Create a model explainer that will run the</li>
+</ul>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -2478,38 +2938,38 @@ evaluation_log:
 <div>
 <details>
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1"></a><span class="co"># https://ema.drwhy.ai/partialDependenceProfiles.html</span></span>
-<span id="cb47-2"><a href="#cb47-2"></a>plot_pdp <span class="ot">&lt;-</span> <span class="cf">function</span>(dat, explainer, input_vars, group_var) {</span>
-<span id="cb47-3"><a href="#cb47-3"></a>  <span class="fu">set.seed</span>(<span class="dv">86329</span>)</span>
-<span id="cb47-4"><a href="#cb47-4"></a>  </span>
-<span id="cb47-5"><a href="#cb47-5"></a>  pdp_list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(input_vars, <span class="cf">function</span>(vname) {</span>
-<span id="cb47-6"><a href="#cb47-6"></a>    var_splits <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">unique</span>(dat[[vname]]))</span>
-<span id="cb47-7"><a href="#cb47-7"></a>    <span class="fu">names</span>(var_splits) <span class="ot">&lt;-</span> vname</span>
-<span id="cb47-8"><a href="#cb47-8"></a>    </span>
-<span id="cb47-9"><a href="#cb47-9"></a>    <span class="fu">model_profile</span>(</span>
-<span id="cb47-10"><a href="#cb47-10"></a>      xgb_explainer,</span>
-<span id="cb47-11"><a href="#cb47-11"></a>      <span class="at">variables =</span> vname,</span>
-<span id="cb47-12"><a href="#cb47-12"></a>      <span class="at">N =</span> <span class="cn">NULL</span>,</span>
-<span id="cb47-13"><a href="#cb47-13"></a>      <span class="at">groups =</span> group_var,</span>
-<span id="cb47-14"><a href="#cb47-14"></a>      <span class="at">variable_splits =</span> var_splits</span>
-<span id="cb47-15"><a href="#cb47-15"></a>    )</span>
-<span id="cb47-16"><a href="#cb47-16"></a>  })</span>
-<span id="cb47-17"><a href="#cb47-17"></a>  </span>
-<span id="cb47-18"><a href="#cb47-18"></a>  <span class="fu">lapply</span>(pdp_list, plot)</span>
-<span id="cb47-19"><a href="#cb47-19"></a>}</span>
-<span id="cb47-20"><a href="#cb47-20"></a></span>
-<span id="cb47-21"><a href="#cb47-21"></a></span>
-<span id="cb47-22"><a href="#cb47-22"></a><span class="fu">plot_pdp</span>(<span class="at">dat =</span> dat_train, <span class="at">explainer =</span> xgb_explainer, </span>
-<span id="cb47-23"><a href="#cb47-23"></a>         <span class="at">input_vars=</span><span class="st">'age'</span>, <span class="at">group_var=</span><span class="st">'treatment_arm'</span>)[[<span class="dv">1</span>]]</span>
-<span id="cb47-24"><a href="#cb47-24"></a><span class="fu">plot_pdp</span>(<span class="at">dat =</span> dat_train, <span class="at">explainer=</span>xgb_explainer, </span>
-<span id="cb47-25"><a href="#cb47-25"></a>         <span class="at">input_vars=</span><span class="st">'karnof'</span>, <span class="at">group_var=</span><span class="st">'treatment_arm'</span>)[[<span class="dv">1</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1"></a><span class="co"># https://ema.drwhy.ai/partialDependenceProfiles.html</span></span>
+<span id="cb45-2"><a href="#cb45-2"></a>plot_pdp <span class="ot">&lt;-</span> <span class="cf">function</span>(dat, explainer, input_vars, group_var) {</span>
+<span id="cb45-3"><a href="#cb45-3"></a>  <span class="fu">set.seed</span>(<span class="dv">86329</span>)</span>
+<span id="cb45-4"><a href="#cb45-4"></a>  </span>
+<span id="cb45-5"><a href="#cb45-5"></a>  pdp_list <span class="ot">&lt;-</span> <span class="fu">lapply</span>(input_vars, <span class="cf">function</span>(vname) {</span>
+<span id="cb45-6"><a href="#cb45-6"></a>    var_splits <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="fu">unique</span>(dat[[vname]]))</span>
+<span id="cb45-7"><a href="#cb45-7"></a>    <span class="fu">names</span>(var_splits) <span class="ot">&lt;-</span> vname</span>
+<span id="cb45-8"><a href="#cb45-8"></a>    </span>
+<span id="cb45-9"><a href="#cb45-9"></a>    <span class="fu">model_profile</span>(</span>
+<span id="cb45-10"><a href="#cb45-10"></a>      xgb_explainer,</span>
+<span id="cb45-11"><a href="#cb45-11"></a>      <span class="at">variables =</span> vname,</span>
+<span id="cb45-12"><a href="#cb45-12"></a>      <span class="at">N =</span> <span class="cn">NULL</span>,</span>
+<span id="cb45-13"><a href="#cb45-13"></a>      <span class="at">groups =</span> group_var,</span>
+<span id="cb45-14"><a href="#cb45-14"></a>      <span class="at">variable_splits =</span> var_splits</span>
+<span id="cb45-15"><a href="#cb45-15"></a>    )</span>
+<span id="cb45-16"><a href="#cb45-16"></a>  })</span>
+<span id="cb45-17"><a href="#cb45-17"></a>  </span>
+<span id="cb45-18"><a href="#cb45-18"></a>  <span class="fu">lapply</span>(pdp_list, plot)</span>
+<span id="cb45-19"><a href="#cb45-19"></a>}</span>
+<span id="cb45-20"><a href="#cb45-20"></a></span>
+<span id="cb45-21"><a href="#cb45-21"></a></span>
+<span id="cb45-22"><a href="#cb45-22"></a><span class="fu">plot_pdp</span>(<span class="at">dat =</span> dat_train, <span class="at">explainer =</span> xgb_explainer, </span>
+<span id="cb45-23"><a href="#cb45-23"></a>         <span class="at">input_vars=</span><span class="st">'age'</span>, <span class="at">group_var=</span><span class="st">'treatment_arm'</span>)[[<span class="dv">1</span>]]</span>
+<span id="cb45-24"><a href="#cb45-24"></a><span class="fu">plot_pdp</span>(<span class="at">dat =</span> dat_train, <span class="at">explainer=</span>xgb_explainer, </span>
+<span id="cb45-25"><a href="#cb45-25"></a>         <span class="at">input_vars=</span><span class="st">'karnof'</span>, <span class="at">group_var=</span><span class="st">'treatment_arm'</span>)[[<span class="dv">1</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell quarto-layout-panel">
 <div class="quarto-layout-row quarto-layout-valign-top">
 <div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="2022_sdna_ML_workshop_day_2_files/figure-revealjs/unnamed-chunk-15-1.png" width="960"></p>
+<p><img data-src="2022_sdna_ML_workshop_day_2_files/figure-revealjs/unnamed-chunk-14-1.png" width="960"></p>
 <p></p><figcaption>Age</figcaption><p></p>
 </figure>
 </div>
@@ -2517,7 +2977,7 @@ evaluation_log:
 <div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="2022_sdna_ML_workshop_day_2_files/figure-revealjs/unnamed-chunk-15-2.png" width="960"></p>
+<p><img data-src="2022_sdna_ML_workshop_day_2_files/figure-revealjs/unnamed-chunk-14-2.png" width="960"></p>
 <p></p><figcaption>Karnofsky</figcaption><p></p>
 </figure>
 </div>
@@ -2525,35 +2985,22 @@ evaluation_log:
 </div>
 </div>
 </div>
-<aside class="notes">
-
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
 </div>
 <div id="tabset-3-2">
 <div>
 <details>
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1"></a><span class="fu">plot_pdp</span>(<span class="at">dat =</span> dat_train, <span class="at">explainer=</span>xgb_explainer, </span>
-<span id="cb48-2"><a href="#cb48-2"></a>         <span class="at">input_vars=</span><span class="st">'days_prior_art'</span>, <span class="at">group_var=</span><span class="st">'treatment_arm'</span>)[[<span class="dv">1</span>]]</span>
-<span id="cb48-3"><a href="#cb48-3"></a><span class="fu">plot_pdp</span>(<span class="at">dat =</span> dat_train, <span class="at">explainer=</span>xgb_explainer, </span>
-<span id="cb48-4"><a href="#cb48-4"></a>         <span class="at">input_vars=</span><span class="st">'baseline_cd8'</span>, <span class="at">group_var=</span><span class="st">'treatment_arm'</span>)[[<span class="dv">1</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1"></a><span class="fu">plot_pdp</span>(<span class="at">dat =</span> dat_train, <span class="at">explainer=</span>xgb_explainer, </span>
+<span id="cb46-2"><a href="#cb46-2"></a>         <span class="at">input_vars=</span><span class="st">'days_prior_art'</span>, <span class="at">group_var=</span><span class="st">'treatment_arm'</span>)[[<span class="dv">1</span>]]</span>
+<span id="cb46-3"><a href="#cb46-3"></a><span class="fu">plot_pdp</span>(<span class="at">dat =</span> dat_train, <span class="at">explainer=</span>xgb_explainer, </span>
+<span id="cb46-4"><a href="#cb46-4"></a>         <span class="at">input_vars=</span><span class="st">'baseline_cd8'</span>, <span class="at">group_var=</span><span class="st">'treatment_arm'</span>)[[<span class="dv">1</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell quarto-layout-panel">
 <div class="quarto-layout-row quarto-layout-valign-top">
 <div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="2022_sdna_ML_workshop_day_2_files/figure-revealjs/unnamed-chunk-16-1.png" width="960"></p>
+<p><img data-src="2022_sdna_ML_workshop_day_2_files/figure-revealjs/unnamed-chunk-15-1.png" width="960"></p>
 <p></p><figcaption>Days on prior ART</figcaption><p></p>
 </figure>
 </div>
@@ -2561,9 +3008,12 @@ evaluation_log:
 <div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <div class="quarto-figure quarto-figure-center">
 <figure>
-<p><img data-src="2022_sdna_ML_workshop_day_2_files/figure-revealjs/unnamed-chunk-16-2.png" width="960"></p>
+<p><img data-src="2022_sdna_ML_workshop_day_2_files/figure-revealjs/unnamed-chunk-15-2.png" width="960"></p>
 <p></p><figcaption>Baseline CD8</figcaption><p></p>
 </figure>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -2582,9 +3032,6 @@ evaluation_log:
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
-</div>
-</div>
-</div>
 </section></section>
 <section>
 <section id="deploy-the-model" class="title-slide slide level1 center">
@@ -2593,7 +3040,14 @@ evaluation_log:
 </section>
 <section id="deploy-the-model-1" class="slide level2">
 <h2>9. Deploy the model</h2>
-<p>Meodel deployment will be discussed in the hands-on session on Day 3.</p>
+<ul>
+<li><p>Model deployment: integrate a machine learning model and integrate it into an existing production environment where it can take in an input and return an output.</p></li>
+<li><p>Make the predictions from a trained ML model available to others, whether that be users, management, or other systems.</p></li>
+<li><p>Model deployment will be discussed in the hands-on session on Day 3.</p></li>
+</ul>
+<div class="footer">
+<p>Source: <a href="https://towardsdatascience.com/what-does-it-mean-to-deploy-a-machine-learning-model-dddb983ac416" class="uri">https://towardsdatascience.com/what-does-it-mean-to-deploy-a-machine-learning-model-dddb983ac416</a></p>
+</div>
 </section></section>
 <section>
 <section id="create-a-ml-workflow" class="title-slide slide level1 center">
@@ -2657,8 +3111,12 @@ evaluation_log:
 <ul>
 <li><p>2022 ML Workshop</p>
 <ul>
-<li><p><a href="https://github.com/sydeaka/machine-learning-workshop-2022">GitHub</a></p></li>
-<li><p><a href="https://1759891.mediaspace.kaltura.com/media/2022+GSS+++SDnA+ML+Workshop+Day+1A+Machine+Learning+at+Lilly/1_2t52m5zn">Video recording of Day 1</a></p></li>
+<li><a href="https://github.com/sydeaka/machine-learning-workshop-2022">GitHub</a></li>
+<li>ACTG 175 study used in demo
+<ul>
+<li>Data source/detail: https://www.rdocumentation.org/packages/speff2trial/versions/1.0.4/topics/ACTG175</li>
+<li>Journal article: https://www.nejm.org/doi/10.1056/NEJM199610103351501</li>
+</ul></li>
 </ul></li>
 <li><p>Machine learning algorithms</p></li>
 <li><p>TidyModels workshop: <a href="https://workshops.tidymodels.org/">Slides</a>; <a href="https://github.com/tidymodels/workshops/tree/main/classwork">GitHub</a>; <a href="https://www.tmwr.org/">Book</a></p></li>
@@ -2668,21 +3126,6 @@ evaluation_log:
 <li><p><a href="https://solutions.rstudio.com/example/bike_predict/">Bike prediction demo</a></p></li>
 <li><p><a href="https://juliasilge.com/blog/lego-sets/">LEGO set demo</a></p></li>
 </ul></li>
-</ul>
-</section>
-<section id="lilly-resources" class="slide level2">
-<h2>Lilly resources</h2>
-<ul>
-<li><p>HPC documentation</p>
-<ul>
-<li><p><a href="https://hpc.am.lilly.com/index.php/Main_Page">RIDS HPC</a></p></li>
-<li><p><a href="http://hpc-analytics.am.lilly.com">HPC Analytics Documentation Portal</a></p></li>
-</ul></li>
-<li><p>JupyterHub: <a href="https://jupyterhub.am.lilly.com/">Link</a>; <a href="https://hpc.am.lilly.com/index.php/JupyterHub">Documentation</a></p></li>
-<li><p>RStudio Server: <a href="https://rstudio.am.lilly.com/">Link</a>; <a href="http://hpc-analytics.am.lilly.com/r_info/rstudio_workbench/">Documentation</a></p></li>
-<li><p>RStudio Connect: <a href="https://rstudio-connect.am.lilly.com/">Link</a>; <a href="http://hpc-analytics.am.lilly.com/r_info/rsconnect/">Documentation</a></p></li>
-<li><p>Analytics WorkBench: Link; Documentation</p></li>
-<li><p>Targets workflow: <a href="https://cran.r-project.org/web/packages/targets/index.html">CRAN</a>, <a href="https://books.ropensci.org/targets/">Manual</a>, <a href="https://cran.r-project.org/web/packages/targets/vignettes/overview.html">Vignette</a></p></li>
 </ul>
 <div class="footer footer-default">
 <p>2022 SDnA Machine Learning Workshop</p>
