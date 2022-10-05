@@ -1,5 +1,6 @@
 ---
-title: "Machine Learning: Principles & Best Practices"
+title: "GSS / SDnA ML"
+subtitle: "Workshop Day 2: ML Lecture"
 author: "Sydeaka Watson"
 format: 
   revealjs:
@@ -24,6 +25,166 @@ editor: visual
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+# Introduction
+
+## Outline
+
+-   Introduction​
+
+-   Algorithms​
+
+-   Tools​
+
+-   Principles and best practices​
+
+-   Resources
+
+## This workshop is\...
+
+-   A **gentle introduction** to machine learning concepts, algorithms, tools​
+
+-   An opportunity to use popular ML tools on real datasets for clinical and pre-clinical use-cases​
+
+## This workshop is NOT\...​
+
+-   A **comprehensive** overview of all machine learning concepts, algorithms, tools, use cases, etc.​
+
+-   For more in-depth study, I recommend that you review the supplementary materials linked at the end of the Day 2 and Day 3 slides.​
+
+-   If interested in learning about more advanced ML use cases, I invite you to attend the upcoming AADS AI / ML workshop (contact Haoda Fu for details)​
+
+## Machine learning defined
+
+There are many ways to define Machine Learning, but here's a good one: ![](images/ML_defined_by_MS.png)
+
+::: footer
+https://azure.microsoft.com/en-us/resources/cloud-computing-dictionary/what-is-machine-learning-platform/
+:::
+
+## ML vs Statistics
+
+![](images/ML_vs_stats.png)
+
+::: footer
+https://towardsdatascience.com/how-is-machine-learning-different-from-statistics-and-why-it-matters-5a8ed539976
+:::
+
+## Healthcare applications
+
+![](images/ML_healthcare.jpeg)
+
+::: footer
+https://www.botreetechnologies.com/blog/machine-learning-in-healthcare/
+:::
+
+## ML Benefits / Opportunities
+
+-   All the cool kids are doing it 😎
+
+-   Can often yield more accurate predictions
+
+-   Automatically learns interactive relationships between predictors and outcomes
+
+    -   Less of a need to manually code interactions
+
+-   Many approaches inherently include variable selection
+
+-   Requires fewer assumptions than statistical models
+
+    -   Independent variables
+
+    -   Independent training examples
+
+## ML Challenges
+
+-   Requires larger datasets
+
+-   Garbage in \--\> Garbage out
+
+    -   Can learn and re-enforce biases inherent in data
+
+-   Must take care to avoid overfitting
+
+-   Can take more time or computational resources to train the model
+
+-   Steep learning curve for some
+
+-   Must tune hyperparameters to get the best fit
+
+    -   Automated ML can help with this (somewhat)
+
+# Algorithms
+
+## ML types
+
+![](images/ML_algorithm_overview.png)
+
+::: footer
+https://medium.com/ml-research-lab/machine-learning-algorithm-overview-5816a2e6303
+:::
+
+## ML types
+
+![](images/ML_types.png)
+
+::: footer
+https://litslink.com/blog/an-introduction-to-machine-learning-algorithms
+:::
+
+## Supervised Learning ML algorithms
+
+-   Decision tree
+
+-   Random forest
+
+-   XGBoost
+
+-   K Nearest Neighbors
+
+-   Many more!
+
+## Unsupervised learning ML algorithms
+
+-   K-means
+
+-   K-protoypes
+
+-   K Nearest Neighbors
+
+-   Many more!
+
+# Tools
+
+## Integrated development environments (IDEs)​
+
+-   RStudio​
+
+    -   RStudio Server​
+
+    -   RStudio Desktop​
+
+    -   RStudio on Linux remote desktop​
+
+-   JupyterHub​
+
+-   Lilly Analytics Workbench (AWB)​
+
+## Exploratory data analysis​
+
+|      R      |         Python          |
+|:-----------:|:-----------------------:|
+| `tidyverse` |        `pandas`         |
+|  `ggplot2`  | `matplotlib`, `seaborn` |
+
+## Model development
+
+|      R       |  Python   |
+|:------------:|:---------:|
+| `tidymodels` | `sklearn` |
+|    `h2o`     |   `h2o`   |
+
+# ML best practices
 
 ## 10 ML best practices
 
@@ -859,7 +1020,7 @@ tm <- system.time({
   xgb_res <-
     xgb_model_wflow_tune %>%
     tune_grid(resamples = dat_folds, 
-              grid = xgb_param %>% grid_max_entropy(size = 100),
+              grid = xgb_param %>% grid_max_entropy(size = 5),
               control = ctrl)
 })
 
@@ -937,7 +1098,7 @@ plot_tune_metrics_xgb
 
 -   Plotting the model performance against the parameter values in the grid can often reveal trends that can help refine the grid for better performance.
 
--   For example... \<insight\>
+-   For example... Model performance tends to increase with learning rate
 
 ------------------------------------------------------------------------
 

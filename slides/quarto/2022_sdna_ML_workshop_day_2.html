@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.0.36">
 
   <meta name="author" content="Sydeaka Watson">
-  <title>Machine Learning: Principles &amp; Best Practices</title>
+  <title>GSS / SDnA ML</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -396,11 +396,200 @@
     <div class="slides">
 
 <section id="title-slide" class="center">
-  <h1 class="title">Machine Learning: Principles &amp; Best Practices</h1>
+  <h1 class="title">GSS / SDnA ML</h1>
+  <p class="subtitle">Workshop Day 2: ML Lecture</p>
   <p class="author">Sydeaka Watson</p>
 </section>
 
-<section id="ml-best-practices" class="slide level2">
+<section>
+<section id="introduction" class="title-slide slide level1 center">
+<h1>Introduction</h1>
+
+</section>
+<section id="outline" class="slide level2">
+<h2>Outline</h2>
+<ul>
+<li><p>Introduction​</p></li>
+<li><p>Algorithms​</p></li>
+<li><p>Tools​</p></li>
+<li><p>Principles and best practices​</p></li>
+<li><p>Resources</p></li>
+</ul>
+</section>
+<section id="this-workshop-is..." class="slide level2">
+<h2>This workshop is...</h2>
+<ul>
+<li><p>A&nbsp;<strong>gentle introduction</strong>&nbsp;to machine learning concepts, algorithms, tools​</p></li>
+<li><p>An opportunity to use popular ML tools on real datasets for clinical&nbsp;and pre-clinical use-cases​</p></li>
+</ul>
+</section>
+<section id="this-workshop-is-not..." class="slide level2">
+<h2>This workshop is NOT...​</h2>
+<ul>
+<li><p>A&nbsp;<strong>comprehensive</strong> overview&nbsp;of all&nbsp;machine learning concepts,&nbsp;algorithms, tools, use cases, etc.​</p></li>
+<li><p>For more in-depth study,&nbsp;I recommend that you review the&nbsp;supplementary materials linked at the end of the Day 2 and Day 3&nbsp;slides.​</p></li>
+<li><p>If interested in learning about more advanced ML use cases, I invite&nbsp;you to attend the upcoming AADS AI / ML workshop (contact&nbsp;Haoda&nbsp;Fu for details)​</p></li>
+</ul>
+</section>
+<section id="machine-learning-defined" class="slide level2">
+<h2>Machine learning defined</h2>
+<p>There are many ways to define Machine Learning, but here’s a good one: <img data-src="images/ML_defined_by_MS.png"></p>
+<div class="footer">
+<p>https://azure.microsoft.com/en-us/resources/cloud-computing-dictionary/what-is-machine-learning-platform/</p>
+</div>
+</section>
+<section id="ml-vs-statistics" class="slide level2">
+<h2>ML vs Statistics</h2>
+
+<img data-src="images/ML_vs_stats.png" class="r-stretch"><div class="footer">
+<p>https://towardsdatascience.com/how-is-machine-learning-different-from-statistics-and-why-it-matters-5a8ed539976</p>
+</div>
+</section>
+<section id="healthcare-applications" class="slide level2">
+<h2>Healthcare applications</h2>
+
+<img data-src="images/ML_healthcare.jpeg" class="r-stretch"><div class="footer">
+<p>https://www.botreetechnologies.com/blog/machine-learning-in-healthcare/</p>
+</div>
+</section>
+<section id="ml-benefits-opportunities" class="slide level2">
+<h2>ML Benefits / Opportunities</h2>
+<ul>
+<li><p>All the cool kids are doing it 😎</p></li>
+<li><p>Can often yield more accurate predictions</p></li>
+<li><p>Automatically learns interactive relationships between predictors and outcomes</p>
+<ul>
+<li>Less of a need to manually code interactions</li>
+</ul></li>
+<li><p>Many approaches inherently include variable selection</p></li>
+<li><p>Requires fewer assumptions than statistical models</p>
+<ul>
+<li><p>Independent variables</p></li>
+<li><p>Independent training examples</p></li>
+</ul></li>
+</ul>
+</section>
+<section id="ml-challenges" class="slide level2">
+<h2>ML Challenges</h2>
+<ul>
+<li><p>Requires larger datasets</p></li>
+<li><p>Garbage in --&gt; Garbage out</p>
+<ul>
+<li>Can learn and re-enforce biases inherent in data</li>
+</ul></li>
+<li><p>Must take care to avoid overfitting</p></li>
+<li><p>Can take more time or computational resources to train the model</p></li>
+<li><p>Steep learning curve for some</p></li>
+<li><p>Must tune hyperparameters to get the best fit</p>
+<ul>
+<li>Automated ML can help with this (somewhat)</li>
+</ul></li>
+</ul>
+</section></section>
+<section>
+<section id="algorithms" class="title-slide slide level1 center">
+<h1>Algorithms</h1>
+
+</section>
+<section id="ml-types" class="slide level2">
+<h2>ML types</h2>
+
+<img data-src="images/ML_algorithm_overview.png" class="r-stretch"><div class="footer">
+<p>https://medium.com/ml-research-lab/machine-learning-algorithm-overview-5816a2e6303</p>
+</div>
+</section>
+<section id="ml-types-1" class="slide level2">
+<h2>ML types</h2>
+
+<img data-src="images/ML_types.png" class="r-stretch"><div class="footer">
+<p>https://litslink.com/blog/an-introduction-to-machine-learning-algorithms</p>
+</div>
+</section>
+<section id="supervised-learning-ml-algorithms" class="slide level2">
+<h2>Supervised Learning ML algorithms</h2>
+<ul>
+<li><p>Decision tree</p></li>
+<li><p>Random forest</p></li>
+<li><p>XGBoost</p></li>
+<li><p>K Nearest Neighbors</p></li>
+<li><p>Many more!</p></li>
+</ul>
+</section>
+<section id="unsupervised-learning-ml-algorithms" class="slide level2">
+<h2>Unsupervised learning ML algorithms</h2>
+<ul>
+<li><p>K-means</p></li>
+<li><p>K-protoypes</p></li>
+<li><p>K Nearest Neighbors</p></li>
+<li><p>Many more!</p></li>
+</ul>
+</section></section>
+<section>
+<section id="tools" class="title-slide slide level1 center">
+<h1>Tools</h1>
+
+</section>
+<section id="integrated-development-environments-ides" class="slide level2">
+<h2>Integrated development environments (IDEs)​</h2>
+<ul>
+<li><p>RStudio​</p>
+<ul>
+<li><p>RStudio Server​</p></li>
+<li><p>RStudio Desktop​</p></li>
+<li><p>RStudio on Linux&nbsp;remote desktop​</p></li>
+</ul></li>
+<li><p>JupyterHub​</p></li>
+<li><p>Lilly Analytics Workbench (AWB)​</p></li>
+</ul>
+</section>
+<section id="exploratory-data-analysis" class="slide level2">
+<h2>Exploratory data analysis​</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">R</th>
+<th style="text-align: center;">Python</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><code>tidyverse</code></td>
+<td style="text-align: center;"><code>pandas</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><code>ggplot2</code></td>
+<td style="text-align: center;"><code>matplotlib</code>, <code>seaborn</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="model-development" class="slide level2">
+<h2>Model development</h2>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">R</th>
+<th style="text-align: center;">Python</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><code>tidymodels</code></td>
+<td style="text-align: center;"><code>sklearn</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><code>h2o</code></td>
+<td style="text-align: center;"><code>h2o</code></td>
+</tr>
+</tbody>
+</table>
+</section></section>
+<section>
+<section id="ml-best-practices" class="title-slide slide level1 center">
+<h1>ML best practices</h1>
+
+</section>
+<section id="ml-best-practices-1" class="slide level2">
 <h2>10 ML best practices</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
@@ -421,7 +610,7 @@
 </ol>
 </div>
 </div>
-</section>
+</section></section>
 <section>
 <section id="define-modeling-objectives" class="title-slide slide level1 center">
 <h1>1. Define modeling objectives</h1>
@@ -464,11 +653,11 @@
 </ul>
 </section></section>
 <section>
-<section id="exploratory-data-analysis" class="title-slide slide level1 center">
+<section id="exploratory-data-analysis-1" class="title-slide slide level1 center">
 <h1>2. Exploratory data analysis</h1>
 
 </section>
-<section id="exploratory-data-analysis-1" class="slide level2">
+<section id="exploratory-data-analysis-2" class="slide level2">
 <h2>2. Exploratory data analysis</h2>
 <ul>
 <li><p>Data quality</p></li>
@@ -787,8 +976,8 @@
 </details>
 <div class="cell-output-display">
 
-<div id="htmlwidget-d72ac41fc933c51c7b99" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-d72ac41fc933c51c7b99">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],[10056,10059,10089,10093,10124,10140,10165,10190,10198,10229,10241,10341,10343,10361,10364,10368,10378,10386,10389,10432],[1,1,1,1,0,1,0,0,1,0,1,1,1,1,1,0,0,1,1,1],["zidovudine and zalcitabine","didanosine","didanosine","didanosine","zidovudine","zidovudine and didanosine","zidovudine","zidovudine","didanosine","zidovudine","zidovudine and zalcitabine","didanosine","zidovudine and zalcitabine","zidovudine and didanosine","zidovudine and zalcitabine","zidovudine","zidovudine","zidovudine and zalcitabine","zidovudine and didanosine","zidovudine and zalcitabine"],[0,0,1,0,0,0,0,0,1,1,0,0,0,1,1,0,0,1,1,0],[48,61,45,47,43,46,31,41,40,35,34,38,25,34,49,40,27,46,47,34],[89.8128,49.4424,88.452,85.2768,66.6792,88.9056,73.0296,66.2256,82.5552,78.0192,95.256,76.4316,68.04,62.8236,79.38,83.0088,67.3,63.8,94,60.3288],["no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no"],["no","no","yes","yes","yes","yes","yes","yes","yes","yes","no","yes","yes","yes","yes","yes","no","yes","yes","no"],["no","no","yes","no","no","yes","no","yes","no","no","no","no","no","no","no","no","yes","no","no","no"],[100,90,90,100,100,100,100,100,90,100,100,100,90,90,90,100,90,100,100,100],["no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no"],["no","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes"],["yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes"],[0,895,707,1399,1352,1181,930,1329,1074,964,897,461,852,342,402,974,875,881,1421,854],["white","white","white","white","white","white","white","white","white","white","non-white","white","white","white","white","white","white","white","white","non-white"],["female","female","male","male","male","male","male","male","male","male","female","male","male","male","male","male","female","male","male","female"],["naive","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced"],["antiretroviral naive","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 1 but &lt;= 52 weeks of prior antiretroviral therapy","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks"],["asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","symptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","symptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic"],[422,162,326,287,504,235,244,401,214,221,471,340,540,212,120,150,350,330,180,233],[566,392,2063,1590,870,860,708,889,652,221,770,660,1590,1094,800,1730,750,820,710,1462],["no","yes","no","no","no","no","yes","no","yes","yes","yes","no","no","no","yes","yes","no","no","yes","no"],[0,1,0,0,0,0,1,0,1,1,1,0,0,0,1,1,0,0,1,0],[948,1002,961,1166,1090,1181,794,957,198,188,1073,1175,1203,1065,357,308,1062,1069,322,1119],[477,218,274,394,353,339,225,366,107,132,468,230,590,190,140,90,440,320,200,240],[660,null,122,null,660,264,106,453,8,null,477,270,410,100,null,20,null,180,null,null],[1,0,1,0,1,1,1,1,1,0,1,1,1,1,0,1,0,1,0,0],[324,564,1893,966,782,1060,699,720,131,759,620,510,1330,1180,1090,1160,990,630,830,1170]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>pidnum<\/th>\n      <th>zidovudine_indicator<\/th>\n      <th>treatment_arm<\/th>\n      <th>offtrt<\/th>\n      <th>age<\/th>\n      <th>wtkg<\/th>\n      <th>hemo<\/th>\n      <th>lgbtq<\/th>\n      <th>hist_intra_drug_use<\/th>\n      <th>karnof<\/th>\n      <th>prior_nz_art<\/th>\n      <th>prior_z_30days<\/th>\n      <th>prior_z<\/th>\n      <th>days_prior_art<\/th>\n      <th>race<\/th>\n      <th>gender<\/th>\n      <th>prior_art<\/th>\n      <th>strat_hist_art<\/th>\n      <th>symptom<\/th>\n      <th>baseline_cd4<\/th>\n      <th>baseline_cd8<\/th>\n      <th>event<\/th>\n      <th>surv_event<\/th>\n      <th>surv_days<\/th>\n      <th>cd420<\/th>\n      <th>cd496<\/th>\n      <th>r<\/th>\n      <th>cd820<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":6,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[1,2,4,5,6,10,14,20,21,23,24,25,26,27,28]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render"],"jsHooks":[]}</script>
+<div id="htmlwidget-be31013119fa305f71d3" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-be31013119fa305f71d3">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],[10056,10059,10089,10093,10124,10140,10165,10190,10198,10229,10241,10341,10343,10361,10364,10368,10378,10386,10389,10432],[1,1,1,1,0,1,0,0,1,0,1,1,1,1,1,0,0,1,1,1],["zidovudine and zalcitabine","didanosine","didanosine","didanosine","zidovudine","zidovudine and didanosine","zidovudine","zidovudine","didanosine","zidovudine","zidovudine and zalcitabine","didanosine","zidovudine and zalcitabine","zidovudine and didanosine","zidovudine and zalcitabine","zidovudine","zidovudine","zidovudine and zalcitabine","zidovudine and didanosine","zidovudine and zalcitabine"],[0,0,1,0,0,0,0,0,1,1,0,0,0,1,1,0,0,1,1,0],[48,61,45,47,43,46,31,41,40,35,34,38,25,34,49,40,27,46,47,34],[89.8128,49.4424,88.452,85.2768,66.6792,88.9056,73.0296,66.2256,82.5552,78.0192,95.256,76.4316,68.04,62.8236,79.38,83.0088,67.3,63.8,94,60.3288],["no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no"],["no","no","yes","yes","yes","yes","yes","yes","yes","yes","no","yes","yes","yes","yes","yes","no","yes","yes","no"],["no","no","yes","no","no","yes","no","yes","no","no","no","no","no","no","no","no","yes","no","no","no"],[100,90,90,100,100,100,100,100,90,100,100,100,90,90,90,100,90,100,100,100],["no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no"],["no","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes"],["yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes","yes"],[0,895,707,1399,1352,1181,930,1329,1074,964,897,461,852,342,402,974,875,881,1421,854],["white","white","white","white","white","white","white","white","white","white","non-white","white","white","white","white","white","white","white","white","non-white"],["female","female","male","male","male","male","male","male","male","male","female","male","male","male","male","male","female","male","male","female"],["naive","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced","experienced"],["antiretroviral naive","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 1 but &lt;= 52 weeks of prior antiretroviral therapy","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks"],["asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","symptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","symptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic"],[422,162,326,287,504,235,244,401,214,221,471,340,540,212,120,150,350,330,180,233],[566,392,2063,1590,870,860,708,889,652,221,770,660,1590,1094,800,1730,750,820,710,1462],["no","yes","no","no","no","no","yes","no","yes","yes","yes","no","no","no","yes","yes","no","no","yes","no"],[0,1,0,0,0,0,1,0,1,1,1,0,0,0,1,1,0,0,1,0],[948,1002,961,1166,1090,1181,794,957,198,188,1073,1175,1203,1065,357,308,1062,1069,322,1119],[477,218,274,394,353,339,225,366,107,132,468,230,590,190,140,90,440,320,200,240],[660,null,122,null,660,264,106,453,8,null,477,270,410,100,null,20,null,180,null,null],[1,0,1,0,1,1,1,1,1,0,1,1,1,1,0,1,0,1,0,0],[324,564,1893,966,782,1060,699,720,131,759,620,510,1330,1180,1090,1160,990,630,830,1170]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>pidnum<\/th>\n      <th>zidovudine_indicator<\/th>\n      <th>treatment_arm<\/th>\n      <th>offtrt<\/th>\n      <th>age<\/th>\n      <th>wtkg<\/th>\n      <th>hemo<\/th>\n      <th>lgbtq<\/th>\n      <th>hist_intra_drug_use<\/th>\n      <th>karnof<\/th>\n      <th>prior_nz_art<\/th>\n      <th>prior_z_30days<\/th>\n      <th>prior_z<\/th>\n      <th>days_prior_art<\/th>\n      <th>race<\/th>\n      <th>gender<\/th>\n      <th>prior_art<\/th>\n      <th>strat_hist_art<\/th>\n      <th>symptom<\/th>\n      <th>baseline_cd4<\/th>\n      <th>baseline_cd8<\/th>\n      <th>event<\/th>\n      <th>surv_event<\/th>\n      <th>surv_days<\/th>\n      <th>cd420<\/th>\n      <th>cd496<\/th>\n      <th>r<\/th>\n      <th>cd820<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":6,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[1,2,4,5,6,10,14,20,21,23,24,25,26,27,28]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render"],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -938,8 +1127,8 @@
 </details>
 <div class="cell-output-display">
 
-<div id="htmlwidget-4f70c72ddf9c701a37ff" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-4f70c72ddf9c701a37ff">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4"],["zidovudine and zalcitabine","didanosine","zidovudine","zidovudine and didanosine"],[0,1,0,1],[1,0,1,1],[1,0,0,0]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>treatment_arm<\/th>\n      <th>ind_didanosine<\/th>\n      <th>ind_zidovudine<\/th>\n      <th>ind_zalcitabine<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"className":"dt-right","targets":[2,3,4]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete"],"jsHooks":[]}</script>
+<div id="htmlwidget-9f78f7562675a58b307a" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-9f78f7562675a58b307a">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4"],["zidovudine and zalcitabine","didanosine","zidovudine","zidovudine and didanosine"],[0,1,0,1],[1,0,1,1],[1,0,0,0]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>treatment_arm<\/th>\n      <th>ind_didanosine<\/th>\n      <th>ind_zidovudine<\/th>\n      <th>ind_zalcitabine<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"className":"dt-right","targets":[2,3,4]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete"],"jsHooks":[]}</script>
 </div>
 </div>
 </section></section>
@@ -1263,8 +1452,8 @@
 </details>
 <div class="cell-output-display">
 
-<div id="htmlwidget-a7248ae96c9bf7f0bbb0" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-a7248ae96c9bf7f0bbb0">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],["zidovudine and zalcitabine","zidovudine","zidovudine and didanosine","zidovudine","zidovudine","zidovudine and didanosine","zidovudine and zalcitabine","zidovudine and didanosine","zidovudine","zidovudine and zalcitabine","didanosine","zidovudine and didanosine","zidovudine and didanosine","zidovudine and didanosine","zidovudine and zalcitabine","zidovudine and zalcitabine","zidovudine and didanosine","zidovudine and didanosine","zidovudine","zidovudine"],[0,0,1,0,0,1,0,1,0,0,1,1,1,1,0,0,1,1,0,0],[1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,1,0,0,1,0,0,0,0,1,1,0,0,0,0],[39,29,28,40,43,45,39,40,34,39,49,31,31,39,36,36,48,30,40,27],[75.7,66.1,76.6584,71.6688,76.4,82.87272,67.1328,110.4516,72.9,73.9368,80.7408,79.8336,78.1,83.9,61.6896,86.184,83.0088,77.3,55.3392,74.3904],["no","no","no","no","no","no","no","no","no","no","no","no","yes","no","no","no","no","no","no","no"],["yes","yes","yes","no","yes","no","no","no","yes","no","yes","yes","no","yes","no","yes","yes","yes","no","yes"],["no","no","no","no","no","no","yes","no","no","no","no","yes","yes","no","no","no","yes","no","no","no"],[100,90,100,100,90,90,100,90,100,100,90,100,90,100,90,100,90,100,100,100],["yes","yes","no","no","yes","yes","yes","yes","yes","no","no","no","yes","no","no","no","no","no","yes","no"],[159,1509,0,0,724,406,1057,179,16,0,0,0,1174,0,0,575,0,0,486,0],["white","white","white","non-white","white","non-white","white","white","white","non-white","white","white","white","white","non-white","white","white","white","non-white","non-white"],["male","male","male","female","male","male","female","male","male","female","male","male","male","male","male","male","male","male","female","male"],["experienced","experienced","naive","naive","experienced","experienced","experienced","experienced","experienced","naive","naive","naive","experienced","naive","naive","experienced","naive","naive","experienced","naive"],["&gt; 1 but &lt;= 52 weeks of prior antiretroviral therapy","&gt; 52 weeks","antiretroviral naive","antiretroviral naive","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 1 but &lt;= 52 weeks of prior antiretroviral therapy","&gt; 1 but &lt;= 52 weeks of prior antiretroviral therapy","antiretroviral naive","antiretroviral naive","antiretroviral naive","&gt; 52 weeks","antiretroviral naive","antiretroviral naive","&gt; 52 weeks","antiretroviral naive","antiretroviral naive","&gt; 52 weeks","antiretroviral naive"],["asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","symptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","symptomatic"],[431,469,440,440,210,324,470,548,332,420,392,419,257,370,416,337,308,309,338,437],[647,775,1210,493,430,1427,950,1117,1571,730,1566,757,137,630,1326,618,956,806,1664,903],["no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no"],["no","yes","no","no","yes","no","no","no","yes","no","no","no","no","no","no","no","no","no","yes","no"],[0.784292811342467,0.460056929320691,0.782805777234955,0.773611910833614,0.29469617346244,0.568227318543993,0.792360175035089,0.821806506823222,0.285612125209292,0.872339539229377,0.621427183364213,0.858621678446729,0.730795186386258,0.794236060235568,0.751417510859172,0.730755609315792,0.739102893685311,0.717174450233723,0.366816335001865,0.639219391399041],[0.215707188657533,0.539943070679309,0.217194222765045,0.226388089166386,0.70530382653756,0.431772681456007,0.207639824964911,0.178193493176778,0.714387874790708,0.127660460770623,0.378572816635787,0.141378321553271,0.269204813613742,0.205763939764432,0.248582489140828,0.269244390684208,0.260897106314689,0.282825549766277,0.633183664998135,0.360780608600959],[0,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>treatment_arm<\/th>\n      <th>ind_didanosine<\/th>\n      <th>ind_zidovudine<\/th>\n      <th>ind_zalcitabine<\/th>\n      <th>age<\/th>\n      <th>wtkg<\/th>\n      <th>hemo<\/th>\n      <th>lgbtq<\/th>\n      <th>hist_intra_drug_use<\/th>\n      <th>karnof<\/th>\n      <th>prior_z_30days<\/th>\n      <th>days_prior_art<\/th>\n      <th>race<\/th>\n      <th>gender<\/th>\n      <th>prior_art<\/th>\n      <th>strat_hist_art<\/th>\n      <th>symptom<\/th>\n      <th>baseline_cd4<\/th>\n      <th>baseline_cd8<\/th>\n      <th>event<\/th>\n      <th>.pred_class<\/th>\n      <th>.pred_no<\/th>\n      <th>.pred_yes<\/th>\n      <th>.pred_yes_int<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":6,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":22,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":23,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":24,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[2,3,4,5,6,10,12,18,19,22,23,24]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render","options.columnDefs.2.render","options.columnDefs.3.render"],"jsHooks":[]}</script>
+<div id="htmlwidget-33ca5f4ee526667da452" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-33ca5f4ee526667da452">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],["zidovudine and zalcitabine","zidovudine","zidovudine and didanosine","zidovudine","zidovudine","zidovudine and didanosine","zidovudine and zalcitabine","zidovudine and didanosine","zidovudine","zidovudine and zalcitabine","didanosine","zidovudine and didanosine","zidovudine and didanosine","zidovudine and didanosine","zidovudine and zalcitabine","zidovudine and zalcitabine","zidovudine and didanosine","zidovudine and didanosine","zidovudine","zidovudine"],[0,0,1,0,0,1,0,1,0,0,1,1,1,1,0,0,1,1,0,0],[1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,1,0,0,1,0,0,0,0,1,1,0,0,0,0],[39,29,28,40,43,45,39,40,34,39,49,31,31,39,36,36,48,30,40,27],[75.7,66.1,76.6584,71.6688,76.4,82.87272,67.1328,110.4516,72.9,73.9368,80.7408,79.8336,78.1,83.9,61.6896,86.184,83.0088,77.3,55.3392,74.3904],["no","no","no","no","no","no","no","no","no","no","no","no","yes","no","no","no","no","no","no","no"],["yes","yes","yes","no","yes","no","no","no","yes","no","yes","yes","no","yes","no","yes","yes","yes","no","yes"],["no","no","no","no","no","no","yes","no","no","no","no","yes","yes","no","no","no","yes","no","no","no"],[100,90,100,100,90,90,100,90,100,100,90,100,90,100,90,100,90,100,100,100],["yes","yes","no","no","yes","yes","yes","yes","yes","no","no","no","yes","no","no","no","no","no","yes","no"],[159,1509,0,0,724,406,1057,179,16,0,0,0,1174,0,0,575,0,0,486,0],["white","white","white","non-white","white","non-white","white","white","white","non-white","white","white","white","white","non-white","white","white","white","non-white","non-white"],["male","male","male","female","male","male","female","male","male","female","male","male","male","male","male","male","male","male","female","male"],["experienced","experienced","naive","naive","experienced","experienced","experienced","experienced","experienced","naive","naive","naive","experienced","naive","naive","experienced","naive","naive","experienced","naive"],["&gt; 1 but &lt;= 52 weeks of prior antiretroviral therapy","&gt; 52 weeks","antiretroviral naive","antiretroviral naive","&gt; 52 weeks","&gt; 52 weeks","&gt; 52 weeks","&gt; 1 but &lt;= 52 weeks of prior antiretroviral therapy","&gt; 1 but &lt;= 52 weeks of prior antiretroviral therapy","antiretroviral naive","antiretroviral naive","antiretroviral naive","&gt; 52 weeks","antiretroviral naive","antiretroviral naive","&gt; 52 weeks","antiretroviral naive","antiretroviral naive","&gt; 52 weeks","antiretroviral naive"],["asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","symptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","asymptomatic","symptomatic"],[431,469,440,440,210,324,470,548,332,420,392,419,257,370,416,337,308,309,338,437],[647,775,1210,493,430,1427,950,1117,1571,730,1566,757,137,630,1326,618,956,806,1664,903],["no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no"],["no","yes","no","no","yes","no","no","no","yes","no","no","no","no","no","no","no","no","no","yes","no"],[0.784292811342467,0.460056929320691,0.782805777234955,0.773611910833614,0.29469617346244,0.568227318543993,0.792360175035089,0.821806506823222,0.285612125209292,0.872339539229377,0.621427183364213,0.858621678446729,0.730795186386258,0.794236060235568,0.751417510859172,0.730755609315792,0.739102893685311,0.717174450233723,0.366816335001865,0.639219391399041],[0.215707188657533,0.539943070679309,0.217194222765045,0.226388089166386,0.70530382653756,0.431772681456007,0.207639824964911,0.178193493176778,0.714387874790708,0.127660460770623,0.378572816635787,0.141378321553271,0.269204813613742,0.205763939764432,0.248582489140828,0.269244390684208,0.260897106314689,0.282825549766277,0.633183664998135,0.360780608600959],[0,1,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>treatment_arm<\/th>\n      <th>ind_didanosine<\/th>\n      <th>ind_zidovudine<\/th>\n      <th>ind_zalcitabine<\/th>\n      <th>age<\/th>\n      <th>wtkg<\/th>\n      <th>hemo<\/th>\n      <th>lgbtq<\/th>\n      <th>hist_intra_drug_use<\/th>\n      <th>karnof<\/th>\n      <th>prior_z_30days<\/th>\n      <th>days_prior_art<\/th>\n      <th>race<\/th>\n      <th>gender<\/th>\n      <th>prior_art<\/th>\n      <th>strat_hist_art<\/th>\n      <th>symptom<\/th>\n      <th>baseline_cd4<\/th>\n      <th>baseline_cd8<\/th>\n      <th>event<\/th>\n      <th>.pred_class<\/th>\n      <th>.pred_no<\/th>\n      <th>.pred_yes<\/th>\n      <th>.pred_yes_int<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":6,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":22,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":23,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":24,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[2,3,4,5,6,10,12,18,19,22,23,24]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render","options.columnDefs.2.render","options.columnDefs.3.render"],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -1281,8 +1470,8 @@
 </details>
 <div class="cell-output-display">
 
-<div id="htmlwidget-d335c1c687bc5c482cd9" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-d335c1c687bc5c482cd9">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1"],["accuracy"],["binary"],[0.677966101694915]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>.metric<\/th>\n      <th>.estimator<\/th>\n      <th>.estimate<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":3},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render"],"jsHooks":[]}</script>
+<div id="htmlwidget-93d0e7e4414d3e294f86" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-93d0e7e4414d3e294f86">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1"],["accuracy"],["binary"],[0.677966101694915]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>.metric<\/th>\n      <th>.estimator<\/th>\n      <th>.estimate<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":3},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render"],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -1299,8 +1488,8 @@
 </details>
 <div class="cell-output-display">
 
-<div id="htmlwidget-9f6ed2df218bd6944764" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-9f6ed2df218bd6944764">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1"],["roc_auc"],["binary"],[0.706469535737828]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>.metric<\/th>\n      <th>.estimator<\/th>\n      <th>.estimate<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":3},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render"],"jsHooks":[]}</script>
+<div id="htmlwidget-34c787d675f9cf432858" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-34c787d675f9cf432858">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1"],["roc_auc"],["binary"],[0.706469535737828]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>.metric<\/th>\n      <th>.estimator<\/th>\n      <th>.estimate<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":3},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render"],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -1320,7 +1509,7 @@
 <section id="b.-example-set-up-parallel-backend" class="slide level2">
 <h2>6b. Example: Set up parallel backend</h2>
 <ul>
-<li><p>Machine learning algorithms are computationally expensive</p></li>
+<li><p>Machine learning algorithms can be computationally expensive</p></li>
 <li><p>Parallelizing these computations over multiple cores can significantly reduce training time</p></li>
 <li><p>Code below shows an example parallel backend setup</p></li>
 </ul>
@@ -1402,8 +1591,8 @@
 </details>
 <div class="cell-output-display">
 
-<div id="htmlwidget-595c5d7b80e7d2ddc182" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-595c5d7b80e7d2ddc182">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2"],["accuracy","roc_auc"],["binary","binary"],[0.763349656951358,0.83498141197273],[5,5],[0.0193105793784417,0.00996596592884503],["Preprocessor1_Model1","Preprocessor1_Model1"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>.metric<\/th>\n      <th>.estimator<\/th>\n      <th>mean<\/th>\n      <th>n<\/th>\n      <th>std_err<\/th>\n      <th>.config<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":5,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[3,4,5]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render"],"jsHooks":[]}</script>
+<div id="htmlwidget-e9c64a3f380317c58321" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-e9c64a3f380317c58321">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2"],["accuracy","roc_auc"],["binary","binary"],[0.763349656951358,0.83498141197273],[5,5],[0.0193105793784417,0.00996596592884503],["Preprocessor1_Model1","Preprocessor1_Model1"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>.metric<\/th>\n      <th>.estimator<\/th>\n      <th>mean<\/th>\n      <th>n<\/th>\n      <th>std_err<\/th>\n      <th>.config<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":5,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[3,4,5]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render"],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -1429,8 +1618,8 @@
 </details>
 <div class="cell-output-display">
 
-<div id="htmlwidget-dc3d966269d0476f7a73" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-dc3d966269d0476f7a73">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],["Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1"],[0.880087192814745,0.516312015732011,0.561806704313741,0.495155747837037,0.686990876952118,0.584657232984979,0.556767844829154,0.567720022201775,0.871080624893879,0.883196657652289,0.489783779397969,0.836028939022556,0.661528800395404,0.609139135455884,0.893540689600632,0.751398638083507,0.698876378127063,0.89487695549398,0.499061518893374,0.669333604079683],[0.119912807185255,0.483687984267989,0.438193295686259,0.504844252162963,0.313009123047882,0.415342767015022,0.443232155170847,0.432279977798225,0.128919375106121,0.11680334234771,0.510216220602031,0.163971060977444,0.338471199604596,0.390860864544116,0.106459310399367,0.248601361916493,0.301123621872937,0.10512304450602,0.500938481106626,0.330666395920316],[7,11,14,15,18,20,32,34,36,58,59,62,69,73,81,85,95,105,107,109],["no","no","no","yes","no","no","no","no","no","no","yes","no","no","no","no","no","no","no","yes","no"],["no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no"],["Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>id<\/th>\n      <th>.pred_no<\/th>\n      <th>.pred_yes<\/th>\n      <th>.row<\/th>\n      <th>.pred_class<\/th>\n      <th>event<\/th>\n      <th>.config<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":2,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[2,3,4]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render"],"jsHooks":[]}</script>
+<div id="htmlwidget-87eb9914b5260b601c03" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-87eb9914b5260b601c03">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],["Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1","Fold1"],[0.880087192814745,0.516312015732011,0.561806704313741,0.495155747837037,0.686990876952118,0.584657232984979,0.556767844829154,0.567720022201775,0.871080624893879,0.883196657652289,0.489783779397969,0.836028939022556,0.661528800395404,0.609139135455884,0.893540689600632,0.751398638083507,0.698876378127063,0.89487695549398,0.499061518893374,0.669333604079683],[0.119912807185255,0.483687984267989,0.438193295686259,0.504844252162963,0.313009123047882,0.415342767015022,0.443232155170847,0.432279977798225,0.128919375106121,0.11680334234771,0.510216220602031,0.163971060977444,0.338471199604596,0.390860864544116,0.106459310399367,0.248601361916493,0.301123621872937,0.10512304450602,0.500938481106626,0.330666395920316],[7,11,14,15,18,20,32,34,36,58,59,62,69,73,81,85,95,105,107,109],["no","no","no","yes","no","no","no","no","no","no","yes","no","no","no","no","no","no","no","yes","no"],["no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no","no"],["Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>id<\/th>\n      <th>.pred_no<\/th>\n      <th>.pred_yes<\/th>\n      <th>.row<\/th>\n      <th>.pred_class<\/th>\n      <th>event<\/th>\n      <th>.config<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":2,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":3,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[2,3,4]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render"],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -1489,8 +1678,8 @@
 </details>
 <div class="cell-output-display">
 
-<div id="htmlwidget-128adbf4518ee7e8b5a3" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-128adbf4518ee7e8b5a3">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4","5","6"],["formula_rand_forest","formula_rand_forest","formula_boost_tree","formula_boost_tree","formula_logistic_reg","formula_logistic_reg"],["Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1"],["accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc"],[0.846653557262506,0.912457503491465,0.833046983492653,0.885090641109191,0.668229596846805,0.70318245623449],[0.00451522882966764,0.00164220583161298,0.00640930232460071,0.00435371196864467,0.00273486175191353,0.00686656788409845],[3,3,3,3,3,3],["formula","formula","formula","formula","formula","formula"],["rand_forest","rand_forest","boost_tree","boost_tree","logistic_reg","logistic_reg"],[1,1,2,2,3,3]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>wflow_id<\/th>\n      <th>.config<\/th>\n      <th>.metric<\/th>\n      <th>mean<\/th>\n      <th>std_err<\/th>\n      <th>n<\/th>\n      <th>preprocessor<\/th>\n      <th>model<\/th>\n      <th>rank<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":4,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":5,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[4,5,6,9]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render"],"jsHooks":[]}</script>
+<div id="htmlwidget-16ce86b3bf10ee0269ac" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-16ce86b3bf10ee0269ac">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4","5","6"],["formula_rand_forest","formula_rand_forest","formula_boost_tree","formula_boost_tree","formula_logistic_reg","formula_logistic_reg"],["Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model1"],["accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc"],[0.846653557262506,0.912457503491465,0.833046983492653,0.885090641109191,0.668229596846805,0.70318245623449],[0.00451522882966764,0.00164220583161298,0.00640930232460071,0.00435371196864467,0.00273486175191353,0.00686656788409845],[3,3,3,3,3,3],["formula","formula","formula","formula","formula","formula"],["rand_forest","rand_forest","boost_tree","boost_tree","logistic_reg","logistic_reg"],[1,1,2,2,3,3]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>wflow_id<\/th>\n      <th>.config<\/th>\n      <th>.metric<\/th>\n      <th>mean<\/th>\n      <th>std_err<\/th>\n      <th>n<\/th>\n      <th>preprocessor<\/th>\n      <th>model<\/th>\n      <th>rank<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":4,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":5,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[4,5,6,9]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render"],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -1549,7 +1738,7 @@
 <span id="cb33-39"><a href="#cb33-39"></a>  xgb_res <span class="ot">&lt;-</span></span>
 <span id="cb33-40"><a href="#cb33-40"></a>    xgb_model_wflow_tune <span class="sc">%&gt;%</span></span>
 <span id="cb33-41"><a href="#cb33-41"></a>    <span class="fu">tune_grid</span>(<span class="at">resamples =</span> dat_folds, </span>
-<span id="cb33-42"><a href="#cb33-42"></a>              <span class="at">grid =</span> xgb_param <span class="sc">%&gt;%</span> <span class="fu">grid_max_entropy</span>(<span class="at">size =</span> <span class="dv">100</span>),</span>
+<span id="cb33-42"><a href="#cb33-42"></a>              <span class="at">grid =</span> xgb_param <span class="sc">%&gt;%</span> <span class="fu">grid_max_entropy</span>(<span class="at">size =</span> <span class="dv">5</span>),</span>
 <span id="cb33-43"><a href="#cb33-43"></a>              <span class="at">control =</span> ctrl)</span>
 <span id="cb33-44"><a href="#cb33-44"></a>})</span>
 <span id="cb33-45"><a href="#cb33-45"></a></span>
@@ -1558,7 +1747,7 @@
 <span id="cb33-48"><a href="#cb33-48"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  3.031   0.767  96.191 </code></pre>
+  0.228   0.017   5.178 </code></pre>
 </div>
 </div>
 </section>
@@ -1574,8 +1763,8 @@
 </details>
 <div class="cell-output-display">
 
-<div id="htmlwidget-b84315896548ebc1d01c" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-b84315896548ebc1d01c">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20"],[3,3,3,3,3,3,3,3,4,4,4,4,4,4,4,4,4,4,4,4],[1327,1327,1170,1170,855,855,1158,1158,1344,1344,588,588,594,594,1128,1128,987,987,217,217],[5,5,7,7,9,9,15,15,5,5,6,6,12,12,14,14,14,14,15,15],[0.00254957582367351,0.00254957582367351,0.0243159519884037,0.0243159519884037,0.0146805804258329,0.0146805804258329,0.0553313889769605,0.0553313889769605,0.0997989159637829,0.0997989159637829,0.0205189070739434,0.0205189070739434,0.035569909024681,0.035569909024681,0.0267443444857723,0.0267443444857723,0.0690918528113165,0.0690918528113165,0.00698534466210986,0.00698534466210986],["accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc"],["binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary","binary"],[0.669461446937139,0.714200983259457,0.71155297557659,0.763129189737974,0.685633443663228,0.739340502997574,0.730245692655061,0.787165932679061,0.76209562485692,0.824445618421626,0.695829062930916,0.743846960311825,0.710275491680085,0.760638319644494,0.720470199826504,0.77215902502805,0.737037068088322,0.799031307779839,0.657995575319486,0.705606100905544],[5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5],[0.0129066557157075,0.0120565085486827,0.0107177476504232,0.0106287270243548,0.00497187060787812,0.011295626404594,0.00702369448189001,0.0111608680252451,0.0108452522694062,0.0128134543882215,0.00658715048552925,0.0103102898801414,0.00824127841880596,0.0104857827009493,0.00706227475118205,0.011126570578537,0.00815532665668525,0.0109758507103662,0.0128286421327647,0.0143300303473854],["Preprocessor1_Model001","Preprocessor1_Model001","Preprocessor1_Model002","Preprocessor1_Model002","Preprocessor1_Model003","Preprocessor1_Model003","Preprocessor1_Model004","Preprocessor1_Model004","Preprocessor1_Model005","Preprocessor1_Model005","Preprocessor1_Model006","Preprocessor1_Model006","Preprocessor1_Model007","Preprocessor1_Model007","Preprocessor1_Model008","Preprocessor1_Model008","Preprocessor1_Model009","Preprocessor1_Model009","Preprocessor1_Model010","Preprocessor1_Model010"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>mtry<\/th>\n      <th>trees<\/th>\n      <th>tree_depth<\/th>\n      <th>learn_rate<\/th>\n      <th>.metric<\/th>\n      <th>.estimator<\/th>\n      <th>mean<\/th>\n      <th>n<\/th>\n      <th>std_err<\/th>\n      <th>.config<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":4,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":7,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":9,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[1,2,3,4,7,8,9]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render","options.columnDefs.2.render"],"jsHooks":[]}</script>
+<div id="htmlwidget-24595a87982686c72ac1" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-24595a87982686c72ac1">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10"],[3,3,6,6,6,6,9,9,13,13],[1196,1196,220,220,1170,1170,1277,1277,529,529],[17,17,8,8,9,9,19,19,7,7],[0.0960708799869637,0.0960708799869637,0.0400252080789302,0.0400252080789302,0.0878301417560782,0.0878301417560782,0.00450005092951469,0.00450005092951469,0.0379410713918042,0.0379410713918042],["accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc","accuracy","roc_auc"],["binary","binary","binary","binary","binary","binary","binary","binary","binary","binary"],[0.749344099877267,0.808535984495232,0.687750273144969,0.740116567508217,0.75487691440743,0.824034062096281,0.685628019046263,0.738988852956361,0.725986755818734,0.778300303566128],[5,5,5,5,5,5,5,5,5,5],[0.013752635109592,0.0114368520456018,0.00778767016281378,0.0113461439131092,0.0143474762311596,0.0126146376185933,0.00949754446294934,0.0114142498813139,0.0107654289181378,0.0103854754112968],["Preprocessor1_Model1","Preprocessor1_Model1","Preprocessor1_Model2","Preprocessor1_Model2","Preprocessor1_Model3","Preprocessor1_Model3","Preprocessor1_Model4","Preprocessor1_Model4","Preprocessor1_Model5","Preprocessor1_Model5"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>mtry<\/th>\n      <th>trees<\/th>\n      <th>tree_depth<\/th>\n      <th>learn_rate<\/th>\n      <th>.metric<\/th>\n      <th>.estimator<\/th>\n      <th>mean<\/th>\n      <th>n<\/th>\n      <th>std_err<\/th>\n      <th>.config<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":4,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":7,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":9,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[1,2,3,4,7,8,9]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render","options.columnDefs.2.render"],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -1592,8 +1781,8 @@
 </details>
 <div class="cell-output-display">
 
-<div id="htmlwidget-83406fccc892b1507196" style="width:100%;height:auto;" class="datatables html-widget"></div>
-<script type="application/json" data-for="htmlwidget-83406fccc892b1507196">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1"],[16],[1385],[17],[0.0924847716008197],["roc_auc"],["binary"],[0.848391763863541],[5],[0.011549706729051],["Preprocessor1_Model084"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>mtry<\/th>\n      <th>trees<\/th>\n      <th>tree_depth<\/th>\n      <th>learn_rate<\/th>\n      <th>.metric<\/th>\n      <th>.estimator<\/th>\n      <th>mean<\/th>\n      <th>n<\/th>\n      <th>std_err<\/th>\n      <th>.config<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":4,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":7,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":9,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[1,2,3,4,7,8,9]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render","options.columnDefs.2.render"],"jsHooks":[]}</script>
+<div id="htmlwidget-3e765617690b9f4a69c1" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-3e765617690b9f4a69c1">{"x":{"filter":"none","vertical":false,"fillContainer":false,"data":[["1"],[6],[1170],[9],[0.0878301417560782],["roc_auc"],["binary"],[0.824034062096281],[5],[0.0126146376185933],["Preprocessor1_Model3"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>mtry<\/th>\n      <th>trees<\/th>\n      <th>tree_depth<\/th>\n      <th>learn_rate<\/th>\n      <th>.metric<\/th>\n      <th>.estimator<\/th>\n      <th>mean<\/th>\n      <th>n<\/th>\n      <th>std_err<\/th>\n      <th>.config<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":5,"autoWidth":true,"dom":"tip","scrollX":true,"scrollY":true,"initComplete":"function(settings, json) {\n$(this.api().table().header()).css({'color': 'white'});\n}","columnDefs":[{"targets":4,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":7,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"targets":9,"render":"function(data, type, row, meta) {\n    return type !== 'display' ? data : DTWidget.formatRound(data, 3, 3, \",\", \".\", null);\n  }"},{"className":"dt-right","targets":[1,2,3,4,7,8,9]},{"orderable":false,"targets":0}],"order":[],"orderClasses":false,"lengthMenu":[5,10,25,50,100]}},"evals":["options.initComplete","options.columnDefs.0.render","options.columnDefs.1.render","options.columnDefs.2.render"],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -1653,7 +1842,7 @@
 <h2>7. Example: ROC vs param value</h2>
 <ul>
 <li><p>Plotting the model performance against the parameter values in the grid can often reveal trends that can help refine the grid for better performance.</p></li>
-<li><p>For example… &lt;insight&gt;</p></li>
+<li><p>For example… Model performance tends to increase with learning rate</p></li>
 </ul>
 </section>
 <section class="slide level2">
@@ -1745,9 +1934,9 @@
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>          Truth
-Prediction    no   yes
-       no  23019  6909
-       yes  6081 11191</code></pre>
+Prediction   no  yes
+       no  1153  351
+       yes  302  554</code></pre>
 </div>
 </div>
 </section>
@@ -1788,8 +1977,8 @@ Prediction    no   yes
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>       no   yes
-no  0.488 0.176
-yes 0.100 0.236</code></pre>
+no  0.486 0.177
+yes 0.102 0.235</code></pre>
 </div>
 </div>
 </section>
@@ -1833,28 +2022,28 @@ event ~ treatment_arm + ind_didanosine + ind_zidovudine + ind_zalcitabine +
 
 ── Model ───────────────────────────────────────────────────────────────────────
 ##### xgb.Booster
-raw: 1.2 Mb 
+raw: 1.1 Mb 
 call:
-  xgboost::xgb.train(params = list(eta = 0.0924847716008197, max_depth = 17L, 
-    gamma = 0, colsample_bytree = 1, colsample_bynode = 0.5, 
-    min_child_weight = 54, subsample = 1), data = x$data, nrounds = 1385L, 
+  xgboost::xgb.train(params = list(eta = 0.0878301417560782, max_depth = 9L, 
+    gamma = 0, colsample_bytree = 1, colsample_bynode = 0.1875, 
+    min_child_weight = 54, subsample = 1), data = x$data, nrounds = 1170L, 
     watchlist = x$watchlist, verbose = 0, nthread = 1, objective = "binary:logistic")
 params (as set within xgb.train):
-  eta = "0.0924847716008197", max_depth = "17", gamma = "0", colsample_bytree = "1", colsample_bynode = "0.5", min_child_weight = "54", subsample = "1", nthread = "1", objective = "binary:logistic", validate_parameters = "TRUE"
+  eta = "0.0878301417560782", max_depth = "9", gamma = "0", colsample_bytree = "1", colsample_bynode = "0.1875", min_child_weight = "54", subsample = "1", nthread = "1", objective = "binary:logistic", validate_parameters = "TRUE"
 xgb.attributes:
   niter
 callbacks:
   cb.evaluation.log()
 # of features: 32 
-niter: 1385
+niter: 1170
 nfeatures : 32 
 evaluation_log:
     iter training_logloss
-       1        0.6818197
-       2        0.6731883
+       1        0.6867557
+       2        0.6806809
 ---                      
-    1384        0.3370586
-    1385        0.3370031</code></pre>
+    1169        0.3926083
+    1170        0.3924625</code></pre>
 </div>
 </div>
 </section></section>
@@ -1899,9 +2088,9 @@ evaluation_log:
   -&gt; predict function  :  yhat.workflow  will be used (  default  )
   -&gt; predicted values  :  No value for predict function target column. (  default  )
   -&gt; model_info        :  package tidymodels , ver. 1.0.0 , task classification (  default  ) 
-  -&gt; predicted values  :  numerical, min =  0.007486761 , mean =  0.4165853 , max =  0.9883219  
+  -&gt; predicted values  :  numerical, min =  0.0132525 , mean =  0.416588 , max =  0.9739801  
   -&gt; residual function :  difference between y and yhat (  default  )
-  -&gt; residuals         :  numerical, min =  -0.9161886 , mean =  -7.166723e-06 , max =  0.9464752  
+  -&gt; residuals         :  numerical, min =  -0.9061467 , mean =  -9.940908e-06 , max =  0.9474251  
   A new explainer has been created!  </code></pre>
 </div>
 </div>
