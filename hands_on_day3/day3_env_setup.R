@@ -11,6 +11,10 @@ suppressPackageStartupMessages(library(pROC))
 suppressPackageStartupMessages(library(recipes))
 suppressPackageStartupMessages(library(themis))
 suppressPackageStartupMessages(library(DALEXtra))
+suppressPackageStartupMessages(library(pins))
+suppressPackageStartupMessages(library(plumber))
+suppressPackageStartupMessages(library(rapidoc))
+suppressPackageStartupMessages(library(vetiver))
 
 
 

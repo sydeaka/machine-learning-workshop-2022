@@ -29,12 +29,14 @@ renv::install("themis")
 renv::install("DALEXtra")
 renv::install("daroczig/logger")
 renv::install("glmnet")
+renv::install("vetiver")
+renv::install("rsconnect")
+renv::install("connectapi")
 #renv::install("")
 #renv::install("")
 #renv::install("")
 #renv::install("")
-
-
+#renv::install("")
 
 renv::status()
 
