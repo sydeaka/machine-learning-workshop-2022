@@ -1,0 +1,480 @@
+---
+title: "Untitled"
+format: html
+editor: visual
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+
+# Setup
+
+
+Workshop environment setup
+
+```{r}
+source(here::here("hands_on_day3", "day3_env_setup.R"))
+```
+
+
+ACTG175 demo environment setup
+
+```{r}
+source(here::here("hands_on_day3", "actg175_env_setup.R"))
+```
+
+
+
+# Apply 10 ML Best practices
+
+## 1. Define modeling objectives
+
+-   ACTG 175 was a randomized, double-blind, placebo-controlled trial that included HIV-1--infected subjects with CD4 cell counts 200-500 per cubic mm
+
+-   Treatments
+
+    -   Monotherapy: (1) zidovudine alone or (2) didanosine alone
+    -   Combination therapy: (3) zidovudine + didanosine or (4) zidovudine + zalcitabine
+
+-   Primary study end point: (1) \>50% decline in CD4 cell count, (2) progression to AIDS, or (3) death.
+
+-   Objective: Given baseline characteristics, predict patient's CD4 level at 20 weeks after randomization (`cd420`)
+
+-   Outcome: Binary indicator of whether patient had \>50% CD4+ increase, progressed to AIDS, or death
+
+-   Data source: Clinical data -- baseline predictors, treatment assignment, study outcomes
+
+-   Candidate algorithms
+
+    -   Supervised learning / regression: Random forest, XGBoost, & Linear regression (OLS)
+
+
+
+## 2. Exploratory data analysis
+
+Load the ACTG175 data
+
+```{r}
+logger::log_info("Run the ACTG175 data load and transformation pipeline")
+proc_data <- actg175_load_and_transform_data()
+
+logger::log_info("Unpack the data")
+dat_raw <- proc_data$dat_raw
+dat_clean <- proc_data$dat_clean
+```
+
+```{r}
+logger::log_info("Preview the raw and processed data")
+dat_raw %>% pretty_dt()
+dat_clean %>% pretty_dt()
+```
+
+
+
+
+
+Exploratory data analysis: Show summaries and plots
+
+```{r}
+eda_results <- actg175_eda(dat_raw, dat_clean)
+```
+
+Missing data summary plot
+
+```{r}
+eda_results$summaries$missing_data_summary
+```
+
+
+## 3. Feature engineering
+
+Create indicator variables for the individual drugs
+
+```{r feat_eng}
+dat_clean <- dat_clean %>%
+  mutate(
+    ind_didanosine = ifelse(grepl(pattern='didanosine', x=treatment_arm), 1L, 0L),
+    ind_zidovudine = ifelse(grepl(pattern='zidovudine', x=treatment_arm), 1L, 0L),
+    ind_zalcitabine = ifelse(grepl(pattern='zalcitabine', x=treatment_arm), 1L, 0L)
+  )
+
+dat_clean %>%
+  distinct(treatment_arm, ind_didanosine, ind_zidovudine, ind_zalcitabine) %>%
+  pretty_dt
+```
+
+
+## 4. Feature selection
+
+Decide which variables we might want to include in the model
+
+TO DO: Try with preliminary model fit
+
+```{r var_types}
+var_predictors <- c(
+    # treatment assignment 
+    'treatment_arm', 
+    'ind_didanosine', 'ind_zidovudine', 'ind_zalcitabine',
+    # baseline predictors
+    'age', 'wtkg', 'hemo', 'lgbtq', 'hist_intra_drug_use', 'karnof', 'prior_z_30days', 
+    'days_prior_art', 'race', 'gender', 'prior_art', 'strat_hist_art', 'symptom', 'baseline_cd4', 'baseline_cd8')
+
+var_outcomes <- c('event', 'surv_event', 'surv_days', 'cd420', 'cd496', 'r', 'cd820')
+vars_all <- colnames(dat_clean)
+vars_to_keep <- c(var_predictors, var_outcomes)
+vars_excluded <- vars_all[!(vars_all %in% vars_to_keep)]
+
+dat_analysis <- dat_clean %>% select_at(vars_to_keep)
+
+dat_analysis %>% summary
+```
+
+
+
+## 5. Split data into training / testing
+
+### Initial data split
+
+85 % training / validation + 15% test
+
+```{r dat_split}
+# Set the seed so the result is reproducible
+set.seed(123)
+# 85% training / 15% testing
+dat_split <- initial_split(dat_analysis, prop = 0.85, strata = strat_hist_art)
+dat_split
+```
+
+```{r dat_split_dims}
+dat_train_and_val <- training(dat_split)
+dat_test <- testing(dat_split)
+```
+
+
+
+## 6. Train the model(s)
+
+Set up the parallel backend
+
+```{r parallel_setup}
+cores <- parallelly::availableCores(logical = FALSE)
+cl <- parallel::makePSOCKcluster(cores)
+doParallel::registerDoParallel(cl)
+```
+
+Tune hyperparameters in multple models (Random Forest + XGBoost) + also fit GLMNET regression benchmark model
+
+
+Generate k folds for CV
+
+```{r}
+set.seed(9265)
+num_folds <- 5
+dat_folds <- vfold_cv(dat_train_and_val, v = num_folds, strata = strat_hist_art)
+```
+
+Model specifications
+
+- Some parameters are specified (e.g. `min_n` in XGBoost and Random Forest), while others are marked for tuning 
+- Also tuning the mixture parameter in the GLMNET model 
+- Specifying parameter ranges for XGBoost & Random Forest, but allowing automatic specification of the glmnet grid
+
+```{r}
+# XGBoost
+model_spec_xgb_tune <- boost_tree(mode = 'regression', engine = 'xgboost', trees = tune(),
+                             tree_depth = tune(), min_n = tune(), learn_rate = tune(), 
+                             mtry = tune())
+
+# Random forest
+model_spec_rf_tune <- rand_forest(mode = 'regression', engine = 'ranger', 
+                             trees = tune(), mtry = tune(), min_n = tune())
+
+# Linear regression
+model_spec_glmnet_tune <- linear_reg(mode = "regression", engine = "glmnet", mixture = tune(), penalty = tune())
+```
+
+Specify two model formulas:
+- First includes both representations of treatment arms
+- Second removes the binary indicators of the individual treatment
+
+```{r}
+logger::log_info("Treatment assignment variables: treatment_arms, ind_didanosine, ind_zidovudine, and ind_zalcitabine")
+model_formula_all_pred <- as.formula(paste('cd420 ~ ', paste(var_predictors, collapse = ' + ')))
+model_formula_all_pred
+
+logger::log_info("Treatment assignment variables: treatment_arms only")
+var_predictors_rm_trt_indicators <-  var_predictors[!(var_predictors %in% c('ind_didanosine', 'ind_zidovudine', 'ind_zalcitabine'))]
+model_formula_rm_trt_indicators <- as.formula(paste('cd420 ~ ', paste(var_predictors_rm_trt_indicators, collapse = ' + ')))
+
+model_formula_rm_trt_indicators
+```
+
+Set control parameters
+
+```{r}
+ctrl <- control_grid(save_pred = TRUE, allow_par=TRUE, parallel_over = "everything", 
+                     verbose=TRUE, event_level='second')
+
+model_formula <- model_formula_all_pred
+```
+
+### Hyperparameter tuning
+
+
+#### Tune parameters in the GLMNET model
+
+Allow tidymodels to automatically set up the grid
+
+```{r}
+logger::log_info("GLMNET: Model workflow")
+glmnet_model_wflow_tune <- workflow(model_formula, model_spec_glmnet_tune)
+
+logger::log_info("GLMNET: Tune the hyperparameters using k-fold cross validation")
+logger::log_info("GLMNET:  Allow the algorithm to automatically determine the parameter ranges")
+set.seed(9)
+tm_glmnet <- system.time({
+  glmnet_res <-
+    glmnet_model_wflow_tune %>%
+    tune_grid(resamples = dat_folds, 
+              grid = 100,
+              control = ctrl)
+})
+
+# How long did it take to run?
+elapsed_secs <- as.numeric(tm_glmnet['elapsed'])
+elapsed_min <- elapsed_secs/60
+logger::log_info("Training completed in {round(elapsed_secs,2)} seconds / {round(elapsed_min,2)} minutes.")
+
+logger::log_info("GLMNET: Select / show the top model configurations (best param combination)")
+top_glmnet_model_config <- glmnet_res %>% 
+  select_best(metric = 'rmse') %>%
+  mutate(algorithm='GLMNET')
+top_glmnet_model_perf <- glmnet_res %>% 
+  show_best(metric = 'rmse', n = 1) %>% 
+  mutate(algorithm='GLMNET')
+
+logger::log_info("GLMNET: Summarize performance metrics over {num_folds} folds")
+glmnet_tune_metrics <- glmnet_res %>% 
+  collect_metrics() %>%
+  mutate(scenario = .config)
+
+logger::log_info("GLMNET: Plot performance metrics: mean +/- standard error")
+plot_tune_grid_metrics(tune_metrics = glmnet_tune_metrics)
+
+logger::log_info("GLMNET: Plot performance metric vs parameter value")
+plot_param(tune_metrics = glmnet_tune_metrics, param = 'mixture', metric_type='rmse')
+plot_param(tune_metrics = glmnet_tune_metrics, param = 'penalty', metric_type='rmse')
+```
+
+
+
+
+
+
+
+#### Tune parameters in the XGBoost model
+
+```{r}
+logger::log_info("XGBoost: Model workflow")
+xgb_model_wflow_tune <- workflow(model_formula, model_spec_xgb_tune)
+
+logger::log_info("XGBoost: Set ranges for the parameters we want to tune")
+xgb_param <- 
+  xgb_model_wflow_tune %>% 
+  extract_parameter_set_dials() %>% 
+  update(
+    trees = trees(c(100, 1000)),
+    learn_rate = learn_rate(c(.005, .025), trans= NULL),
+    tree_depth = tree_depth(c(4, 10)),
+    mtry = mtry(c(5, 15))
+  )
+
+logger::log_info("XGBoost: Tune the hyperparameters using k-fold cross validation")
+set.seed(9)
+tm_xgb <- system.time({
+  xgb_res <-
+    xgb_model_wflow_tune %>%
+    tune_grid(resamples = dat_folds, 
+              grid = xgb_param %>% grid_max_entropy(size = 200),
+              #grid = 100,
+              control = ctrl)
+})
+
+# How long did it take to run?
+elapsed_secs <- as.numeric(tm_xgb['elapsed'])
+elapsed_min <- elapsed_secs/60
+logger::log_info("Training completed in {round(elapsed_secs,2)} seconds / {round(elapsed_min,2)} minutes.")
+
+logger::log_info("XGBoost: Select / show the top model configurations (best param combination)")
+top_xgb_model_config <- xgb_res %>% 
+  select_best(metric = 'rmse')  %>% 
+  mutate(algorithm='XGBoost')
+top_xgb_model_perf <- xgb_res %>% 
+  show_best(metric = 'rmse', n = 1) %>% 
+  mutate(algorithm='XGBoost')
+
+logger::log_info("XGBoost: Summarize performance metrics over {num_folds} folds")
+xgb_tune_metrics <- xgb_res %>% 
+  collect_metrics() %>%
+  mutate(scenario = .config)
+
+logger::log_info("XGBoost: Plot performance metrics: mean +/- standard error")
+plot_tune_grid_metrics(tune_metrics = xgb_tune_metrics)
+
+logger::log_info("XGBoost: Plot performance metric vs parameter value")
+plot_param(tune_metrics = xgb_tune_metrics, param = 'learn_rate', metric_type='rmse')
+plot_param(tune_metrics = xgb_tune_metrics, param = 'trees', metric_type='rmse')
+plot_param(tune_metrics = xgb_tune_metrics, param = 'tree_depth', metric_type='rmse')
+plot_param(tune_metrics = xgb_tune_metrics, param = 'mtry', metric_type='rmse')
+```
+
+
+
+
+#### Tune parameters in the Random Forest model
+
+```{r}
+logger::log_info("Random Forest: Model workflow")
+rf_model_wflow_tune <- workflow(model_formula, model_spec_rf_tune)
+
+logger::log_info("Random Forest: Set ranges for the parameters we want to tune")
+rf_param <- 
+  rf_model_wflow_tune %>% 
+  extract_parameter_set_dials() %>% 
+  update(
+    trees = trees(c(100, 1000)),
+    mtry = mtry(c(3, 20))
+  )
+
+logger::log_info("Random Forest: Tune the hyperparameters using k-fold cross validation")
+set.seed(9)
+tm_rf <- system.time({
+  rf_res <-
+    rf_model_wflow_tune %>%
+    tune_grid(resamples = dat_folds, 
+              grid = rf_param %>% grid_max_entropy(size = 100),
+              #grid = 100,
+              control = ctrl)
+})
+
+# How long did it take to run?
+elapsed_secs <- as.numeric(tm_rf['elapsed'])
+elapsed_min <- elapsed_secs/60
+logger::log_info("Training completed in {round(elapsed_secs,2)} seconds / {round(elapsed_min,2)} minutes.")
+
+logger::log_info("Random Forest: Select / show the top model configurations (best param combination)")
+top_rf_model_config <- rf_res %>% 
+  select_best(metric = 'rmse')  %>% 
+  mutate(algorithm='Random Forest')
+top_rf_model_perf <- rf_res %>% 
+  show_best(metric = 'rmse', n = 1) %>% 
+  mutate(algorithm='Random Forest')
+
+logger::log_info("Random Forest: Summarize performance metrics over {num_folds} folds")
+rf_tune_metrics <- rf_res %>% 
+  collect_metrics() %>%
+  mutate(scenario = .config)
+
+logger::log_info("Random Forest: Plot performance metrics: mean +/- standard error")
+plot_tune_grid_metrics(tune_metrics = rf_tune_metrics)
+
+logger::log_info("Random Forest: Plot performance metric vs parameter value")
+plot_param(tune_metrics = rf_tune_metrics, param = 'trees', metric_type='rmse')
+plot_param(tune_metrics = rf_tune_metrics, param = 'mtry', metric_type='rmse')
+```
+
+
+### Summarize parameter tuning results
+
+```{r}
+model_workflows <- list("GLMNET" = glmnet_model_wflow_tune,
+  "Random Forest" = rf_model_wflow_tune,
+     "XGBoost" = xgb_model_wflow_tune)
+model_workflows
+```
+
+
+Top models: Performance metrics in each algorithm
+
+```{r}
+model_perf <- list("GLMNET" = top_glmnet_model_perf,
+  "Random Forest" = top_rf_model_perf,
+     "XGBoost" = top_xgb_model_perf)
+model_perf
+```
+
+
+Top models: Optimal hyperparameters in each algorithm
+
+```{r}
+model_config <- list("GLMNET" = top_glmnet_model_config,
+  "Random Forest" = top_rf_model_config,
+     "XGBoost" = top_xgb_model_config)
+
+model_config
+```
+
+
+Top overall model
+
+```{r}
+rmse_vals <- sapply(model_perf, function(perf) perf$mean[1])
+top_model_name <- which.min(rmse_vals) %>% names
+top_model_config <- model_config[[top_model_name]]
+logger::log_info("Top model: `{top_model_name}`")
+top_model_config
+```
+
+```{r}
+top_model_workflow <- model_workflows[[top_model_name]] %>%
+  finalize_workflow(top_model_config)
+```
+
+
+
+```{r}
+## The final model fit
+final_model_fit <- 
+  top_model_workflow %>% 
+  last_fit(split = dat_split)
+```
+
+```{r}
+final_model_fit %>% extract_workflow()
+```
+
+
+
+Extract the fitted object in its native format
+
+For example, this would return a `glmnet` class object that can be used with native `glmnet` package utilities as if you had fit it directly outside of the tidymodels framework.
+
+```{r}
+final_model_obj <- final_model_fit %>% extract_fit_engine()
+class(final_model_obj)
+```
+
+
+# Deploy the model
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
