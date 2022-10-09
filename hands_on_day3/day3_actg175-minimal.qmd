@@ -427,14 +427,15 @@ logger::log_info("Random Forest: Model workflow")
 rf_model_wflow_tune <- workflow(model_formula, model_spec_rf_tune)
 
 logger::log_info("Random Forest: Set ranges for the parameters we want to tune")
-rf_param <- 
+rf_param_grid <- 
   rf_model_wflow_tune %>% 
   extract_parameter_set_dials() %>% 
   update(
     trees = trees(c(100, 300)),
     mtry = mtry(c(5, 20)),
     min_n = min_n(c(25, 200))
-  )
+  ) %>% 
+  grid_max_entropy(size = grid_size)
 
 logger::log_info("Random Forest: Tune the hyperparameters using k-fold cross validation")
 set.seed(9)
@@ -442,7 +443,7 @@ tm_rf <- system.time({
   rf_res <-
     rf_model_wflow_tune %>%
     tune_grid(resamples = dat_folds, 
-              grid = rf_param %>% grid_max_entropy(size = grid_size),
+              grid = rf_param_grid ,
               #grid = grid_size,
               control = ctrl)
 })
