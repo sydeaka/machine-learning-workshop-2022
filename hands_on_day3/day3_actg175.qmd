@@ -26,6 +26,7 @@ ACTG175 demo environment setup
 
 ```{r}
 source(here::here("hands_on_day3", "actg175_env_setup.R"))
+source(here::here("hands_on_day3", "day3_model_utils.R"))
 ```
 
 
@@ -37,7 +38,6 @@ source(here::here("hands_on_day3", "actg175_env_setup.R"))
 -   ACTG 175 was a randomized, double-blind, placebo-controlled trial that included HIV-1--infected subjects with CD4 cell counts 200-500 per cubic mm
 
 -   Treatments
-
     -   Monotherapy: (1) zidovudine alone or (2) didanosine alone
     -   Combination therapy: (3) zidovudine + didanosine or (4) zidovudine + zalcitabine
 
@@ -91,6 +91,13 @@ eda_results$summaries$missing_data_summary
 ```
 
 
+Other summary plots
+
+```{r}
+eda_results$plot_list
+```
+
+
 ## 3. Feature engineering
 
 Create indicator variables for the individual drugs
@@ -126,6 +133,7 @@ var_predictors <- c(
 
 var_outcomes <- c('event', 'surv_event', 'surv_days', 'cd420', 'cd496', 'r', 'cd820')
 vars_all <- colnames(dat_clean)
+
 vars_to_keep <- c(var_predictors, var_outcomes)
 vars_excluded <- vars_all[!(vars_all %in% vars_to_keep)]
 
@@ -134,6 +142,13 @@ dat_analysis <- dat_clean %>% select_at(vars_to_keep)
 dat_analysis %>% summary
 ```
 
+
+
+Specify the outcome that we will focus on in this modeling exercise
+
+```{r}
+selected_outcome <- "cd820"
+```
 
 
 ## 5. Split data into training / testing
@@ -150,7 +165,7 @@ dat_split <- initial_split(dat_analysis, prop = 0.85, strata = strat_hist_art)
 dat_split
 ```
 
-```{r dat_split_dims}
+```{r dat_split_dfs}
 dat_train_and_val <- training(dat_split)
 dat_test <- testing(dat_split)
 ```
@@ -204,12 +219,12 @@ Specify two model formulas:
 
 ```{r}
 logger::log_info("Treatment assignment variables: treatment_arms, ind_didanosine, ind_zidovudine, and ind_zalcitabine")
-model_formula_all_pred <- as.formula(paste('cd420 ~ ', paste(var_predictors, collapse = ' + ')))
+model_formula_all_pred <- as.formula(paste(selected_outcome, '~ ', paste(var_predictors, collapse = ' + ')))
 model_formula_all_pred
 
 logger::log_info("Treatment assignment variables: treatment_arms only")
 var_predictors_rm_trt_indicators <-  var_predictors[!(var_predictors %in% c('ind_didanosine', 'ind_zidovudine', 'ind_zalcitabine'))]
-model_formula_rm_trt_indicators <- as.formula(paste('cd420 ~ ', paste(var_predictors_rm_trt_indicators, collapse = ' + ')))
+model_formula_rm_trt_indicators <- as.formula(paste(selected_outcome, ' ~ ', paste(var_predictors_rm_trt_indicators, collapse = ' + ')))
 
 model_formula_rm_trt_indicators
 ```
@@ -222,7 +237,7 @@ ctrl <- control_grid(save_pred = TRUE, allow_par=TRUE, parallel_over = "everythi
 
 grid_size <- 200
 
-model_formula <- model_formula_all_pred
+model_formula <- model_formula_rm_trt_indicators
 ```
 
 ### Hyperparameter tuning
@@ -243,7 +258,7 @@ tm_glmnet <- system.time({
   glmnet_res <-
     glmnet_model_wflow_tune %>%
     tune_grid(resamples = dat_folds, 
-              grid = 100,
+              grid = ifelse(grid_size > 100, ceiling(grid_size/3), grid_size),
               control = ctrl)
 })
 
@@ -259,6 +274,15 @@ top_glmnet_model_config <- glmnet_res %>%
 top_glmnet_model_perf <- glmnet_res %>% 
   show_best(metric = 'rmse', n = 1) %>% 
   mutate(algorithm='GLMNET')
+
+logger::log_info("GLMNET: Collect predictions over folds")
+glmnet_tune_preds <- glmnet_res %>% 
+  collect_predictions() %>%
+  filter(.config == top_glmnet_model_perf$.config)
+
+logger::log_info("GLMNET: Plot predicted vs observed")
+plot_pred_vs_obs_scatter(preds=glmnet_tune_preds,
+                         plot_title="CV predictions: GLMNET pred vs obs")
 
 logger::log_info("GLMNET: Summarize performance metrics over {num_folds} folds")
 glmnet_tune_metrics <- glmnet_res %>% 
@@ -290,10 +314,11 @@ xgb_param <-
   xgb_model_wflow_tune %>% 
   extract_parameter_set_dials() %>% 
   update(
-    trees = trees(c(600, 1500)),
-    learn_rate = learn_rate(c(.005, .1), trans= NULL),
-    tree_depth = tree_depth(c(4, 20)),
-    mtry = mtry(c(5, 20))
+    trees = trees(c(100, 800)),
+    learn_rate = learn_rate(c(.00001, .1), trans= NULL),
+    tree_depth = tree_depth(c(5, 25)),
+    mtry = mtry(c(5, 20)),
+    min_n = min_n(c(25, 200))
   )
 
 logger::log_info("XGBoost: Tune the hyperparameters using k-fold cross validation")
@@ -302,8 +327,8 @@ tm_xgb <- system.time({
   xgb_res <-
     xgb_model_wflow_tune %>%
     tune_grid(resamples = dat_folds, 
-              grid = xgb_param %>% grid_max_entropy(size = 200),
-              #grid = 100,
+              grid = xgb_param %>% grid_max_entropy(size = grid_size),
+              #grid = grid_size,
               control = ctrl)
 })
 
@@ -316,9 +341,25 @@ logger::log_info("XGBoost: Select / show the top model configurations (best para
 top_xgb_model_config <- xgb_res %>% 
   select_best(metric = 'rmse')  %>% 
   mutate(algorithm='XGBoost')
+
 top_xgb_model_perf <- xgb_res %>% 
   show_best(metric = 'rmse', n = 1) %>% 
   mutate(algorithm='XGBoost')
+
+
+# top_xgb_fit <- xgb_model_wflow_tune %>%
+#   finalize_workflow(top_xgb_model_config) %>%
+#   last_fit(split = dat_split) %>% 
+#   extract_workflow()
+
+logger::log_info("XGBoost: Collect predictions over folds")
+xgb_tune_preds <- xgb_res %>% 
+  collect_predictions() %>%
+  filter(.config == top_xgb_model_perf$.config)
+
+logger::log_info("XGBoost: Plot predicted vs observed")
+plot_pred_vs_obs_scatter(preds=xgb_tune_preds,
+                         plot_title="CV predictions: XGBoost pred vs obs")
 
 logger::log_info("XGBoost: Summarize performance metrics over {num_folds} folds")
 xgb_tune_metrics <- xgb_res %>% 
@@ -333,6 +374,7 @@ plot_param(tune_metrics = xgb_tune_metrics, param = 'learn_rate', metric_type='r
 plot_param(tune_metrics = xgb_tune_metrics, param = 'trees', metric_type='rmse')
 plot_param(tune_metrics = xgb_tune_metrics, param = 'tree_depth', metric_type='rmse')
 plot_param(tune_metrics = xgb_tune_metrics, param = 'mtry', metric_type='rmse')
+plot_param(tune_metrics = xgb_tune_metrics, param = 'min_n', metric_type='rmse')
 ```
 
 
@@ -349,9 +391,9 @@ rf_param <-
   rf_model_wflow_tune %>% 
   extract_parameter_set_dials() %>% 
   update(
-    trees = trees(c(500, 1500)),
+    trees = trees(c(100, 800)),
     mtry = mtry(c(5, 20)),
-    min_n = min_n(c(15, 100))
+    min_n = min_n(c(25, 200))
   )
 
 logger::log_info("Random Forest: Tune the hyperparameters using k-fold cross validation")
@@ -361,7 +403,7 @@ tm_rf <- system.time({
     rf_model_wflow_tune %>%
     tune_grid(resamples = dat_folds, 
               grid = rf_param %>% grid_max_entropy(size = grid_size),
-              #grid = 100,
+              #grid = grid_size,
               control = ctrl)
 })
 
@@ -378,6 +420,15 @@ top_rf_model_perf <- rf_res %>%
   show_best(metric = 'rmse', n = 1) %>% 
   mutate(algorithm='Random Forest')
 
+logger::log_info("Random Forest: Collect predictions over folds")
+rf_tune_preds <- rf_res %>% 
+  collect_predictions() %>%
+  filter(.config == top_rf_model_perf$.config)
+
+logger::log_info("Random Forest: Plot predicted vs observed")
+plot_pred_vs_obs_scatter(preds=rf_tune_preds,
+                         plot_title="CV predictions: Random Forest pred vs obs")
+
 logger::log_info("Random Forest: Summarize performance metrics over {num_folds} folds")
 rf_tune_metrics <- rf_res %>% 
   collect_metrics() %>%
@@ -392,6 +443,13 @@ plot_param(tune_metrics = rf_tune_metrics, param = 'mtry', metric_type='rmse')
 plot_param(tune_metrics = rf_tune_metrics, param = 'min_n', metric_type='rmse')
 ```
 
+### Shut down the parallel backend
+
+```{r}
+foreach::registerDoSEQ()
+parallel::stopCluster(cl)
+```
+
 
 ### Summarize parameter tuning results
 
@@ -399,7 +457,7 @@ plot_param(tune_metrics = rf_tune_metrics, param = 'min_n', metric_type='rmse')
 model_workflows <- list("GLMNET" = glmnet_model_wflow_tune,
   "Random Forest" = rf_model_wflow_tune,
      "XGBoost" = xgb_model_wflow_tune)
-model_workflows
+#model_workflows
 ```
 
 
@@ -441,6 +499,7 @@ top_model_workflow <- model_workflows[[top_model_name]] %>%
 
 
 
+
 ```{r}
 ## The final model fit
 top_model_fit <- 
@@ -454,6 +513,10 @@ top_model_fit_wflow <- top_model_fit %>% extract_workflow()
 
 
 
+
+
+
+
 Extract the fitted object in its native format
 
 For example, this would return a `glmnet` class object that can be used with native `glmnet` package utilities as if you had fit it directly outside of the tidymodels framework.
@@ -464,12 +527,14 @@ class(top_model_obj)
 ```
 
 
+
+
 # Deploy the model
 
 Create a vetiver model object.
 
 ```{r}
-model_name <- "actg175_cd420_model_predict"
+model_name <- glue::glue("actg175_{selected_outcome}_model_predict")
 pin_name <- glue::glue("{Sys.getenv('CONNECT_USER_ID')}/{model_name}")
 
 # Model metadata
@@ -598,15 +663,6 @@ content$get_dashboard_url()
 
 
 
-Use the API
-
-```{bash}
-curl -X POST "https://rstudio-connect.am.lilly.com/content/a4d4bf54-dbaa-4f58-af21-d0fba64416f0/predict" \
- -H "Accept: application/json" \
- -H "Content-Type: application/json" \
- -H "Authorization: Key ${CONNECT_API_KEY}" \
- -d '[{"treatment_arm":"zidovudine and zalcitabine","ind_didanosine":0,"ind_zidovudine":1,"ind_zalcitabine":1,"age":36,"wtkg":81.6,"hemo":"no","lgbtq":"yes","hist_intra_drug_use":"yes","karnof":100,"prior_z_30days":"yes","days_prior_art":86,"race":"white","gender":"male","prior_art":"experienced","strat_hist_art":"> 1 but <= 52 weeks of prior antiretroviral therapy","symptom":"symptomatic","baseline_cd4":236,"baseline_cd8":634}]' 
-```
 
 
 

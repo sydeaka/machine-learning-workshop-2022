@@ -166,14 +166,6 @@ actg175_eda <- function(dat_raw, dat_clean) {
     geom_bar(stat = 'identity') + 
     ylab('') + ggtitle('Patient counts by event status')
   
-  logger::log_info("Boxplot of baseline CD4 levels across treatment arms")
-  plot_list[["cdv_vs_treatment_arms"]] <- dat_clean %>%
-    ggplot(aes(x = treatment_arm, y = baseline_cd4)) + 
-    geom_boxplot() + 
-    coord_flip() +
-    xlab('') + ylab('') + ggtitle('Baseline CD4')
-  
-  
   logger::log_info("Bar plot of prior_z counts")
   plot_list[["prior_z_counts"]] <- dat_clean %>%
     count(prior_z) %>%
@@ -188,6 +180,16 @@ actg175_eda <- function(dat_raw, dat_clean) {
     ggplot(aes(x = prior_nz_art, y = n)) + 
     geom_bar(stat = 'identity') +
     xlab('') + ylab('') + ggtitle('Patient counts by prior non-zidovudine history')
+  
+  logger::log_info("Boxplot: CD4 @ 20 wks by treatment arm")
+  plot_list[["cd420_vs_treatment_arm"]] <- dat_clean %>%
+    ggplot(aes(x=treatment_arm, y=cd420)) +
+    geom_boxplot()
+  
+  logger::log_info("Boxplot: CD8 @ 20 wks by treatment arm")
+  plot_list[["cd820_vs_treatment_arm"]] <- dat_clean %>%
+    ggplot(aes(x=treatment_arm, y=cd820)) +
+    geom_boxplot()
   
   logger::log_info("Exploratory data analysis of ACTG study data is complete.")
   
