@@ -57,6 +57,28 @@ source(here::here("hands_on_day3", "actg175_env_setup.R"))
 source(here::here("hands_on_day3", "day3_model_utils.R"))
 ```
 
+## 10 ML best practices
+
+1\. Define modeling objectives
+
+2\. Exploratory data analysis
+
+3\. Feature engineering
+
+4\. Feature selection
+
+5\. Split data into training / testing sets
+
+6\. Train / validate the model
+
+7\. Create visual summaries
+
+8\. Explain the model predictions
+
+9\. Deploy the model
+
+10\. Create a ML workflow
+
 # Apply 10 ML Best practices
 
 ## 1. Define modeling objectives
@@ -576,7 +598,9 @@ class(top_model_obj)
 top_model_obj
 ```
 
-# Deploy the model
+## 8. Explain the model predictions
+
+## 9. Deploy the model
 
 This code has been adapted from the DC Bikeshare demo provided by RStudio
 
@@ -685,7 +709,6 @@ content <-
     title = app_title
   )
 
-
 content
 ```
 
@@ -707,3 +730,5 @@ View the dashboard URL. You can view this board if you'd like to view the Vetive
 ```{r}
 content$get_dashboard_url()
 ```
+
+## 10. Create a ML workflow
