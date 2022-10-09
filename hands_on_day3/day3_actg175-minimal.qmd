@@ -10,6 +10,38 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Introduction
 
+This demo will be discussed on Day 3 (October 12, 2022) of the 2022 Machine Learning Workshop.
+
+The Day 3 interactive hands-on session will illustrate the 10 machine learning best practices for building and deploying machine learning models that were discussed on Day 2.
+
+-   [**Environment setup instructions**]{.underline}: \<link\>
+
+-   [**Repository URL**]{.underline}: \<link\>
+
+## Tips
+
+-   Use code for every step in the workflow (avoid manual steps if possible)
+
+    -   data ingestion, data pre-processing, model fitting, data summaries / visualizations, final model selection, model deployment, etc.
+
+-   Create your own suite of helper functions that are stored in external scripts. This makes your code cleaner and easier to maintain.
+
+    -   Re-use functions for multiple scenarios
+
+    -   Code is cleaner, easier to read
+
+-   Parameterize your code, so that you can easily/quickly adjust settings that are likely to change from one model training exercise to the next
+
+-   Use the `logger` package to display descriptive logs as your workflow runs. This helps with troubleshooting if any issues arise.
+
+-   To ensure that your results are reproducible (i.e., that you get the same results) from one run to the next, always use the `set.seed` function to set a random seed before each step that uses randomization. You will note that I always set the seed before I do any of the following:
+
+    -   Split the data
+
+    -   Create k-folds
+
+    -   Train a model
+
 # Setup
 
 Workshop environment setup
@@ -46,7 +78,7 @@ source(here::here("hands_on_day3", "day3_model_utils.R"))
 
 -   Candidate algorithms
 
-    -   Supervised learning / regression: Random forest, Decision Tree, & Linear regression (OLS)
+    -   Supervised learning / regression: Random forest, Decision Tree, & Linear regression (Ordinary Least Squares, or OLS)
 
 ## 2. Exploratory data analysis
 
@@ -106,8 +138,6 @@ dat_clean %>%
 
 Decide which variables we might want to include in the model
 
-TO DO: Try with preliminary model fit
-
 ```{r var_types}
 var_predictors <- c(
     # treatment assignment 
@@ -153,11 +183,17 @@ dat_train_and_val <- training(dat_split)
 dat_test <- testing(dat_split)
 ```
 
-## 6. Train the model(s)
+## 6. Train the model(s) + 7. Create visual summaries
 
-Set up the parallel backend
+Set up the parallel backend.
 
-Uncomment if running outside of RStudio Cloud
+-   RStudio Cloud free account only has a single core, so it will not be possible to leverage parallel processing on RStudio Cloud.
+
+-   If you are running this demo outside of RStudio Cloud, you may uncomment the code in the chunk below.
+
+-   Since we are using limited resources for this demo, you will note that the parameters have been adjusted so that we are using fewer trees, fewer cross-validation folds, and fewer iterations in the grid search. I also switched to models that don't require RcppEigen package since this is not supported in RStudio Cloud. To view a more realistic example of an ML workflow that uses more complex models and parallelization, see the demo linked below.
+
+    -   <https://github.com/sydeaka/machine-learning-workshop-2022/blob/main/hands_on_day3/day3_actg175.qmd>
 
 ```{r parallel_setup}
 # cores <- parallelly::availableCores(logical = FALSE)
@@ -165,9 +201,11 @@ Uncomment if running outside of RStudio Cloud
 # doParallel::registerDoParallel(cl)
 ```
 
-Tune hyperparameters in multple models (Random Forest + Decision Tree) + also fit OLS Linear regression benchmark model
-
 Generate k folds for CV
+
+-   Note the smaller number of folds that we are using in this limited RStudio Cloud environment.
+
+-   Stratified fold split by the study stratification variable, history of anti-retroviral therapy
 
 ```{r}
 set.seed(9265)
@@ -175,8 +213,13 @@ num_folds <- 2
 dat_folds <- vfold_cv(dat_train_and_val, v = num_folds, strata = strat_hist_art)
 ```
 
+Specify two model formulas.
 
-Specify two model formulas: - First includes both representations of treatment arms - Second removes the binary indicators of the individual treatment
+-   First includes both representations of treatment arms
+
+-   Second removes the binary indicators of the individual treatment
+
+You may want to try it both ways to see if you get a different result.
 
 ```{r}
 logger::log_info("Treatment assignment variables: treatment_arms, ind_didanosine, ind_zidovudine, and ind_zalcitabine")
@@ -190,7 +233,11 @@ model_formula_rm_trt_indicators <- as.formula(paste(selected_outcome, ' ~ ', pas
 model_formula_rm_trt_indicators
 ```
 
-Set control parameters
+Set control parameters.
+
+-   Note the smaller grid size (5) that we are using in this limited RStudio Cloud environment.
+
+-   `model_formula` parameter allows you to switch between the two model formulas specified in the previous chunk.
 
 ```{r}
 ctrl <- control_grid(save_pred = TRUE, allow_par=TRUE, parallel_over = "everything", 
@@ -201,15 +248,21 @@ grid_size <- 5
 model_formula <- model_formula_rm_trt_indicators
 ```
 
-
-
 Model specifications
 
--   Some parameters are specified (e.g. `min_n` in Decision Tree and Random Forest), while others are marked for tuning
--   Also tuning the mixture parameter in the OLS Linear model
--   Specifying parameter ranges for Decision Tree & Random Forest, but allowing automatic specification of the glmnet grid
+-   Benchmark: OLS Linear model via the `lm` function implemented in the `stats` package
+-   ML Models:
+    -   Decision Tree model implemented in the `rpart` package
+
+    -   Random Forest model implemented in the `randomForest` package
+-   All Decision Tree and Random Forest parameters are will be tuned
+-   Specifying parameter ranges for Decision Tree & Random Forest in later chunks
+-   Thanks to tidymodels, we can leverage the same code structure as we advance from one algorithm to the next.
 
 ```{r}
+# Linear regression (benchmark model)
+model_spec_lm <- linear_reg(mode = "regression", engine = "lm")
+
 # Decision Tree
 model_spec_decision_tree_tune <- decision_tree(mode = 'regression', engine = 'rpart', 
                              tree_depth = tune(), min_n = tune())
@@ -217,21 +270,27 @@ model_spec_decision_tree_tune <- decision_tree(mode = 'regression', engine = 'rp
 # Random forest
 model_spec_rf_tune <- rand_forest(mode = 'regression', engine = 'randomForest', 
                              trees = tune(), mtry = tune(), min_n = tune())
-
-# Linear regression
-model_spec_lm <- linear_reg(mode = "regression", engine = "lm")
 ```
 
-
-
 ### Fit benchmark model: OLS Linear regression with k-fold cross validation
+
+-   We didn't specify which performance metrics we want to use, so we are using the two default performance metrics for regression models:
+
+    -   Root mean squared error (rmse)
+
+    -   R-squared (rsq)
+
+-   Visualizing results of the model fits
+
+    -   Scatterplot (predicted vs observed values) shows that this is a decent fit, but it isn't great.
+
+    -   This aligns with the high RMSE and low R-squared values that also indicate the model's poor performance.
 
 ```{r}
 logger::log_info("OLS Linear: Model workflow")
 lm_model_wflow <- workflow(model_formula, model_spec_lm)
 
-logger::log_info("OLS Linear: Tune the hyperparameters using k-fold cross validation")
-logger::log_info("OLS Linear:  Allow the algorithm to automatically determine the parameter ranges")
+logger::log_info("OLS Linear: Fit/evaluate the model using k-fold cross validation")
 set.seed(9)
 tm_lm <- system.time({
   lm_res <-
@@ -270,25 +329,37 @@ logger::log_info("OLS Linear: Plot performance metrics: mean +/- standard error"
 plot_tune_grid_metrics(tune_metrics = lm_metrics)
 ```
 
-
-
-
 ### Hyperparameter tuning
 
 #### Tune parameters in the Decision Tree model
+
+-   Below, we are specifying the ranges for the `tree_depth` and `min_n` parameters
+
+-   If we wanted to let the algorithm automatically set the ranges for the grid, we could set the `grid` parameter equal to an integer that represents the number of parameter combinations we want to try.
+
+    -   See the commented out line below in the `tune_grid` function call for an example
+
+-   Visual summaries
+
+    -   Scatterplot (predicted vs observed) shows that the fit still isn't great. This isn't surprising since we have such a small number of iterations in our grid due to limited computational resources in RStudio Cloud.
+
+    -   If we had run it on a larger grid (i.e., with a larger value for the `grid_size` parameter, we would have a better idea of the relationship between performance and parameter values
+
+    -   
 
 ```{r}
 logger::log_info("Decision Tree: Model workflow")
 decision_tree_model_wflow_tune <- workflow(model_formula, model_spec_decision_tree_tune)
 
 logger::log_info("Decision Tree: Set ranges for the parameters we want to tune")
-decision_tree_param <- 
+decision_tree_param_grid <- 
   decision_tree_model_wflow_tune %>% 
   extract_parameter_set_dials() %>% 
   update(
     tree_depth = tree_depth(c(5, 25)),
     min_n = min_n(c(25, 200))
-  )
+  ) %>% 
+  grid_max_entropy(size = grid_size)
 
 logger::log_info("Decision Tree: Tune the hyperparameters using k-fold cross validation")
 set.seed(9)
@@ -296,7 +367,7 @@ tm_decision_tree <- system.time({
   decision_tree_res <-
     decision_tree_model_wflow_tune %>%
     tune_grid(resamples = dat_folds, 
-              grid = decision_tree_param %>% grid_max_entropy(size = grid_size),
+              grid = decision_tree_param_grid,
               #grid = grid_size,
               control = ctrl)
 })
@@ -314,12 +385,6 @@ top_decision_tree_model_config <- decision_tree_res %>%
 top_decision_tree_model_perf <- decision_tree_res %>% 
   show_best(metric = 'rmse', n = 1) %>% 
   mutate(algorithm='Decision Tree')
-
-
-# top_decision_tree_fit <- decision_tree_model_wflow_tune %>%
-#   finalize_workflow(top_decision_tree_model_config) %>%
-#   last_fit(split = dat_split) %>% 
-#   extract_workflow()
 
 logger::log_info("Decision Tree: Collect predictions over folds")
 decision_tree_tune_preds <- decision_tree_res %>% 
@@ -344,6 +409,18 @@ plot_param(tune_metrics = decision_tree_tune_metrics, param = 'min_n', metric_ty
 ```
 
 #### Tune parameters in the Random Forest model
+
+-   Below, we are specifying the ranges for the`trees`, `tree_depth` and `min_n` parameters
+
+-   If we wanted to let the algorithm automatically set the ranges for the grid, we could set the `grid` parameter equal to an integer that represents the number of parameter combinations we want to try.
+
+    -   See the commented out line below in the `tune_grid` function call for an example
+
+-   Visual summaries
+
+    -   Scatterplot (predicted vs observed) shows that the fit still isn't great. This isn't surprising since we have such a small number of iterations in our grid due to limited computational resources in RStudio Cloud.
+
+    -   If we had run it on a larger grid (i.e., with a larger value for the `grid_size` parameter, we would have a better idea of the relationship between performance and parameter values
 
 ```{r}
 logger::log_info("Random Forest: Model workflow")
@@ -417,6 +494,8 @@ Uncomment if running outside of RStudio Cloud
 
 ### Summarize parameter tuning results
 
+These are all of the model workflows that we used in this demo
+
 ```{r}
 model_workflows <- list("OLS Linear" = lm_model_wflow,
   "Random Forest" = rf_model_wflow_tune,
@@ -435,6 +514,8 @@ model_perf
 
 Top models: Optimal hyperparameters in each algorithm
 
+-   No parameters in the OLS Linear regression model since there were none that required tuning
+
 ```{r}
 model_config <- list("OLS Linear" = top_lm_model_config,
   "Random Forest" = top_rf_model_config,
@@ -443,7 +524,13 @@ model_config <- list("OLS Linear" = top_lm_model_config,
 model_config
 ```
 
-Top overall model
+Automatically determine the best model overall, i.e., the one that optimizes the RMSE performance metric
+
+-   This is useful since the results will change from one run to the next
+
+-   The user does not have to manually decide which model is the best one, i.e., which one should be deployed
+
+-   Any hyperparameter values are automatically recorded in this `top_model_config` variable.
 
 ```{r}
 rmse_vals <- sapply(model_perf, function(perf) perf$mean[1])
@@ -453,13 +540,20 @@ logger::log_info("Top model: `{top_model_name}`")
 top_model_config
 ```
 
+Get the final workflow that applies the optimal parameters in the best model
+
 ```{r}
 top_model_workflow <- model_workflows[[top_model_name]] %>%
   finalize_workflow(top_model_config)
 ```
 
+After all of the training rounds, we are finally ready to generate the final model fit
+
+-   This one uses the combined training/validation dataset stored in the `dat_train_and_val` dataframe
+
+-   Final model performance is evaluated on the held-out `dat_test` dataframe
+
 ```{r}
-## The final model fit
 top_model_fit <- 
   top_model_workflow %>% 
   last_fit(split = dat_split)
@@ -469,18 +563,27 @@ top_model_fit <-
 top_model_fit_wflow <- top_model_fit %>% extract_workflow()
 ```
 
-Extract the fitted object in its native format
+We could alternatively extract the fitted object in its native format.
 
-For example, this would return a `glmnet` class object that can be used with native `glmnet` package utilities as if you had fit it directly outside of the tidymodels framework.
+-   For example, this would return a `lm` class object that can be used with native `stats` package utilities as if you had fit it directly outside of the tidymodels framework.
+
+-   We don't need this for this demo. I just wanted to point this out in case you need it for your project.
 
 ```{r}
 top_model_obj <- top_model_fit %>% extract_fit_engine()
 class(top_model_obj)
+top_model_obj
 ```
 
 # Deploy the model
 
-Create a vetiver model object.
+This code has been adapted from the DC Bikeshare demo provided by RStudio
+
+-   DC Bikeshare Demo: <https://solutions.rstudio.com/example/bike_predict/>
+
+-   Model training / deployment code: <https://colorado.rstudio.com/rsc/bike-predict-r-train-and-deploy-model/document.html>
+
+First, we create a vetiver model object.
 
 ```{r}
 model_name <- glue::glue("actg175_{selected_outcome}_model_predict")
@@ -526,7 +629,7 @@ v <- vetiver_model(
 )
 
 v
-# ── actg175_cd420_model_predict ─ <bundled_workflow> model for deployment 
+# ── actg175_cd820_model_predict ─ <bundled_workflow> model for deployment 
 # A glmnet regression modeling workflow using 19 features
 ```
 
@@ -543,9 +646,8 @@ board <- pins::board_rsconnect(
 # Write the model to the board.
 board %>%
  vetiver_pin_write(vetiver_model = v)
-```
 
-```{r}
+# View the board
 board
 ```
 
@@ -584,7 +686,11 @@ content <-
 
 
 content
+```
 
+This code was provided in the demo, but it was commented out. My model was deployed after running the previous code, so I'm not sure what this does.
+
+```{r}
 # # Deploy the content.
 # vetiver_deploy_rsconnect(
 #  board = board,
@@ -594,6 +700,8 @@ content
 #  account = Sys.getenv("CONNECT_USER_ID")
 # )
 ```
+
+View the dashboard URL. You can view this board if you'd like to view the Vetiver help page that was automatically generated for you for your model deployment.
 
 ```{r}
 content$get_dashboard_url()
