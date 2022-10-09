@@ -1,0 +1,31 @@
+# install.packages('renv')
+# renv::init()
+# renv::activate()
+
+renv::install("tidymodels")
+renv::install("ggplot2")
+renv::install("here")
+renv::install("testthat") # may not need this
+renv::install("speff2trial")
+renv::install("tidymodels/censored")
+renv::install("glue")
+renv::install("DT")
+renv::install("diffobj")
+renv::install("parallelly")
+renv::install("doParallel")
+renv::install("recipes")
+renv::install("themis")
+renv::install("DALEXtra")
+renv::install("daroczig/logger")
+renv::install("vetiver")
+renv::install("rsconnect")
+renv::install("connectapi")
+renv::install("randomForest")
+renv::install("rmarkdown")
+#renv::install("")
+
+renv::status()
+
+renv::snapshot()
+
+renv::status()

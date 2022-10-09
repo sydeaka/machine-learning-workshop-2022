@@ -1,0 +1,600 @@
+---
+title: "Untitled"
+format: html
+editor: visual
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+# Setup
+
+Workshop environment setup
+
+```{r}
+source(here::here("hands_on_day3", "day3_env_setup.R"))
+```
+
+ACTG175 demo environment setup
+
+```{r}
+source(here::here("hands_on_day3", "actg175_env_setup.R"))
+source(here::here("hands_on_day3", "day3_model_utils.R"))
+```
+
+# Apply 10 ML Best practices
+
+## 1. Define modeling objectives
+
+-   ACTG 175 was a randomized, double-blind, placebo-controlled trial that included HIV-1--infected subjects with CD4 cell counts 200-500 per cubic mm
+
+-   Treatments
+
+    -   Monotherapy: (1) zidovudine alone or (2) didanosine alone
+    -   Combination therapy: (3) zidovudine + didanosine or (4) zidovudine + zalcitabine
+
+-   Primary study end point: (1) \>50% decline in CD4 cell count, (2) progression to AIDS, or (3) death.
+
+-   Objective: Given baseline characteristics, predict patient's CD4 level at 20 weeks after randomization (`cd420`)
+
+-   Outcome: Binary indicator of whether patient had \>50% CD4+ increase, progressed to AIDS, or death
+
+-   Data source: Clinical data -- baseline predictors, treatment assignment, study outcomes
+
+-   Candidate algorithms
+
+    -   Supervised learning / regression: Random forest, Decision Tree, & Linear regression (OLS)
+
+## 2. Exploratory data analysis
+
+Load the ACTG175 data
+
+```{r}
+logger::log_info("Run the ACTG175 data load and transformation pipeline")
+proc_data <- actg175_load_and_transform_data()
+
+logger::log_info("Unpack the data")
+dat_raw <- proc_data$dat_raw
+dat_clean <- proc_data$dat_clean
+```
+
+```{r}
+logger::log_info("Preview the raw and processed data")
+dat_raw %>% pretty_dt()
+dat_clean %>% pretty_dt()
+```
+
+Exploratory data analysis: Show summaries and plots
+
+```{r}
+eda_results <- actg175_eda(dat_raw, dat_clean)
+```
+
+Missing data summary plot
+
+```{r}
+eda_results$summaries$missing_data_summary
+```
+
+Other summary plots
+
+```{r}
+eda_results$plot_list
+```
+
+## 3. Feature engineering
+
+Create indicator variables for the individual drugs
+
+```{r feat_eng}
+dat_clean <- dat_clean %>%
+  mutate(
+    ind_didanosine = ifelse(grepl(pattern='didanosine', x=treatment_arm), 1L, 0L),
+    ind_zidovudine = ifelse(grepl(pattern='zidovudine', x=treatment_arm), 1L, 0L),
+    ind_zalcitabine = ifelse(grepl(pattern='zalcitabine', x=treatment_arm), 1L, 0L)
+  )
+
+dat_clean %>%
+  distinct(treatment_arm, ind_didanosine, ind_zidovudine, ind_zalcitabine) %>%
+  pretty_dt
+```
+
+## 4. Feature selection
+
+Decide which variables we might want to include in the model
+
+TO DO: Try with preliminary model fit
+
+```{r var_types}
+var_predictors <- c(
+    # treatment assignment 
+    'treatment_arm', 
+    'ind_didanosine', 'ind_zidovudine', 'ind_zalcitabine',
+    # baseline predictors
+    'age', 'wtkg', 'hemo', 'lgbtq', 'hist_intra_drug_use', 'karnof', 'prior_z_30days', 
+    'days_prior_art', 'race', 'gender', 'prior_art', 'strat_hist_art', 'symptom', 'baseline_cd4', 'baseline_cd8')
+
+var_outcomes <- c('event', 'surv_event', 'surv_days', 'cd420', 'cd496', 'r', 'cd820')
+vars_all <- colnames(dat_clean)
+
+vars_to_keep <- c(var_predictors, var_outcomes)
+vars_excluded <- vars_all[!(vars_all %in% vars_to_keep)]
+
+dat_analysis <- dat_clean %>% select_at(vars_to_keep)
+
+dat_analysis %>% summary
+```
+
+Specify the outcome that we will focus on in this modeling exercise
+
+```{r}
+selected_outcome <- "cd820"
+```
+
+## 5. Split data into training / testing
+
+### Initial data split
+
+85 % training / validation + 15% test
+
+```{r dat_split}
+# Set the seed so the result is reproducible
+set.seed(123)
+# 85% training / 15% testing
+dat_split <- initial_split(dat_analysis, prop = 0.85, strata = strat_hist_art)
+dat_split
+```
+
+```{r dat_split_dfs}
+dat_train_and_val <- training(dat_split)
+dat_test <- testing(dat_split)
+```
+
+## 6. Train the model(s)
+
+Set up the parallel backend
+
+Uncomment if running outside of RStudio Cloud
+
+```{r parallel_setup}
+# cores <- parallelly::availableCores(logical = FALSE)
+# cl <- parallel::makePSOCKcluster(cores)
+# doParallel::registerDoParallel(cl)
+```
+
+Tune hyperparameters in multple models (Random Forest + Decision Tree) + also fit OLS Linear regression benchmark model
+
+Generate k folds for CV
+
+```{r}
+set.seed(9265)
+num_folds <- 2
+dat_folds <- vfold_cv(dat_train_and_val, v = num_folds, strata = strat_hist_art)
+```
+
+
+Specify two model formulas: - First includes both representations of treatment arms - Second removes the binary indicators of the individual treatment
+
+```{r}
+logger::log_info("Treatment assignment variables: treatment_arms, ind_didanosine, ind_zidovudine, and ind_zalcitabine")
+model_formula_all_pred <- as.formula(paste(selected_outcome, '~ ', paste(var_predictors, collapse = ' + ')))
+model_formula_all_pred
+
+logger::log_info("Treatment assignment variables: treatment_arms only")
+var_predictors_rm_trt_indicators <-  var_predictors[!(var_predictors %in% c('ind_didanosine', 'ind_zidovudine', 'ind_zalcitabine'))]
+model_formula_rm_trt_indicators <- as.formula(paste(selected_outcome, ' ~ ', paste(var_predictors_rm_trt_indicators, collapse = ' + ')))
+
+model_formula_rm_trt_indicators
+```
+
+Set control parameters
+
+```{r}
+ctrl <- control_grid(save_pred = TRUE, allow_par=TRUE, parallel_over = "everything", 
+                     verbose=TRUE, event_level='second')
+
+grid_size <- 5
+
+model_formula <- model_formula_rm_trt_indicators
+```
+
+
+
+Model specifications
+
+-   Some parameters are specified (e.g. `min_n` in Decision Tree and Random Forest), while others are marked for tuning
+-   Also tuning the mixture parameter in the OLS Linear model
+-   Specifying parameter ranges for Decision Tree & Random Forest, but allowing automatic specification of the glmnet grid
+
+```{r}
+# Decision Tree
+model_spec_decision_tree_tune <- decision_tree(mode = 'regression', engine = 'rpart', 
+                             tree_depth = tune(), min_n = tune())
+
+# Random forest
+model_spec_rf_tune <- rand_forest(mode = 'regression', engine = 'randomForest', 
+                             trees = tune(), mtry = tune(), min_n = tune())
+
+# Linear regression
+model_spec_lm <- linear_reg(mode = "regression", engine = "lm")
+```
+
+
+
+### Fit benchmark model: OLS Linear regression with k-fold cross validation
+
+```{r}
+logger::log_info("OLS Linear: Model workflow")
+lm_model_wflow <- workflow(model_formula, model_spec_lm)
+
+logger::log_info("OLS Linear: Tune the hyperparameters using k-fold cross validation")
+logger::log_info("OLS Linear:  Allow the algorithm to automatically determine the parameter ranges")
+set.seed(9)
+tm_lm <- system.time({
+  lm_res <-
+    lm_model_wflow %>%
+    fit_resamples(dat_folds, control = ctrl)
+})
+
+# How long did it take to run?
+elapsed_secs <- as.numeric(tm_lm['elapsed'])
+elapsed_min <- elapsed_secs/60
+logger::log_info("Training completed in {round(elapsed_secs,2)} seconds / {round(elapsed_min,2)} minutes.")
+
+logger::log_info("OLS Linear: Select / show the top model configurations (best param combination)")
+top_lm_model_config <- lm_res %>% 
+  select_best(metric = 'rmse') %>%
+  mutate(algorithm='OLS Linear')
+top_lm_model_perf <- lm_res %>% 
+  show_best(metric = 'rmse', n = 1) %>% 
+  mutate(algorithm='OLS Linear')
+
+logger::log_info("OLS Linear: Collect predictions over folds")
+lm_preds <- lm_res %>% 
+  collect_predictions() %>%
+  filter(.config == top_lm_model_perf$.config)
+
+logger::log_info("OLS Linear: Plot predicted vs observed")
+plot_pred_vs_obs_scatter(preds=lm_preds,
+                         plot_title="CV predictions: OLS Linear pred vs obs")
+
+logger::log_info("OLS Linear: Summarize performance metrics over {num_folds} folds")
+lm_metrics <- lm_res %>% 
+  collect_metrics() %>%
+  mutate(scenario = .config)
+
+logger::log_info("OLS Linear: Plot performance metrics: mean +/- standard error")
+plot_tune_grid_metrics(tune_metrics = lm_metrics)
+```
+
+
+
+
+### Hyperparameter tuning
+
+#### Tune parameters in the Decision Tree model
+
+```{r}
+logger::log_info("Decision Tree: Model workflow")
+decision_tree_model_wflow_tune <- workflow(model_formula, model_spec_decision_tree_tune)
+
+logger::log_info("Decision Tree: Set ranges for the parameters we want to tune")
+decision_tree_param <- 
+  decision_tree_model_wflow_tune %>% 
+  extract_parameter_set_dials() %>% 
+  update(
+    tree_depth = tree_depth(c(5, 25)),
+    min_n = min_n(c(25, 200))
+  )
+
+logger::log_info("Decision Tree: Tune the hyperparameters using k-fold cross validation")
+set.seed(9)
+tm_decision_tree <- system.time({
+  decision_tree_res <-
+    decision_tree_model_wflow_tune %>%
+    tune_grid(resamples = dat_folds, 
+              grid = decision_tree_param %>% grid_max_entropy(size = grid_size),
+              #grid = grid_size,
+              control = ctrl)
+})
+
+# How long did it take to run?
+elapsed_secs <- as.numeric(tm_decision_tree['elapsed'])
+elapsed_min <- elapsed_secs/60
+logger::log_info("Training completed in {round(elapsed_secs,2)} seconds / {round(elapsed_min,2)} minutes.")
+
+logger::log_info("Decision Tree: Select / show the top model configurations (best param combination)")
+top_decision_tree_model_config <- decision_tree_res %>% 
+  select_best(metric = 'rmse')  %>% 
+  mutate(algorithm='Decision Tree')
+
+top_decision_tree_model_perf <- decision_tree_res %>% 
+  show_best(metric = 'rmse', n = 1) %>% 
+  mutate(algorithm='Decision Tree')
+
+
+# top_decision_tree_fit <- decision_tree_model_wflow_tune %>%
+#   finalize_workflow(top_decision_tree_model_config) %>%
+#   last_fit(split = dat_split) %>% 
+#   extract_workflow()
+
+logger::log_info("Decision Tree: Collect predictions over folds")
+decision_tree_tune_preds <- decision_tree_res %>% 
+  collect_predictions() %>%
+  filter(.config == top_decision_tree_model_perf$.config)
+
+logger::log_info("Decision Tree: Plot predicted vs observed")
+plot_pred_vs_obs_scatter(preds=decision_tree_tune_preds,
+                         plot_title="CV predictions: Decision Tree pred vs obs")
+
+logger::log_info("Decision Tree: Summarize performance metrics over {num_folds} folds")
+decision_tree_tune_metrics <- decision_tree_res %>% 
+  collect_metrics() %>%
+  mutate(scenario = .config)
+
+logger::log_info("Decision Tree: Plot performance metrics: mean +/- standard error")
+plot_tune_grid_metrics(tune_metrics = decision_tree_tune_metrics)
+
+logger::log_info("Decision Tree: Plot performance metric vs parameter value")
+plot_param(tune_metrics = decision_tree_tune_metrics, param = 'tree_depth', metric_type='rmse')
+plot_param(tune_metrics = decision_tree_tune_metrics, param = 'min_n', metric_type='rmse')
+```
+
+#### Tune parameters in the Random Forest model
+
+```{r}
+logger::log_info("Random Forest: Model workflow")
+rf_model_wflow_tune <- workflow(model_formula, model_spec_rf_tune)
+
+logger::log_info("Random Forest: Set ranges for the parameters we want to tune")
+rf_param <- 
+  rf_model_wflow_tune %>% 
+  extract_parameter_set_dials() %>% 
+  update(
+    trees = trees(c(100, 300)),
+    mtry = mtry(c(5, 20)),
+    min_n = min_n(c(25, 200))
+  )
+
+logger::log_info("Random Forest: Tune the hyperparameters using k-fold cross validation")
+set.seed(9)
+tm_rf <- system.time({
+  rf_res <-
+    rf_model_wflow_tune %>%
+    tune_grid(resamples = dat_folds, 
+              grid = rf_param %>% grid_max_entropy(size = grid_size),
+              #grid = grid_size,
+              control = ctrl)
+})
+
+# How long did it take to run?
+elapsed_secs <- as.numeric(tm_rf['elapsed'])
+elapsed_min <- elapsed_secs/60
+logger::log_info("Training completed in {round(elapsed_secs,2)} seconds / {round(elapsed_min,2)} minutes.")
+
+logger::log_info("Random Forest: Select / show the top model configurations (best param combination)")
+top_rf_model_config <- rf_res %>% 
+  select_best(metric = 'rmse')  %>% 
+  mutate(algorithm='Random Forest')
+top_rf_model_perf <- rf_res %>% 
+  show_best(metric = 'rmse', n = 1) %>% 
+  mutate(algorithm='Random Forest')
+
+logger::log_info("Random Forest: Collect predictions over folds")
+rf_tune_preds <- rf_res %>% 
+  collect_predictions() %>%
+  filter(.config == top_rf_model_perf$.config)
+
+logger::log_info("Random Forest: Plot predicted vs observed")
+plot_pred_vs_obs_scatter(preds=rf_tune_preds,
+                         plot_title="CV predictions: Random Forest pred vs obs")
+
+logger::log_info("Random Forest: Summarize performance metrics over {num_folds} folds")
+rf_tune_metrics <- rf_res %>% 
+  collect_metrics() %>%
+  mutate(scenario = .config)
+
+logger::log_info("Random Forest: Plot performance metrics: mean +/- standard error")
+plot_tune_grid_metrics(tune_metrics = rf_tune_metrics)
+
+logger::log_info("Random Forest: Plot performance metric vs parameter value")
+plot_param(tune_metrics = rf_tune_metrics, param = 'trees', metric_type='rmse')
+plot_param(tune_metrics = rf_tune_metrics, param = 'mtry', metric_type='rmse')
+plot_param(tune_metrics = rf_tune_metrics, param = 'min_n', metric_type='rmse')
+```
+
+### Shut down the parallel backend
+
+Uncomment if running outside of RStudio Cloud
+
+```{r}
+# foreach::registerDoSEQ()
+# parallel::stopCluster(cl)
+```
+
+### Summarize parameter tuning results
+
+```{r}
+model_workflows <- list("OLS Linear" = lm_model_wflow,
+  "Random Forest" = rf_model_wflow_tune,
+     "Decision Tree" = decision_tree_model_wflow_tune)
+#model_workflows
+```
+
+Top models: Performance metrics in each algorithm
+
+```{r}
+model_perf <- list("OLS Linear" = top_lm_model_perf,
+  "Random Forest" = top_rf_model_perf,
+     "Decision Tree" = top_decision_tree_model_perf)
+model_perf
+```
+
+Top models: Optimal hyperparameters in each algorithm
+
+```{r}
+model_config <- list("OLS Linear" = top_lm_model_config,
+  "Random Forest" = top_rf_model_config,
+     "Decision Tree" = top_decision_tree_model_config)
+
+model_config
+```
+
+Top overall model
+
+```{r}
+rmse_vals <- sapply(model_perf, function(perf) perf$mean[1])
+top_model_name <- which.min(rmse_vals) %>% names
+top_model_config <- model_config[[top_model_name]]
+logger::log_info("Top model: `{top_model_name}`")
+top_model_config
+```
+
+```{r}
+top_model_workflow <- model_workflows[[top_model_name]] %>%
+  finalize_workflow(top_model_config)
+```
+
+```{r}
+## The final model fit
+top_model_fit <- 
+  top_model_workflow %>% 
+  last_fit(split = dat_split)
+```
+
+```{r}
+top_model_fit_wflow <- top_model_fit %>% extract_workflow()
+```
+
+Extract the fitted object in its native format
+
+For example, this would return a `glmnet` class object that can be used with native `glmnet` package utilities as if you had fit it directly outside of the tidymodels framework.
+
+```{r}
+top_model_obj <- top_model_fit %>% extract_fit_engine()
+class(top_model_obj)
+```
+
+# Deploy the model
+
+Create a vetiver model object.
+
+```{r}
+model_name <- glue::glue("actg175_{selected_outcome}_model_predict")
+pin_name <- glue::glue("{Sys.getenv('CONNECT_USER_ID')}/{model_name}")
+
+# Model metadata
+model_metadata <- list(
+  date_model_trained = as.character(Sys.Date()),
+  top_model_name = top_model_name,
+  top_model_config = top_model_config %>% as.list
+)
+
+print(model_metadata)
+# $date_model_trained
+# [1] "2022-10-08"
+# 
+# $top_model_name
+# [1] "OLS Linear"
+# 
+# $top_model_config
+# $top_model_config$penalty
+# [1] 0.8153613
+# 
+# $top_model_config$mixture
+# [1] 0.9241239
+# 
+# $top_model_config$.config
+# [1] "Preprocessor1_Model093"
+# 
+# $top_model_config$algorithm
+# [1] "OLS Linear"
+
+
+# Create the vetiver model.
+v <- vetiver_model(
+  top_model_fit_wflow, 
+  model_name,
+  versioned = TRUE,
+  save_ptype = dat_train_and_val %>%
+    head(1) %>%
+    select_at(var_predictors),
+  metadata = model_metadata
+)
+
+v
+# ── actg175_cd420_model_predict ─ <bundled_workflow> model for deployment 
+# A glmnet regression modeling workflow using 19 features
+```
+
+Save the model as a pin to RStudio Connect:
+
+```{r}
+# Use RStudio Connect as a board.
+board <- pins::board_rsconnect(
+  server = Sys.getenv("CONNECT_SERVER"),
+  key = Sys.getenv("CONNECT_API_KEY"),
+  versioned = TRUE
+)
+
+# Write the model to the board.
+board %>%
+ vetiver_pin_write(vetiver_model = v)
+```
+
+```{r}
+board
+```
+
+Convert the model into a plumber API. The function vetiver_write_plumber will generate the plumber code for you and write it to plumber.R.
+
+```{r}
+# Write the model to `api/plumber.R`.
+api_folder <- here::here("hands_on_day3", "api")
+if (!dir.exists(api_folder)) dir.create(api_folder)
+vetiver_write_plumber(board, pin_name, file = file.path(api_folder, "plumber.R"))
+
+# Write a manifest.json file for the api
+rsconnect::writeManifest(api_folder)
+```
+
+Then, deploy the plumber API to RStudio Connect.
+
+```{r}
+app_name <- "actg175-cd4-20wk-model-predict"
+app_title <- "ACTG175 CD4 20 wk - Model - API"
+
+# Establish a connection to RStudio connect.
+client <- connectapi::connect(
+  server = Sys.getenv("CONNECT_SERVER"),
+  api_key = Sys.getenv("CONNECT_API_KEY")
+)
+
+# Deploy the content.
+content <- 
+  client %>%
+  connectapi::deploy(
+    connectapi::bundle_dir(api_folder),
+    name = app_name,
+    title = app_title
+  )
+
+
+content
+
+# # Deploy the content.
+# vetiver_deploy_rsconnect(
+#  board = board,
+#  name = pin_name,
+#  version = NULL,
+#  appTitle = app_title,
+#  account = Sys.getenv("CONNECT_USER_ID")
+# )
+```
+
+```{r}
+content$get_dashboard_url()
+```
