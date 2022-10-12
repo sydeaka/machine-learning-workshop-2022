@@ -307,7 +307,7 @@ logger::log_info("Set control parameters")
 ctrl <- control_grid(save_pred = TRUE, allow_par=TRUE, parallel_over = "everything", 
                      verbose=TRUE, event_level='second')
 
-grid_size <- 10
+grid_size <- 20
 
 model_formula <- model_formula_rm_trt_indicators
 ```
@@ -664,7 +664,7 @@ First, we create a vetiver model object.
 
 ```{r}
 # Create a model name and a pin name
-model_name <- glue::glue("actg175_{selected_outcome}_model_predict")
+model_name <- glue::glue("actg175_demo_{selected_outcome}_model_predict")
 pin_name <- glue::glue("{Sys.getenv('CONNECT_USER_ID')}/{model_name}")
 
 # Model metadata
@@ -739,7 +739,9 @@ if (!dir.exists(api_folder)) dir.create(api_folder)
 vetiver_write_plumber(board, pin_name, file = file.path(api_folder, "plumber.R"))
 
 # Write a manifest.json file for the api
-rsconnect::writeManifest(api_folder)
+# This line is commented out due to a conflict between the package managers
+# But normally we would uncomment and run the following line
+#rsconnect::writeManifest(api_folder)
 ```
 
 Then, deploy the plumber API to RStudio Connect.
@@ -788,7 +790,7 @@ content$get_dashboard_url()
 Get results from the API
 
 ```{bash}
-curl -X POST "${CONNECT_SERVER}/content/a4d4bf54-dbaa-4f58-af21-d0fba64416f0/predict" \
+curl -X POST "https://rstudio-connect.am.lilly.com/content/a4d4bf54-dbaa-4f58-af21-d0fba64416f0/predict" \
  -H "Accept: application/json" \
  -H "Content-Type: application/json" \
  -H "Authorization: Key ${CONNECT_API_KEY}" \
@@ -803,24 +805,27 @@ library(httr)
 connectServer <- Sys.getenv("CONNECT_SERVER")
 connectAPIKey <- Sys.getenv("CONNECT_API_KEY")
 
-data_input_json <- '{"treatment_arm":"zidovudine and zalcitabine","ind_didanosine":0,"ind_zidovudine":1,"ind_zalcitabine":1,"age":36,"wtkg":81.6,"hemo":"no","lgbtq":"yes","hist_intra_drug_use":"yes","karnof":100,"prior_z_30days":"yes","days_prior_art":86,"race":"white","gender":"male","prior_art":"experienced","strat_hist_art":"> 1 but <= 52 weeks of prior antiretroviral therapy","symptom":"symptomatic","baseline_cd4":236,"baseline_cd8":634}'
+data_input_json <- '[{"treatment_arm":"zidovudine and zalcitabine","ind_didanosine":0,"ind_zidovudine":1,"ind_zalcitabine":1,"age":36,"wtkg":81.6,"hemo":"no","lgbtq":"yes","hist_intra_drug_use":"yes","karnof":100,"prior_z_30days":"yes","days_prior_art":86,"race":"white","gender":"male","prior_art":"experienced","strat_hist_art":"> 1 but <= 52 weeks of prior antiretroviral therapy","symptom":"symptomatic","baseline_cd4":236,"baseline_cd8":634}]'
 
 resp <- httr::POST(
   connectServer, 
      # You will need to change this to path associated with your own model API
     path = "/content/a4d4bf54-dbaa-4f58-af21-d0fba64416f0/predict", 
     body = data_input_json,
-    encode = "raw",
-    add_headers(
-      Accept = "application/json",
-      `Content-Type` = "application/json",
-      Authorization = paste0("Key ", connectAPIKey)),
+    #encode = "raw",
+    accept("application/json"),
+    content_type("application/json"),
+    add_headers(Authorization = paste0("Key ", connectAPIKey))
 )
 
 
 result <- httr::content(resp, as = "parsed")
 result
 ```
+
+
+
+
 
 
 ## 10. Create a ML workflow
