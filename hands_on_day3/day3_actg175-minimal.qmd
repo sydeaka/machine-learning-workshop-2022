@@ -10,29 +10,55 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Introduction
 
+## Introduction
+
 This demo will be discussed on Day 3 (October 12, 2022) of the 2022 Machine Learning Workshop.
 
 The Day 3 interactive hands-on session will illustrate the 10 machine learning best practices for building and deploying machine learning models that were discussed on Day 2.
 
--   [**Environment setup instructions**]{.underline}: \<link\>
+-   [**Environment setup instructions**]{.underline}: If you registered for the workshop, you should have received an email with instructions for setting up your RStudio Cloud environment. If not, please contact Sydeaka Watson for more information.
 
--   [**Repository URL**]{.underline}: \<link\>
+-   [**Repository URL**]{.underline}: <https://github.com/sydeaka/machine-learning-workshop-2022>
+
+## About Me
+
+-   **Current role**: Senior Advisor - Innovative Sciences in SDnA/GSS
+
+-   **Education**: Ph.D. Statistics, Baylor University, 2011
+
+-   **Experience**:
+
+    -   Biostatistician -- Los Alamos National Laboratory, University of Chicago Medicine
+
+    -   Data Scentist -- AT&T, Elicit Insights (consulting firm), Eli Lilly (2020-present)
+
+-   **Skills**: R / Python; Statistics; Machine Learning; Shiny app development
+
+-   **Current residence**: Dallas, Texas
 
 ## Tips
+
+In this demo, you will notice that I used the following principles to help me stay organized and focused. I highly encourage you to adopt these practices within your machine learning projects.
 
 -   Use code for every step in the workflow (avoid manual steps if possible)
 
     -   data ingestion, data pre-processing, model fitting, data summaries / visualizations, final model selection, model deployment, etc.
 
+-   Document your code.
+
+    -   Use RMarkdown or Quarto to add annotations to code chunks and output
+
+    -   Add lots of comments so that you understand what each chunk of code is doing
+
 -   Create your own suite of helper functions that are stored in external scripts. This makes your code cleaner and easier to maintain.
 
-    -   Re-use functions for multiple scenarios
+    -   You could re-use your functions over multiple scenarios within the same project, or even across multiple projects.
 
     -   Code is cleaner, easier to read
 
 -   Parameterize your code, so that you can easily/quickly adjust settings that are likely to change from one model training exercise to the next
 
--   Use the `logger` package to display descriptive logs as your workflow runs. This helps with troubleshooting if any issues arise.
+-   Use the `logger` package to display descriptive logs as your workflow runs. This helps with troubleshooting if any issues arise. You could also use this package to save the logs associated with each training run to a log file.
 
 -   To ensure that your results are reproducible (i.e., that you get the same results) from one run to the next, always use the `set.seed` function to set a random seed before each step that uses randomization. You will note that I always set the seed before I do any of the following:
 
@@ -57,7 +83,7 @@ source(here::here("hands_on_day3", "actg175_env_setup.R"))
 source(here::here("hands_on_day3", "day3_model_utils.R"))
 ```
 
-## 10 ML best practices
+## Reminder: 10 ML best practices discussed on Day 2
 
 1\. Define modeling objectives
 
@@ -92,19 +118,24 @@ source(here::here("hands_on_day3", "day3_model_utils.R"))
 
 -   Primary study end point: (1) \>50% decline in CD4 cell count, (2) progression to AIDS, or (3) death.
 
--   Objective: Given baseline characteristics, predict patient's CD4 level at 20 weeks after randomization (`cd420`)
+-   Objective: Given baseline characteristics, predict patient's CD8 level at \~20 weeks after randomization (`cd820`)
 
--   Outcome: Binary indicator of whether patient had \>50% CD4+ increase, progressed to AIDS, or death
+-   Outcome: Integer value representing the patient's CD8 level at \~20 weeks after randomization (`cd820`)
 
 -   Data source: Clinical data -- baseline predictors, treatment assignment, study outcomes
 
 -   Candidate algorithms
 
-    -   Supervised learning / regression: Random forest, Decision Tree, & Linear regression (Ordinary Least Squares, or OLS)
+    -   Supervised learning / [**regression**]{.underline}: Random forest, Decision Tree, & Linear regression (Ordinary Least Squares, or OLS)
 
 ## 2. Exploratory data analysis
 
 Load the ACTG175 data
+
+-   In the helper function, notice that I'm getting the data stored in the package. Thus, the results will be identical each run (since the data aren't changing).
+-   However, in practice, we would connect this to a data source that is refreshed at some frequency.
+    -   For example, link to a table in a database
+    -   We will get new model results each time we run the workflow as we train on newer, fresher datasets.
 
 ```{r}
 logger::log_info("Run the ACTG175 data load and transformation pipeline")
@@ -129,6 +160,8 @@ eda_results <- actg175_eda(dat_raw, dat_clean)
 
 Missing data summary plot
 
+-   The `cd496` outcome (CD4 count at \~96 weeks after treatment) is the only field that contains missing values.
+
 ```{r}
 eda_results$summaries$missing_data_summary
 ```
@@ -141,7 +174,9 @@ eda_results$plot_list
 
 ## 3. Feature engineering
 
-Create indicator variables for the individual drugs
+-   Create indicator variables for the individual drugs
+
+-   Show the mapping between the indicators and the `treatment_arm` field
 
 ```{r feat_eng}
 dat_clean <- dat_clean %>%
@@ -161,6 +196,7 @@ dat_clean %>%
 Decide which variables we might want to include in the model
 
 ```{r var_types}
+logger::log_info("Identify fields to keep or exclude")
 var_predictors <- c(
     # treatment assignment 
     'treatment_arm', 
@@ -175,6 +211,7 @@ vars_all <- colnames(dat_clean)
 vars_to_keep <- c(var_predictors, var_outcomes)
 vars_excluded <- vars_all[!(vars_all %in% vars_to_keep)]
 
+logger::log_info("Get relevant fields")
 dat_analysis <- dat_clean %>% select_at(vars_to_keep)
 
 dat_analysis %>% summary
@@ -184,6 +221,7 @@ Specify the outcome that we will focus on in this modeling exercise
 
 ```{r}
 selected_outcome <- "cd820"
+logger::log_info("Fitting regression models predicting `{selected_outcome}`")
 ```
 
 ## 5. Split data into training / testing
@@ -195,12 +233,13 @@ selected_outcome <- "cd820"
 ```{r dat_split}
 # Set the seed so the result is reproducible
 set.seed(123)
-# 85% training / 15% testing
+logger::log_info("Initial data split with 85% training/validation + 15% testing")
 dat_split <- initial_split(dat_analysis, prop = 0.85, strata = strat_hist_art)
 dat_split
 ```
 
 ```{r dat_split_dfs}
+logger::log_info("Creating train/val + testing dataframes")
 dat_train_and_val <- training(dat_split)
 dat_test <- testing(dat_split)
 ```
@@ -209,15 +248,16 @@ dat_test <- testing(dat_split)
 
 Set up the parallel backend.
 
--   RStudio Cloud free account only has a single core, so it will not be possible to leverage parallel processing on RStudio Cloud.
+-   RStudio Cloud free account only provides a single core, so it will not be possible to leverage parallel processing on RStudio Cloud.
 
 -   If you are running this demo outside of RStudio Cloud, you may uncomment the code in the chunk below.
 
--   Since we are using limited resources for this demo, you will note that the parameters have been adjusted so that we are using fewer trees, fewer cross-validation folds, and fewer iterations in the grid search. I also switched to models that don't require RcppEigen package since this is not supported in RStudio Cloud. To view a more realistic example of an ML workflow that uses more complex models and parallelization, see the demo linked below.
+-   Since we are using limited resources for this demo, you will note that the parameters have been adjusted so that we are using fewer trees, fewer cross-validation folds, and fewer iterations in the grid search. I also switched to models that don't require `RcppEigen` package since this is not readily supported in RStudio Cloud (unless you use their package manager... thanks, Eric!). To view a more realistic example of an ML workflow that uses more complex models and parallelization, see the demo linked below.
 
     -   <https://github.com/sydeaka/machine-learning-workshop-2022/blob/main/hands_on_day3/day3_actg175.qmd>
 
 ```{r parallel_setup}
+# logger::log_info("Set up the parallel backend")
 # cores <- parallelly::availableCores(logical = FALSE)
 # cl <- parallel::makePSOCKcluster(cores)
 # doParallel::registerDoParallel(cl)
@@ -232,6 +272,7 @@ Generate k folds for CV
 ```{r}
 set.seed(9265)
 num_folds <- 2
+logger::log_info("Using {num_folds}-fold validation stratified by history of anti-retroviral therapy")
 dat_folds <- vfold_cv(dat_train_and_val, v = num_folds, strata = strat_hist_art)
 ```
 
@@ -244,11 +285,11 @@ Specify two model formulas.
 You may want to try it both ways to see if you get a different result.
 
 ```{r}
-logger::log_info("Treatment assignment variables: treatment_arms, ind_didanosine, ind_zidovudine, and ind_zalcitabine")
+logger::log_info("Model formula 1 -- Treatment assignment variables: treatment_arm, ind_didanosine, ind_zidovudine, and ind_zalcitabine")
 model_formula_all_pred <- as.formula(paste(selected_outcome, '~ ', paste(var_predictors, collapse = ' + ')))
 model_formula_all_pred
 
-logger::log_info("Treatment assignment variables: treatment_arms only")
+logger::log_info("Model formula 2 -- Treatment assignment variables: treatment_arm only")
 var_predictors_rm_trt_indicators <-  var_predictors[!(var_predictors %in% c('ind_didanosine', 'ind_zidovudine', 'ind_zalcitabine'))]
 model_formula_rm_trt_indicators <- as.formula(paste(selected_outcome, ' ~ ', paste(var_predictors_rm_trt_indicators, collapse = ' + ')))
 
@@ -262,10 +303,11 @@ Set control parameters.
 -   `model_formula` parameter allows you to switch between the two model formulas specified in the previous chunk.
 
 ```{r}
+logger::log_info("Set control parameters")
 ctrl <- control_grid(save_pred = TRUE, allow_par=TRUE, parallel_over = "everything", 
                      verbose=TRUE, event_level='second')
 
-grid_size <- 5
+grid_size <- 10
 
 model_formula <- model_formula_rm_trt_indicators
 ```
@@ -282,6 +324,8 @@ Model specifications
 -   Thanks to tidymodels, we can leverage the same code structure as we advance from one algorithm to the next.
 
 ```{r}
+logger::log_info("Create model specifications")
+
 # Linear regression (benchmark model)
 model_spec_lm <- linear_reg(mode = "regression", engine = "lm")
 
@@ -298,9 +342,9 @@ model_spec_rf_tune <- rand_forest(mode = 'regression', engine = 'randomForest',
 
 -   We didn't specify which performance metrics we want to use, so we are using the two default performance metrics for regression models:
 
-    -   Root mean squared error (rmse)
+    -   Root mean squared error (rmse) -- lower values indicate higher performance
 
-    -   R-squared (rsq)
+    -   R-squared (rsq) -- higher values indicate higher performance
 
 -   Visualizing results of the model fits
 
@@ -309,6 +353,8 @@ model_spec_rf_tune <- rand_forest(mode = 'regression', engine = 'randomForest',
     -   This aligns with the high RMSE and low R-squared values that also indicate the model's poor performance.
 
 ```{r}
+logger::log_info("Fitting the benchmark model")
+
 logger::log_info("OLS Linear: Model workflow")
 lm_model_wflow <- workflow(model_formula, model_spec_lm)
 
@@ -360,6 +406,7 @@ plot_tune_grid_metrics(tune_metrics = lm_metrics)
 -   If we wanted to let the algorithm automatically set the ranges for the grid, we could set the `grid` parameter equal to an integer that represents the number of parameter combinations we want to try.
 
     -   See the commented out line below in the `tune_grid` function call for an example
+    -   It is often helpful to use this as a starting point to get a preliminary understanding of the ranges we might want to explore for a new ML problem.
 
 -   Visual summaries
 
@@ -511,6 +558,7 @@ plot_param(tune_metrics = rf_tune_metrics, param = 'min_n', metric_type='rmse')
 Uncomment if running outside of RStudio Cloud
 
 ```{r}
+# logger::log_info("Shut down the parallel backend")
 # foreach::registerDoSEQ()
 # parallel::stopCluster(cl)
 ```
@@ -553,7 +601,7 @@ Automatically determine the best model overall, i.e., the one that optimizes the
 
 -   The user does not have to manually decide which model is the best one, i.e., which one should be deployed
 
--   Any hyperparameter values are automatically recorded in this `top_model_config` variable.
+-   Optimal hyperparameter values are automatically recorded in this `top_model_config` variable.
 
 ```{r}
 rmse_vals <- sapply(model_perf, function(perf) perf$mean[1])
@@ -572,7 +620,7 @@ top_model_workflow <- model_workflows[[top_model_name]] %>%
 
 After all of the training rounds, we are finally ready to generate the final model fit
 
--   This one uses the combined training/validation dataset stored in the `dat_train_and_val` dataframe
+-   This one trains the model on the the combined training/validation dataset stored in the `dat_train_and_val` dataframe
 
 -   Final model performance is evaluated on the held-out `dat_test` dataframe
 
@@ -581,6 +629,8 @@ top_model_fit <-
   top_model_workflow %>% 
   last_fit(split = dat_split)
 ```
+
+Get the workflow associated with the trained model
 
 ```{r}
 top_model_fit_wflow <- top_model_fit %>% extract_workflow()
@@ -600,6 +650,8 @@ top_model_obj
 
 ## 8. Explain the model predictions
 
+Sorry, I didn't have time to finish the model explainability example in time for this demo. We can revisit this in a future session.
+
 ## 9. Deploy the model
 
 This code has been adapted from the DC Bikeshare demo provided by RStudio
@@ -611,6 +663,7 @@ This code has been adapted from the DC Bikeshare demo provided by RStudio
 First, we create a vetiver model object.
 
 ```{r}
+# Create a model name and a pin name
 model_name <- glue::glue("actg175_{selected_outcome}_model_predict")
 pin_name <- glue::glue("{Sys.getenv('CONNECT_USER_ID')}/{model_name}")
 
@@ -623,20 +676,14 @@ model_metadata <- list(
 
 print(model_metadata)
 # $date_model_trained
-# [1] "2022-10-08"
+# [1] "2022-10-11"
 # 
 # $top_model_name
 # [1] "OLS Linear"
 # 
 # $top_model_config
-# $top_model_config$penalty
-# [1] 0.8153613
-# 
-# $top_model_config$mixture
-# [1] 0.9241239
-# 
 # $top_model_config$.config
-# [1] "Preprocessor1_Model093"
+# [1] "Preprocessor1_Model1"
 # 
 # $top_model_config$algorithm
 # [1] "OLS Linear"
@@ -655,7 +702,7 @@ v <- vetiver_model(
 
 v
 # ── actg175_cd820_model_predict ─ <bundled_workflow> model for deployment 
-# A glmnet regression modeling workflow using 19 features
+# A lm regression modeling workflow using 19 features
 ```
 
 Save the model as a pin to RStudio Connect:
@@ -668,6 +715,12 @@ board <- pins::board_rsconnect(
   versioned = TRUE
 )
 
+# View the board before making any changes
+board
+```
+
+
+```{r}
 # Write the model to the board.
 board %>%
  vetiver_pin_write(vetiver_model = v)
@@ -675,6 +728,7 @@ board %>%
 # View the board
 board
 ```
+
 
 Convert the model into a plumber API. The function vetiver_write_plumber will generate the plumber code for you and write it to plumber.R.
 
@@ -731,4 +785,59 @@ View the dashboard URL. You can view this board if you'd like to view the Vetive
 content$get_dashboard_url()
 ```
 
+Get results from the API
+
+```{bash}
+curl -X POST "${CONNECT_SERVER}/content/a4d4bf54-dbaa-4f58-af21-d0fba64416f0/predict" \
+ -H "Accept: application/json" \
+ -H "Content-Type: application/json" \
+ -H "Authorization: Key ${CONNECT_API_KEY}" \
+ -d '[{"treatment_arm":"zidovudine and zalcitabine","ind_didanosine":0,"ind_zidovudine":1,"ind_zalcitabine":1,"age":36,"wtkg":81.6,"hemo":"no","lgbtq":"yes","hist_intra_drug_use":"yes","karnof":100,"prior_z_30days":"yes","days_prior_art":86,"race":"white","gender":"male","prior_art":"experienced","strat_hist_art":"> 1 but <= 52 weeks of prior antiretroviral therapy","symptom":"symptomatic","baseline_cd4":236,"baseline_cd8":634}]' 
+```
+
+You can also use the convenient utilities in the R `httr` package to make calls against the model API
+
+```{r}
+library(httr)
+
+connectServer <- Sys.getenv("CONNECT_SERVER")
+connectAPIKey <- Sys.getenv("CONNECT_API_KEY")
+
+data_input_json <- '{"treatment_arm":"zidovudine and zalcitabine","ind_didanosine":0,"ind_zidovudine":1,"ind_zalcitabine":1,"age":36,"wtkg":81.6,"hemo":"no","lgbtq":"yes","hist_intra_drug_use":"yes","karnof":100,"prior_z_30days":"yes","days_prior_art":86,"race":"white","gender":"male","prior_art":"experienced","strat_hist_art":"> 1 but <= 52 weeks of prior antiretroviral therapy","symptom":"symptomatic","baseline_cd4":236,"baseline_cd8":634}'
+
+resp <- httr::POST(
+  connectServer, 
+     # You will need to change this to path associated with your own model API
+    path = "/content/a4d4bf54-dbaa-4f58-af21-d0fba64416f0/predict", 
+    body = data_input_json,
+    encode = "raw",
+    add_headers(
+      Accept = "application/json",
+      `Content-Type` = "application/json",
+      Authorization = paste0("Key ", connectAPIKey)),
+)
+
+
+result <- httr::content(resp, as = "parsed")
+result
+```
+
+
 ## 10. Create a ML workflow
+
+Discussed in a future session
+
+# Closing thoughts
+
+## Closing thoughts
+
+-   In my final email to you, I will send a link to the video recording for Day 3
+-   I will also send a link to a survey. Please fill it out and share any feedback you may have about the course content.
+-   In the survey, I will ask you to let me know if there are any additional machine learning topics that you'd like to learn more about in future sessions. For example, these may include:
+    -   Python-based hands-on workshop
+    -   Model explainability
+    -   Unsupervised learning (for example, clustering/segmentation)
+    -   Machine learning workflow with targets (Will Landau)
+    -   Other topics!
+-   There are plans for another AI/ML workshop this fall. Please reach out to Haoda Fu for details, or follow the Community of Practice for the latest updates about the workshop.
+-   Thank you for attending!
